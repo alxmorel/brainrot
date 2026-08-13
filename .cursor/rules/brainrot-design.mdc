@@ -1,0 +1,59 @@
+---
+description: Design system / DA Brainrot — sticker bomb, paint splash, collectible toy
+alwaysApply: true
+---
+
+# Brainrot.com — Design System
+
+**One-liner:** Brainrot.com is a colorful collectible toy brand living on the internet.
+
+Reference energy: **Brainrot Wear** — light scrapbook canvas, paint splashes, thick black outlines, bubble logo, sticker characters, clean functional UI.
+
+**NOT** neon gaming, cyberpunk, crypto, synthwave, soft lifestyle/surf, or dark SaaS.
+
+## Light canvas (mandatory)
+
+- Background: off-white / paper grey (`#f3f1ec`) with subtle grain/dot texture
+- Color arrives as **paint explosions** (yellow / pink / purple / blue splashes), not dark neon glow
+- Pure black (`#0a0a0a`) for outlines, marker highlights, sticker shadows
+
+## Sticker language
+
+Brand UI should feel sticker-bombed:
+
+- Thick black borders (`3px`)
+- Hard offset shadows (`4px 4px 0 #0a0a0a`) — not soft colored glow
+- Occasional slight rotation
+- Black marker / brush shapes behind key words
+- Doodles (stars, bolts, smiles) as accents only
+
+## Color tokens
+
+```css
+--br-bg: #f3f1ec;
+--br-fg: #0a0a0a;
+--br-pink: #ff2fb3;
+--br-orange: #ff5a1f;
+--br-yellow: #dfff00;
+--br-lime: #7cff00;
+--br-cyan: #00e5ff;
+--br-blue: #3155ff;
+--br-purple: #8b3dff;
+```
+
+## Typography
+
+- **Brand / bubble**: Fredoka — logo, hero, Brainrot names, badges, key CTAs
+- **Functional**: Nunito Sans — nav, labels, prices, forms
+- Logo can use white fill + black stroke + hard shadow
+- Highlight words with `MarkHighlight` (black jagged mark + pink→purple gradient text)
+
+Do **not** cartoonize every label/form. Keep functional UI clean.
+
+## Hierarchy
+
+**illustration / stickers > title > CTA > secondary info**
+
+## CTAs
+
+Pill, saturated fill, **black outline**, hard sticker shadow. Language: `DÉCOUVRIR LA COLLECTION →`, `GENERATE BRAINROT`, `WEAR THIS`.

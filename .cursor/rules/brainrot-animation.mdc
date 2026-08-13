@@ -1,0 +1,41 @@
+---
+description: Motion system — timings, hover/selection, hero float, reduced motion
+alwaysApply: true
+---
+
+# Brainrot.com — Motion System
+
+Animation = brand personality, but **controlled**. Playful, tactile, responsive — never slow, corporate, or distracting.
+
+## Durations
+
+| Kind | Duration |
+|---|---|
+| Micro | 100–180ms |
+| Button | 150–220ms |
+| Card | 200–300ms |
+| Page | 250–450ms |
+
+Avoid long animations.
+
+## Patterns
+
+- **Hover cards**: slight scale + rotate + translateY + glow increase
+- **Selection**: highlight selected; optionally dim others; animate product preview on switch — selection must stay clear **without** motion
+- **Hero**: subtle float via CSS transforms (no JS animation loops)
+- **Holo**: slow shared gradient motion; reuse CSS keyframes — don't animate every gradient independently
+
+## Reduced motion
+
+Always honor `@media (prefers-reduced-motion: reduce)`:
+
+- disable floating / large transforms
+- shorten transitions
+- keep state changes visually understandable
+
+## Rule
+
+Motion makes the site feel alive. It should never make it hard to use.
+
+On the light canvas, prefer playful lift/tilt/gloss over heavy neon bloom.
+No constant large movement, heavy parallax, or particle spam.

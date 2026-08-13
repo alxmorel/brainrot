@@ -1,0 +1,70 @@
+---
+description: Stack, architecture frontend, data-driven UI, state, assets, perf
+alwaysApply: true
+---
+
+# Brainrot.com — Frontend Architecture
+
+## Stack (V1 — do not diverge without explicit ask)
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 + React 19 + TypeScript (strict) |
+| Styling | Tailwind CSS 4 + CSS variables for design tokens |
+| Motion | Motion (CSS first for pure visuals) |
+| 3D | CSS only unless Three.js is explicitly needed |
+| UI | Homegrown components; shadcn/ui only as optional base |
+| State | React state; Zustand only if shared state needs it |
+| Validation | Zod |
+| Data V1 | TypeScript/JSON files — no e-commerce backend yet |
+| Deploy | Vercel |
+| Tests | Vitest + Playwright |
+| Lint | ESLint + Prettier |
+
+Avoid `any`. No business logic dumped in templates. No overengineering the MVP.
+
+## Folder shape (feature-based)
+
+```
+features/   home | generator | brainrot | products | cart
+shared/     components | hooks | utils
+data/       brainrots | products | traits
+models/     domain types
+```
+
+## Data-driven UI
+
+Brainrots and products are **data**, never hardcoded in components.
+
+```ts
+interface Brainrot {
+  id: string;
+  name: string;
+  animal: string;
+  ingredient: string;
+  vibe: string;
+  image: string;
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
+}
+
+interface Product {
+  id: string;
+  type: 'tshirt' | 'hoodie' | 'cap';
+  name: string;
+  baseImage: string;
+}
+```
+
+Swap `staticBrainrots.ts` for an API later without rewriting UI.
+
+## State (keep simple)
+
+`selectedAnimal` | `selectedIngredient` | `selectedVibe` | `selectedBrainrot` | `selectedProduct`
+
+## Assets
+
+Centralize under `assets/brainrots|products|decorations|fonts`. Images replaceable without touching components. Prefer WebP/AVIF; lazy-load non-critical.
+
+## A11y & perf
+
+Keyboard-accessible controls, meaningful alt, contrast, `prefers-reduced-motion`. Prefer CSS animations; no libraries for trivial effects.

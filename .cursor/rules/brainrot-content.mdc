@@ -1,0 +1,37 @@
+---
+description: Catalogue Brainrot, traits, naming, assets contenu — data hors UI
+globs: data/**/*.{ts,tsx,json}
+alwaysApply: false
+---
+
+# Brainrot.com — Content & Catalogue
+
+## Catalogue V1
+
+Maintain ~20–30 brainrots as structured data (TS/JSON), not JSX cards.
+
+Each entry: `id`, `name`, `animal`, `ingredient`, `vibe`, `image`, optional `rarity`.
+
+Adding a brainrot = new data row + image asset. **Zero component edits.**
+
+## Traits
+
+Keep trait enums/lists in data modules (animals, ingredients, vibes). UI reads from data.
+
+## Naming
+
+Combo-derived names are fine for V1 (e.g. Fragolafrogo, Melonsharko). Keep naming logic outside presentational components.
+
+## Products
+
+V1 types only: tshirt, hoodie, cap. Product mockups compose `baseImage` + selected brainrot `image`.
+
+## Assets
+
+- Placeholders OK early; keep paths centralized
+- Illustrations are the star — prioritize large, clean character art
+- Decorative stickers/blobs are secondary and optional per section
+
+## Copy tone
+
+Internet / meme / streetwear. Short, punchy. CTAs as brand language, not form language.

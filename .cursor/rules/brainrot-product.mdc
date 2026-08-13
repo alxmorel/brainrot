@@ -1,0 +1,39 @@
+---
+description: Vision produit Brainrot.com V1 — objectifs MVP, parcours utilisateur, périmètre
+alwaysApply: true
+---
+
+# Brainrot.com — Product Vision
+
+Brainrot.com is a colorful collectible toy brand living on the internet: create a brainrot from predefined combos, then wear it on merch.
+
+Visual canvas is light (white/off-white). Colors explode on top — not a dark neon/gaming site.
+
+V1 is intentionally simple. **No dynamic AI generation.** Illustrations are pre-generated assets. Data-driven catalogue (~20–30 brainrots).
+
+## User journey
+
+1. Land → instantly get the concept
+2. Select traits (Animal, Ingredient/Food, Vibe; optional name)
+3. See matching brainrots → pick one illustration
+4. Apply to product mockup (T-shirt / Hoodie / Cap)
+5. Add to cart
+
+## Generator categories (V1)
+
+- **Animal**: crocodile, chat, grenouille, requin, singe, canard…
+- **Ingredient**: banane, fraise, pastèque, ananas, pomme, pizza…
+- **Vibe**: italian, cute, cursed, chaotic, luxury…
+- Name can be derived from the combo (e.g. Banacrocodilo Bambino)
+
+## Products V1
+
+Only: T-shirt, Hoodie, Cap. Architecture must allow later tote, mug, sticker, poster.
+
+## Priorities (in order)
+
+1. UX / visual impact / DA
+2. Fluidity & responsive
+3. Architecture & performance
+
+Feel: click → create → choose → share → buy. Not a classic e-commerce shop.
