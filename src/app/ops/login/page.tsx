@@ -1,0 +1,13 @@
+import { OpsLoginForm } from "@/features/ops/OpsLoginForm";
+import type { Metadata } from "next";
+import { Suspense } from "react";
+
+export const metadata: Metadata = { title: "Ops login — Brainrot" };
+
+export default function Page() {
+  return (
+    <Suspense>
+      <OpsLoginForm />
+    </Suspense>
+  );
+}

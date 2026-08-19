@@ -6,6 +6,7 @@ import {
   Nunito_Sans,
   Titan_One,
 } from "next/font/google";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -53,7 +54,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="fr"
       className={`${fredoka.variable} ${titan.variable} ${lilita.variable} ${coiny.variable} ${body.variable} h-full antialiased`}
     >
-      <body className="h-full">{children}</body>
+      <body className="h-full">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

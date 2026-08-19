@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: brainrot
+      POSTGRES_PASSWORD: brainrot
+      POSTGRES_DB: brainrot
+    ports:
+      - "5432:5432"
+    volumes:
+      - brainrot_pg:/var/lib/postgresql/data
+
+volumes:
+  brainrot_pg:

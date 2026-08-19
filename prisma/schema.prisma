@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Order {
+  id                 String      @id
+  sessionId          String
+  status             String
+  name               String
+  email              String
+  line1              String
+  city               String
+  postalCode         String
+  country            String
+  supplierProvider   String      @default("aliexpress")
+  supplierProductId  String?
+  supplierSku        String?
+  supplierExternalId String?
+  supplierTracking   String?
+  supplierLastError  String?
+  stripeCheckoutId   String?
+  items              OrderItem[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+}
+
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  order      Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  brainrotId String
+  productId  String
+  quantity   Int
+  printImage String
+}
+
+model AnalyticsEvent {
+  id        String   @id
+  sessionId String
+  name      String
+  path      String
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([name])
+  @@index([createdAt])
+}

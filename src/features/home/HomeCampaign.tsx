@@ -46,7 +46,9 @@ export function HomeCampaign() {
           />
           <nav className="hidden items-center gap-4 text-sm font-bold uppercase tracking-wide text-ink/80 lg:flex">
             <span className="hover:text-hot-pink">Shop</span>
-            <span className="hover:text-hot-pink">Create</span>
+            <Link href="/create" className="hover:text-hot-pink">
+              Create
+            </Link>
             <span className="hover:text-hot-pink">About</span>
           </nav>
         </div>
@@ -54,7 +56,7 @@ export function HomeCampaign() {
         <div className="flex items-center gap-2 sm:gap-3">
           <BadgeAge />
           <Link
-            href="#create"
+            href="/create"
             className="hidden rounded-pill border-[3px] border-ink bg-hot-pink px-4 py-2 font-display text-xs font-bold uppercase tracking-tight text-white shadow-sticker-sm transition-transform duration-[var(--duration-button)] hover:translate-x-px hover:translate-y-px sm:inline-flex lg:text-sm"
           >
             Create →
@@ -125,7 +127,7 @@ export function HomeCampaign() {
               go custom
             </ScribbleNote>
             <Link
-              href="#create"
+              href="/create"
               className="inline-flex items-center justify-center gap-2 rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker transition-[transform,box-shadow] duration-[var(--duration-button)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-sticker-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8] sm:px-8 sm:py-4 sm:text-base lg:text-lg"
             >
               Découvrir la collection →
@@ -135,8 +137,6 @@ export function HomeCampaign() {
 
         <PromisesBar />
       </div>
-
-      <div id="create" className="sr-only" aria-hidden />
     </main>
   );
 }
