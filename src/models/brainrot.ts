@@ -1,6 +1,6 @@
 export type Rarity = "common" | "rare" | "epic" | "legendary";
 
-export interface Brainrot {
+export interface Brainrototo {
   id: string;
   name: string;
   animal: string;

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useCart } from "@/features/cart/CartProvider";
+import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import { Button, Input } from "@/shared/components/ui";
 import { getSessionId, track } from "@/shared/utils/track";
@@ -53,17 +55,18 @@ export function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-dvh">
-        <SiteNav />
-        <main className="mx-auto max-w-lg px-4 py-10 text-center">
-          <p className="font-display text-xl font-bold uppercase">Panier vide</p>
-        </main>
-      </div>
+    <div className="flex min-h-dvh flex-col">
+      <SiteNav />
+      <main className="mx-auto max-w-lg flex-1 px-4 py-10 text-center">
+        <p className="font-display text-xl font-bold uppercase">Panier vide</p>
+      </main>
+      <SiteFooter />
+    </div>
     );
   }
 
   return (
-    <div className="min-h-dvh">
+    <div className="flex min-h-dvh flex-col">
       <SiteNav />
       <main className="mx-auto max-w-lg px-4 py-6">
         <h1 className="font-display text-3xl font-bold uppercase">Checkout</h1>
@@ -83,6 +86,28 @@ export function CheckoutPage() {
           <Input name="city" label="Ville" required />
           <Input name="postalCode" label="Code postal" required />
           <Input name="country" label="Pays" defaultValue="FR" required />
+          <label className="flex items-start gap-2 text-sm font-bold text-ink/75">
+            <input
+              name="cgv"
+              type="checkbox"
+              required
+              className="mt-1 size-4 accent-hot-pink"
+            />
+            <span>
+              J’accepte les{" "}
+              <Link href="/cgv" className="underline hover:text-hot-pink">
+                CGV
+              </Link>{" "}
+              et la{" "}
+              <Link
+                href="/confidentialite"
+                className="underline hover:text-hot-pink"
+              >
+                politique de confidentialité
+              </Link>
+              .
+            </span>
+          </label>
           {error ? (
             <p className="text-sm font-bold text-hot-pink">{error}</p>
           ) : null}
@@ -91,6 +116,7 @@ export function CheckoutPage() {
           </Button>
         </form>
       </main>
+      <SiteFooter />
     </div>
   );
 }

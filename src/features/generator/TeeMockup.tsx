@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Brainrot, Product } from "@/models";
+import type { Brainrototo, Product } from "@/models";
 
 import { cn } from "@/shared/utils/cn";
 
@@ -9,7 +9,7 @@ export function TeeMockup({
   className,
 }: {
   product: Product;
-  brainrot: Brainrot | null;
+  brainrot: Brainrototo | null;
   className?: string;
 }) {
   return (
@@ -32,7 +32,7 @@ export function TeeMockup({
           />
         ) : (
           <span className="rotate-[-6deg] rounded-md border-[3px] border-dashed border-ink/40 bg-white/80 px-2 py-1 text-center font-display text-[0.65rem] font-bold uppercase leading-tight text-ink/50">
-            Choisis un Brainrot
+            Choisis un Brainrototo
           </span>
         )}
       </div>

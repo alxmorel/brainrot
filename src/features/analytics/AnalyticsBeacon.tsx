@@ -2,14 +2,20 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { track } from "@/shared/utils/track";
+import { CONSENT_EVENT, hasAnalyticsConsent, track } from "@/shared/utils/track";
 
 export function AnalyticsBeacon() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname.startsWith("/ops")) return;
-    track("page_view");
+    function ping() {
+      if (pathname.startsWith("/ops")) return;
+      if (!hasAnalyticsConsent()) return;
+      track("page_view");
+    }
+    ping();
+    window.addEventListener(CONSENT_EVENT, ping);
+    return () => window.removeEventListener(CONSENT_EVENT, ping);
   }, [pathname]);
 
   return null;

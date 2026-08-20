@@ -1,4 +1,4 @@
-import type { Brainrot } from "@/models";
+import type { Brainrototo } from "@/models";
 
 const img = {
   croc: "/assets/brainrots/banana-croc.png",
@@ -6,7 +6,7 @@ const img = {
   elephant: "/assets/brainrots/elephant-cactus.png",
 } as const;
 
-export const brainrots: Brainrot[] = [
+export const brainrots: Brainrototo[] = [
   { id: "banacrocodilo", name: "Banacrocodilo Bambino", animal: "crocodile", ingredient: "banane", vibe: "italian", image: img.croc, rarity: "legendary" },
   { id: "crocopizza", name: "Crocopizza Chaos", animal: "crocodile", ingredient: "pizza", vibe: "chaotic", image: img.croc, rarity: "rare" },
   { id: "fragolafrogo", name: "Fragolafrogo", animal: "grenouille", ingredient: "fraise", vibe: "cute", image: img.sloth, rarity: "epic" },

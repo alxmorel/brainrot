@@ -12,12 +12,12 @@ import {
 import { track } from "@/shared/utils/track";
 import type { CartItem } from "@/models";
 
-const STORAGE_KEY = "brainrot-cart-v1";
+const STORAGE_KEY = "brainrot-cart-v2";
 
 type CartContextValue = {
   items: CartItem[];
   count: number;
-  addItem: (brainrotId: string, productId: string) => void;
+  addItem: (brainrotId: string, productId: string, size: string) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
@@ -30,7 +30,17 @@ function readStored(): CartItem[] {
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed as CartItem[];
+    return parsed.filter((item): item is CartItem => {
+      if (!item || typeof item !== "object") return false;
+      const row = item as CartItem;
+      return (
+        typeof row.id === "string" &&
+        typeof row.brainrotId === "string" &&
+        typeof row.productId === "string" &&
+        typeof row.size === "string" &&
+        typeof row.quantity === "number"
+      );
+    });
   } catch {
     return [];
   }
@@ -50,19 +60,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, hydrated]);
 
-  const addItem = useCallback((brainrotId: string, productId: string) => {
-    const id = `${brainrotId}__${productId}`;
-    setItems((prev) => {
-      const existing = prev.find((item) => item.id === id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-        );
-      }
-      return [...prev, { id, brainrotId, productId, quantity: 1 }];
-    });
-    track("add_to_cart", { brainrotId, productId });
-  }, []);
+  const addItem = useCallback(
+    (brainrotId: string, productId: string, size: string) => {
+      const id = `${brainrotId}__${productId}__${size}`;
+      setItems((prev) => {
+        const existing = prev.find((item) => item.id === id);
+        if (existing) {
+          return prev.map((item) =>
+            item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+          );
+        }
+        return [...prev, { id, brainrotId, productId, size, quantity: 1 }];
+      });
+      track("add_to_cart", { brainrotId, productId, size });
+    },
+    [],
+  );
 
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));

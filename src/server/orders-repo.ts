@@ -13,6 +13,7 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
         productId: item.productId,
         quantity: item.quantity,
         printImage: item.printImage,
+        size: item.size,
       }),
     ),
     shipping: {
@@ -24,7 +25,7 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
       country: row.country,
     },
     supplier: {
-      provider: "aliexpress",
+      provider: "gelato",
       productId: row.supplierProductId,
       sku: row.supplierSku,
       externalId: row.supplierExternalId,
@@ -58,6 +59,7 @@ export async function createOrder(order: Order) {
           productId: item.productId,
           quantity: item.quantity,
           printImage: item.printImage,
+          size: item.size,
         })),
       },
     },

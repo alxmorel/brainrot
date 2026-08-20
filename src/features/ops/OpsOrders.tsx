@@ -84,12 +84,12 @@ export function OpsOrders() {
                   </p>
                   <p className="text-sm">
                     {order.items
-                      .map((item) => `${item.brainrotId} ×${item.quantity}`)
+                      .map((item) => `${item.brainrotId} ${item.size} ×${item.quantity}`)
                       .join(" · ")}
                   </p>
                   {order.supplier.externalId ? (
                     <p className="text-xs font-bold text-ink/50">
-                      AliExpress {order.supplier.externalId}
+                      Gelato {order.supplier.externalId}
                       {order.supplier.lastError === "simulated"
                         ? " (simulé)"
                         : ""}
@@ -108,7 +108,7 @@ export function OpsOrders() {
                       variant="secondary"
                       onClick={() => void act(order.id, "fulfill")}
                     >
-                      Envoyer AliExpress
+                      Envoyer Gelato
                     </Button>
                   ) : null}
                   {order.status === "fulfillment_sent" ? (

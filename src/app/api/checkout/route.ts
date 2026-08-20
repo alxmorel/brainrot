@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { brainrots } from "@/data/brainrots";
-import { catalogForProduct } from "@/server/fulfillment/aliexpress";
+import { catalogForProduct } from "@/data/fulfillment";
+import { isTeeSize } from "@/data/sizes";
 import {
   attachStripeCheckout,
   createOrder,
@@ -49,9 +50,11 @@ export async function POST(request: Request) {
     const item = raw as CartItem;
     const brainrot = brainrots.find((b) => b.id === item.brainrotId);
     if (!brainrot || !item.productId || item.quantity < 1) continue;
+    if (!item.size || !isTeeSize(item.size)) continue;
     items.push({
       brainrotId: item.brainrotId,
       productId: item.productId,
+      size: item.size,
       quantity: item.quantity,
       printImage: brainrot.image,
     });
@@ -60,7 +63,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const catalog = catalogForProduct(items[0].productId);
+  const catalog = catalogForProduct(
+    items[0].productId,
+    isTeeSize(items[0].size) ? items[0].size : undefined,
+  );
   const now = new Date().toISOString();
   const order: Order = {
     id: `BR-${Date.now().toString(36).toUpperCase()}`,
@@ -69,9 +75,9 @@ export async function POST(request: Request) {
     items,
     shipping,
     supplier: {
-      provider: "aliexpress",
-      productId: catalog?.aliexpressProductId ?? null,
-      sku: catalog?.sku ?? null,
+      provider: "gelato",
+      productId: catalog?.productUid ?? null,
+      sku: items[0].size,
       externalId: null,
       tracking: null,
       lastError: null,
@@ -98,7 +104,7 @@ export async function POST(request: Request) {
           currency: "eur",
           unit_amount: unit,
           product_data: {
-            name: `T-shirt ${brainrot?.name ?? item.brainrotId}`,
+            name: `T-shirt ${brainrot?.name ?? item.brainrotId} ${item.size}`,
           },
         },
       };

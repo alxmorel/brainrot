@@ -32,7 +32,7 @@ export function SplashBlob({
   );
 }
 
-/** Soft paint explosions like the Brainrot Wear reference — not neon glow orbs. */
+/** Soft paint explosions like the Brainrototo Wear reference — not neon glow orbs. */
 export function SplashField({ className }: { className?: string }) {
   return (
     <div

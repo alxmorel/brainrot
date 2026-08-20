@@ -3,7 +3,7 @@ description: Stack, architecture frontend, data-driven UI, state, assets, perf
 alwaysApply: true
 ---
 
-# Brainrot.com — Frontend Architecture
+# Brainrototo.com — Frontend Architecture
 
 ## Stack (V1 — do not diverge without explicit ask)
 
@@ -37,7 +37,7 @@ models/     domain types
 Brainrots and products are **data**, never hardcoded in components.
 
 ```ts
-interface Brainrot {
+interface Brainrototo {
   id: string;
   name: string;
   animal: string;

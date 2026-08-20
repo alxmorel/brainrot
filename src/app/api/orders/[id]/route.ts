@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendToAliExpress } from "@/server/fulfillment/aliexpress";
+import { sendToGelato } from "@/server/fulfillment/gelato";
 import { getOrder, saveOrder } from "@/server/orders-repo";
 
 export async function PATCH(
@@ -39,7 +39,7 @@ export async function PATCH(
       return NextResponse.json({ ok: false }, { status: 409 });
     }
     order.status = "fulfillment_queued";
-    const sent = await sendToAliExpress(order);
+    const sent = await sendToGelato(order);
     if (!sent.ok) {
       order.status = "failed";
       order.supplier.lastError = sent.error;

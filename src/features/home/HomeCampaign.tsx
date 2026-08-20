@@ -49,7 +49,9 @@ export function HomeCampaign() {
             <Link href="/create" className="hover:text-hot-pink">
               Create
             </Link>
-            <span className="hover:text-hot-pink">About</span>
+            <Link href="/mentions-legales" className="hover:text-hot-pink">
+              Mentions
+            </Link>
           </nav>
         </div>
 
@@ -113,7 +115,7 @@ export function HomeCampaign() {
 
           <p className="hidden font-display text-base font-bold uppercase leading-tight tracking-[-0.03em] text-ink sm:block lg:text-lg">
             Drôles. Colorés.{" "}
-            <span className="text-ultraviolet">100% Brainrot.</span>
+            <span className="text-ultraviolet">100% Brainrototo.</span>
           </p>
 
           <p className="hidden max-w-md font-sans text-sm font-bold leading-snug text-ink/80 sm:block lg:text-[0.95rem]">
@@ -137,6 +139,18 @@ export function HomeCampaign() {
 
         <PromisesBar />
       </div>
+
+      <nav className="pointer-events-auto absolute bottom-3 left-0 right-0 z-40 flex justify-center gap-3 px-3 text-[0.65rem] font-bold uppercase tracking-wide text-ink/45 sm:gap-4">
+        <Link href="/mentions-legales" className="hover:text-hot-pink">
+          Mentions
+        </Link>
+        <Link href="/cgv" className="hover:text-hot-pink">
+          CGV
+        </Link>
+        <Link href="/confidentialite" className="hover:text-hot-pink">
+          Confidentialité
+        </Link>
+      </nav>
     </main>
   );
 }

@@ -1,13 +1,13 @@
 ---
-description: Design system / DA Brainrot — sticker bomb, paint splash, collectible toy
+description: Design system / DA Brainrototo — sticker bomb, paint splash, collectible toy
 alwaysApply: true
 ---
 
-# Brainrot.com — Design System
+# Brainrototo.com — Design System
 
-**One-liner:** Brainrot.com is a colorful collectible toy brand living on the internet.
+**One-liner:** Brainrototo.com is a colorful collectible toy brand living on the internet.
 
-Reference energy: **Brainrot Wear** — light scrapbook canvas, paint splashes, thick black outlines, bubble logo, sticker characters, clean functional UI.
+Reference energy: **Brainrototo Wear** — light scrapbook canvas, paint splashes, thick black outlines, bubble logo, sticker characters, clean functional UI.
 
 **NOT** neon gaming, cyberpunk, crypto, synthwave, soft lifestyle/surf, or dark SaaS.
 
@@ -43,7 +43,7 @@ Brand UI should feel sticker-bombed:
 
 ## Typography
 
-- **Brand / bubble**: Fredoka — logo, hero, Brainrot names, badges, key CTAs
+- **Brand / bubble**: Fredoka — logo, hero, Brainrototo names, badges, key CTAs
 - **Functional**: Nunito Sans — nav, labels, prices, forms
 - Logo can use white fill + black stroke + hard shadow
 - Highlight words with `MarkHighlight` (black jagged mark + pink→purple gradient text)

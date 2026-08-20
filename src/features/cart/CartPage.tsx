@@ -5,13 +5,14 @@ import Link from "next/link";
 import { brainrots } from "@/data/brainrots";
 import { products } from "@/data/products";
 import { useCart } from "@/features/cart/CartProvider";
+import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 
 export function CartPage() {
   const { items, removeItem } = useCart();
 
   return (
-    <div className="min-h-dvh">
+    <div className="flex min-h-dvh flex-col">
       <SiteNav />
       <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
         <h1 className="font-display text-[clamp(1.8rem,5vw,3rem)] font-bold uppercase leading-none text-ink">
@@ -24,7 +25,7 @@ export function CartPage() {
               Panier vide
             </p>
             <p className="mt-1 text-sm font-bold text-ink/60">
-              Crée un Brainrot et porte-le sur un tee.
+              Crée un Brainrototo et porte-le sur un tee.
             </p>
             <Link
               href="/create"
@@ -58,7 +59,7 @@ export function CartPage() {
                       {brainrot.name}
                     </p>
                     <p className="text-sm font-bold text-ink/60">
-                      {product.name} · ×{item.quantity}
+                      {product.name} · {item.size} · ×{item.quantity}
                     </p>
                   </div>
                   <button
@@ -81,6 +82,7 @@ export function CartPage() {
           </>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { Brainrot } from "@/models";
+import type { Brainrototo } from "@/models";
 import { Badge } from "@/shared/components/ui";
 import { cn } from "@/shared/utils/cn";
 
@@ -37,9 +37,9 @@ export function BrainrotGrid({
   selectedId,
   onSelect,
 }: {
-  items: Brainrot[];
+  items: Brainrototo[];
   selectedId: string | null;
-  onSelect: (brainrot: Brainrot) => void;
+  onSelect: (brainrot: Brainrototo) => void;
 }) {
   return (
     <ul className="grid grid-flow-dense grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">

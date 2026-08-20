@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/shared/utils/cn";
 
-/** Bubble logo treatment inspired by Brainrot Wear reference. */
+/** Bubble logo treatment inspired by Brainrototo Wear reference. */
 export function BrandWordmark({
   className,
   subtitle,
@@ -19,7 +19,7 @@ export function BrandWordmark({
           textShadow: "5px 5px 0 #0a0a0a",
         }}
       >
-        Brainrot
+        Brainrototo
       </span>
       {subtitle ? (
         <span className="font-display bg-gradient-to-r from-blue to-ultraviolet bg-clip-text text-[clamp(1.4rem,4vw,2.2rem)] font-bold uppercase tracking-[-0.03em] text-transparent">

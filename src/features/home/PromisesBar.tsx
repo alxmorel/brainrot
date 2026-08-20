@@ -3,7 +3,7 @@ import { cn } from "@/shared/utils/cn";
 const promises = [
   {
     title: "Design original et fun",
-    subtitle: "100% Brainrot",
+    subtitle: "100% Brainrototo",
     icon: "tee" as const,
   },
   {

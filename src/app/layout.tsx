@@ -43,7 +43,7 @@ const body = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Brainrot.com",
+  title: "Brainrototo.com",
   description:
     "Create your brainrot. Wear the chaos. Colorful collectible toy brand on the internet.",
 };

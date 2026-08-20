@@ -20,6 +20,7 @@ export interface ShippingAddress {
 export interface OrderItem {
   brainrotId: string;
   productId: string;
+  size: string;
   quantity: number;
   printImage: string;
 }
@@ -31,7 +32,7 @@ export interface Order {
   items: OrderItem[];
   shipping: ShippingAddress;
   supplier: {
-    provider: "aliexpress";
+    provider: "gelato";
     productId: string | null;
     sku: string | null;
     externalId: string | null;

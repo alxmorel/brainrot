@@ -118,7 +118,7 @@ export default function DesignSystemPage() {
             <MarkHighlight>paint splash</MarkHighlight> + outlines noirs
           </p>
           <p className="max-w-2xl text-base text-muted sm:text-lg">
-            Moins soft lifestyle, plus Brainrot Wear : papier clair, explosions
+            Moins soft lifestyle, plus Brainrototo Wear : papier clair, explosions
             peintes, boutons sticker, marqueur noir derrière les mots forts.
           </p>
         </header>
@@ -127,7 +127,7 @@ export default function DesignSystemPage() {
           <Surface variant="sticker" className="overflow-hidden !rotate-[-1deg] !p-0">
             <Image
               src="/assets/decorations/reference-brainrot-wear.png"
-              alt="Référence visuelle Brainrot Wear — collage sticker et paint splash"
+              alt="Référence visuelle Brainrototo Wear — collage sticker et paint splash"
               width={1600}
               height={900}
               className="h-auto w-full"
@@ -153,7 +153,7 @@ export default function DesignSystemPage() {
                   </Badge>
                 </div>
                 <p className={cn(candidate.fontClass, "text-4xl text-ink")}>
-                  Brainrot Wear
+                  Brainrototo Wear
                 </p>
                 <p
                   className={cn(
@@ -172,7 +172,7 @@ export default function DesignSystemPage() {
         <Section eyebrow="02 / Brand tricks" title="Marker + doodles">
           <Surface variant="paper" className="space-y-5">
             <p className="text-2xl font-bold leading-tight text-ink sm:text-3xl">
-              Des t-shirts <MarkHighlight>Brainrot</MarkHighlight> aussi absurdes
+              Des t-shirts <MarkHighlight>Brainrototo</MarkHighlight> aussi absurdes
               que toi
             </p>
             <div className="relative min-h-24">
@@ -237,7 +237,7 @@ export default function DesignSystemPage() {
             <Card
               pack="sunset"
               title="Banacrocodilo Bambino"
-              meta={<Badge rarity="rare">Rare Brainrot</Badge>}
+              meta={<Badge rarity="rare">Rare Brainrototo</Badge>}
               media={<PlaceholderCharacter label="BC" />}
             >
               <p className="text-sm text-muted">Outline noir + ombre sticker.</p>
@@ -265,7 +265,7 @@ export default function DesignSystemPage() {
         <Section eyebrow="07 / Forms" title="Functional UI">
           <Surface variant="solid" className="grid gap-4 md:grid-cols-2">
             <Input
-              label="Brainrot name"
+              label="Brainrototo name"
               placeholder="Banacrocodilo Bambino"
               hint="Label body neutre — pas display bubble."
             />

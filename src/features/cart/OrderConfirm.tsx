@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/features/cart/CartProvider";
+import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 
 export function OrderConfirm({ orderId }: { orderId?: string }) {
@@ -12,9 +13,9 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
     clearCart();
   }, [clearCart]);
   return (
-    <div className="min-h-dvh">
+    <div className="flex min-h-dvh flex-col">
       <SiteNav />
-      <main className="relative mx-auto flex max-w-[720px] flex-col items-center px-4 pb-16 pt-8 text-center sm:px-6">
+      <main className="relative mx-auto flex max-w-[720px] flex-1 flex-col items-center px-4 pb-16 pt-8 text-center sm:px-6">
         <p className="rotate-[-4deg] rounded-pill border-[3px] border-ink bg-acid-yellow px-3 py-1 font-display text-xs font-bold uppercase tracking-tight shadow-sticker-sm">
           C’est validé
         </p>
@@ -25,7 +26,7 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
         </h1>
 
         <p className="mt-4 max-w-md text-sm font-bold leading-snug text-ink/70 sm:text-base">
-          Ton paiement est passé. On prépare ton tee Brainrot — mail dès qu’il
+          Ton paiement est passé. On prépare ton tee Brainrototo — mail dès qu’il
           part.
         </p>
 
@@ -58,6 +59,7 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
           </Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

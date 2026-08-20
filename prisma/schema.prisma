@@ -18,7 +18,7 @@ model Order {
   city               String
   postalCode         String
   country            String
-  supplierProvider   String      @default("aliexpress")
+  supplierProvider   String      @default("gelato")
   supplierProductId  String?
   supplierSku        String?
   supplierExternalId String?
@@ -40,6 +40,7 @@ model OrderItem {
   order      Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   brainrotId String
   productId  String
+  size       String
   quantity   Int
   printImage String
 }

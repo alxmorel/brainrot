@@ -1,4 +1,4 @@
-# Brainrot.com
+# Brainrototo.com
 
 Expérience web V1 : créer un personnage brainrot à partir de combinaisons prédéfinies, puis l'afficher sur un produit dérivé.
 

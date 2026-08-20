@@ -16,7 +16,7 @@ export function HeroModels({ className }: { className?: string }) {
     >
       <Image
         src="/assets/products/hero-models.png"
-        alt="Deux jeunes avec t-shirts Brainrot personnalisables"
+        alt="Deux jeunes avec t-shirts Brainrototo personnalisables"
         width={1024}
         height={682}
         priority
