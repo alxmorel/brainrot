@@ -81,11 +81,11 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
             >
               <Link
                 href={`/tee/${brainrot.id}`}
-                className="group flex flex-col rounded-xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-1 hover:shadow-sticker"
+                className="group flex flex-col overflow-hidden rounded-xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-1 hover:shadow-sticker"
               >
                 <div
                   className={cn(
-                    "relative flex aspect-square items-center justify-center overflow-hidden p-3 sm:p-4",
+                    "relative flex aspect-square items-center justify-center overflow-hidden rounded-t-[9px] p-3 sm:p-4",
                     packClass[packs[index % packs.length]],
                   )}
                 >
