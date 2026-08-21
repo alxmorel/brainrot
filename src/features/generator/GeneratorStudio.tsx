@@ -46,6 +46,7 @@ export function GeneratorStudio({
   const [selected, setSelected] = useState<Brainrototo | null>(initialBrainrot);
   const [size, setSize] = useTeeSize(initialSize);
   const [justAdded, setJustAdded] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(Boolean(initialBrainrot));
 
   const matches = useMemo(
     () => filterBrainrots(brainrots, { animal, ingredient, vibe }),
@@ -102,7 +103,8 @@ export function GeneratorStudio({
 
           <details
             className="mt-5 rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm open:shadow-sticker"
-            defaultOpen={Boolean(initialBrainrot)}
+            open={filtersOpen}
+            onToggle={(event) => setFiltersOpen(event.currentTarget.open)}
           >
             <summary className="cursor-pointer list-none font-display text-sm font-bold uppercase tracking-tight text-ink [&::-webkit-details-marker]:hidden">
               <span className="flex items-center justify-between gap-2">
