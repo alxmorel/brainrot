@@ -1,3 +1,5 @@
+import { teePriceLabel } from "@/data/pricing";
+
 /** Identité légale — à compléter avant de vendre. Affichée telle quelle sur les pages. */
 export const legal = {
   brand: "Brainrototo",
@@ -17,6 +19,8 @@ export const legal = {
     region: "EU-Marseille-1 (France)",
   },
   paymentProcessor: "Stripe Payments Europe, Ltd.",
-  priceTtc: "24,90 € TTC",
-  deliveryEstimate: "7 à 21 jours ouvrés après validation du paiement",
+  priceTtc: teePriceLabel,
+  deliveryShort: "2–7 jours",
+  deliveryEstimate:
+    "2 à 7 jours ouvrés après paiement (France et UE, délai indicatif)",
 };

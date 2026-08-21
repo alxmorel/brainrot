@@ -18,6 +18,8 @@ type CartContextValue = {
   items: CartItem[];
   count: number;
   addItem: (brainrotId: string, productId: string, size: string) => void;
+  setQuantity: (id: string, quantity: number) => void;
+  setSize: (id: string, size: string) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
@@ -77,6 +79,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const setQuantity = useCallback((id: string, quantity: number) => {
+    if (quantity < 1) {
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      return;
+    }
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
+    );
+  }, []);
+
+  const setSize = useCallback((id: string, size: string) => {
+    setItems((prev) => {
+      const current = prev.find((item) => item.id === id);
+      if (!current || current.size === size) return prev;
+      const nextId = `${current.brainrotId}__${current.productId}__${size}`;
+      const rest = prev.filter((item) => item.id !== id);
+      const existing = rest.find((item) => item.id === nextId);
+      if (existing) {
+        return rest.map((item) =>
+          item.id === nextId
+            ? { ...item, quantity: item.quantity + current.quantity }
+            : item,
+        );
+      }
+      return [...rest, { ...current, id: nextId, size }];
+    });
+  }, []);
+
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
     track("remove_from_cart", { id });
@@ -91,10 +121,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       items,
       count: items.reduce((sum, item) => sum + item.quantity, 0),
       addItem,
+      setQuantity,
+      setSize,
       removeItem,
       clearCart,
     }),
-    [items, addItem, removeItem, clearCart],
+    [items, addItem, setQuantity, setSize, removeItem, clearCart],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

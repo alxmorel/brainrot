@@ -32,3 +32,15 @@ export const brainrots: Brainrototo[] = [
   { id: "canardfraise", name: "Fragoladuck Chaos", animal: "canard", ingredient: "fraise", vibe: "chaotic", image: img.croc, rarity: "epic" },
   { id: "frogbanane", name: "Bananfrogo Cute", animal: "grenouille", ingredient: "banane", vibe: "cute", image: img.sloth, rarity: "common" },
 ];
+
+/** Ordre éditorial tant qu’il n’y a pas assez de ventes. */
+export const bestSellerFallbackIds = [
+  "banacrocodilo",
+  "fragolafrogo",
+  "melonsharko",
+  "ananasinge",
+  "crocfraise",
+  "duckpizza",
+  "chatbanane",
+  "frogpasteque",
+] as const;

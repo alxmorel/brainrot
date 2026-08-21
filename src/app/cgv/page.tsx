@@ -25,8 +25,8 @@ export default function Page() {
       </LegalSection>
       <LegalSection title="Prix et paiement">
         <p>
-          Prix affiché : {legal.priceTtc} par tee, hors éventuels frais de
-          port indiqués avant paiement. Paiement par carte via{" "}
+          Prix affiché : {legal.priceTtc} par tee, livraison comprise. Paiement par
+          carte via{" "}
           {legal.paymentProcessor}. La commande n’est confirmée qu’après
           paiement effectif.
         </p>
@@ -39,9 +39,9 @@ export default function Page() {
       </LegalSection>
       <LegalSection title="Livraison">
         <p>
-          Impression à la demande. Délai indicatif : {legal.deliveryEstimate},
-          selon le prestataire d’impression et le transporteur. Livraison à
-          l’adresse fournie.
+          Impression à la demande via un réseau d’imprimeurs locaux (Gelato).
+          Délai indicatif : {legal.deliveryEstimate}. Hors UE, le délai peut
+          être un peu plus long. Livraison à l’adresse fournie.
         </p>
       </LegalSection>
       <LegalSection title="Droit de rétractation">

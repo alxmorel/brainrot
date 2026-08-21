@@ -100,6 +100,30 @@ export async function attachStripeCheckout(id: string, stripeCheckoutId: string)
   });
 }
 
+export async function updateOrderShipping(
+  id: string,
+  shipping: {
+    name: string;
+    email: string;
+    line1: string;
+    city: string;
+    postalCode: string;
+    country: string;
+  },
+) {
+  return prisma.order.update({
+    where: { id },
+    data: {
+      name: shipping.name,
+      email: shipping.email,
+      line1: shipping.line1,
+      city: shipping.city,
+      postalCode: shipping.postalCode,
+      country: shipping.country,
+    },
+  });
+}
+
 export async function saveOrder(order: Order) {
   await prisma.order.update({
     where: { id: order.id },
@@ -136,6 +160,27 @@ export async function listEvents() {
 
 export async function countOrders() {
   return prisma.order.count();
+}
+
+const SOLD_STATUSES = [
+  "paid",
+  "validated",
+  "fulfillment_queued",
+  "fulfillment_sent",
+  "shipped",
+] as const;
+
+export async function listBestSellingBrainrotIds(limit = 8): Promise<string[]> {
+  const groups = await prisma.orderItem.groupBy({
+    by: ["brainrotId"],
+    where: {
+      order: { status: { in: [...SOLD_STATUSES] } },
+    },
+    _sum: { quantity: true },
+    orderBy: { _sum: { quantity: "desc" } },
+    take: limit,
+  });
+  return groups.map((group) => group.brainrotId);
 }
 
 export async function ordersGroupedByStatus() {

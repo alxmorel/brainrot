@@ -7,20 +7,21 @@ import {
   createOrder,
 } from "@/server/orders-repo";
 import { appUrl, getStripe, teeUnitAmountCents } from "@/server/stripe";
-import type { CartItem, Order, ShippingAddress } from "@/models";
+import type { CartItem, Order } from "@/models";
 
-function parseShipping(value: unknown): ShippingAddress | null {
-  if (!value || typeof value !== "object") return null;
-  const s = value as Record<string, unknown>;
-  const name = typeof s.name === "string" ? s.name.trim() : "";
-  const email = typeof s.email === "string" ? s.email.trim() : "";
-  const line1 = typeof s.line1 === "string" ? s.line1.trim() : "";
-  const city = typeof s.city === "string" ? s.city.trim() : "";
-  const postalCode = typeof s.postalCode === "string" ? s.postalCode.trim() : "";
-  const country = typeof s.country === "string" ? s.country.trim() : "";
-  if (!name || !email || !line1 || !city || !postalCode || !country) return null;
-  return { name, email, line1, city, postalCode, country };
-}
+const SHIPPING_COUNTRIES = [
+  "FR",
+  "BE",
+  "CH",
+  "DE",
+  "ES",
+  "IT",
+  "LU",
+  "NL",
+  "GB",
+  "PT",
+  "AT",
+] as const;
 
 export async function POST(request: Request) {
   const stripe = getStripe();
@@ -38,9 +39,8 @@ export async function POST(request: Request) {
   const record = body as Record<string, unknown>;
   const sessionId =
     typeof record.sessionId === "string" ? record.sessionId : "";
-  const shipping = parseShipping(record.shipping);
   const itemsRaw = Array.isArray(record.items) ? record.items : [];
-  if (!sessionId || !shipping || itemsRaw.length === 0) {
+  if (!sessionId || itemsRaw.length === 0) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
@@ -73,7 +73,14 @@ export async function POST(request: Request) {
     sessionId,
     status: "pending_payment",
     items,
-    shipping,
+    shipping: {
+      name: "—",
+      email: "—",
+      line1: "—",
+      city: "—",
+      postalCode: "—",
+      country: "FR",
+    },
     supplier: {
       provider: "gelato",
       productId: catalog?.productUid ?? null,
@@ -92,10 +99,12 @@ export async function POST(request: Request) {
   const origin = appUrl();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    customer_email: shipping.email,
     metadata: { orderId: order.id },
     success_url: `${origin}/checkout/merci?id=${order.id}`,
     cancel_url: `${origin}/checkout`,
+    shipping_address_collection: {
+      allowed_countries: [...SHIPPING_COUNTRIES],
+    },
     line_items: items.map((item) => {
       const brainrot = brainrots.find((b) => b.id === item.brainrotId);
       return {

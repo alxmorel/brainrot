@@ -11,33 +11,38 @@ export function SiteNav() {
   const { count } = useCart();
 
   return (
-    <header className="relative z-20 flex items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 flex items-center justify-between gap-2 border-b-[3px] border-ink bg-[#fffdf8] px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:px-8">
       <Link href="/" className="shrink-0">
         <BrandWordmark
           subtitle="Wear"
-          className="[&>span:first-child]:text-[clamp(1.4rem,4vw,2.1rem)] [&>span:first-child]:[-webkit-text-stroke-width:3px] [&>span:last-child]:text-[clamp(0.8rem,2vw,1.1rem)]"
+          className="[&>span:first-child]:text-[clamp(1.15rem,4vw,2.1rem)] [&>span:first-child]:[-webkit-text-stroke-width:3px] [&>span:last-child]:hidden sm:[&>span:last-child]:inline sm:[&>span:last-child]:text-[clamp(0.8rem,2vw,1.1rem)]"
         />
       </Link>
 
-      <nav className="flex items-center gap-2 sm:gap-3">
+      <nav className="flex items-center gap-1 sm:gap-3">
         <Link
           href="/create"
           className={cn(
-            "rounded-pill border-[3px] border-ink px-3 py-1.5 font-display text-xs font-bold uppercase tracking-tight shadow-sticker-sm sm:text-sm",
-            pathname === "/create"
+            "rounded-pill border-[3px] border-ink px-2 py-1 font-display text-[0.65rem] font-bold uppercase tracking-tight shadow-sticker-sm sm:px-3 sm:py-1.5 sm:text-sm",
+            pathname === "/create" || pathname.startsWith("/tee")
               ? "bg-hot-pink text-white"
               : "bg-white text-ink hover:bg-acid-yellow",
           )}
         >
-          Create
+          Collection
         </Link>
         <Link
           href="/cart"
-          className="relative inline-flex items-center rounded-pill border-[3px] border-ink bg-white px-3 py-1.5 font-display text-xs font-bold uppercase tracking-tight text-ink shadow-sticker-sm hover:bg-acid-yellow sm:text-sm"
+          className={cn(
+            "relative inline-flex items-center rounded-pill border-[3px] border-ink px-2 py-1 font-display text-[0.65rem] font-bold uppercase tracking-tight shadow-sticker-sm sm:px-3 sm:py-1.5 sm:text-sm",
+            pathname === "/cart" || pathname.startsWith("/checkout")
+              ? "bg-hot-pink text-white"
+              : "bg-white text-ink hover:bg-acid-yellow",
+          )}
         >
           Panier
           {count > 0 ? (
-            <span className="ml-1.5 inline-flex min-w-[1.2rem] items-center justify-center rounded-pill bg-hot-pink px-1.5 text-[0.65rem] text-white">
+            <span className="ml-1.5 inline-flex min-w-[1.2rem] items-center justify-center rounded-pill bg-acid-yellow px-1.5 text-[0.65rem] text-ink">
               {count}
             </span>
           ) : null}

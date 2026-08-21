@@ -1,8 +1,45 @@
 import { NextResponse } from "next/server";
-import { createEvent, markOrderPaid } from "@/server/orders-repo";
+import type Stripe from "stripe";
+import {
+  createEvent,
+  markOrderPaid,
+  updateOrderShipping,
+} from "@/server/orders-repo";
 import { getStripe } from "@/server/stripe";
 
 export const runtime = "nodejs";
+
+function shippingFromSession(session: Stripe.Checkout.Session) {
+  const email = session.customer_details?.email?.trim() ?? "";
+  const extended = session as Stripe.Checkout.Session & {
+    shipping_details?: {
+      name?: string | null;
+      address?: Stripe.Address | null;
+    };
+    collected_information?: {
+      shipping_details?: {
+        name?: string | null;
+        address?: Stripe.Address | null;
+      };
+    };
+  };
+  const ship =
+    extended.shipping_details ??
+    extended.collected_information?.shipping_details;
+  const name =
+    ship?.name?.trim() ??
+    session.customer_details?.name?.trim() ??
+    "";
+  const addr = ship?.address;
+  const line1 = addr?.line1?.trim() ?? "";
+  const city = addr?.city?.trim() ?? "";
+  const postalCode = addr?.postal_code?.trim() ?? "";
+  const country = addr?.country?.trim() ?? "";
+  if (!email || !name || !line1 || !city || !postalCode || !country) {
+    return null;
+  }
+  return { name, email, line1, city, postalCode, country };
+}
 
 export async function POST(request: Request) {
   const stripe = getStripe();
@@ -31,6 +68,10 @@ export async function POST(request: Request) {
         ? session.metadata.orderId
         : null;
     if (orderId && session.payment_status === "paid") {
+      const shipping = shippingFromSession(session);
+      if (shipping) {
+        await updateOrderShipping(orderId, shipping);
+      }
       await markOrderPaid(orderId, session.id);
       try {
         await createEvent({

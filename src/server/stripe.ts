@@ -1,3 +1,4 @@
+import { teePriceCents } from "@/data/pricing";
 import Stripe from "stripe";
 
 let client: Stripe | null = null;
@@ -12,8 +13,8 @@ export function getStripe() {
 }
 
 export function teeUnitAmountCents() {
-  const raw = Number(process.env.STRIPE_TEE_CENTS ?? "2490");
-  return Number.isFinite(raw) && raw > 0 ? raw : 2490;
+  const raw = Number(process.env.STRIPE_TEE_CENTS ?? String(teePriceCents));
+  return Number.isFinite(raw) && raw > 0 ? raw : teePriceCents;
 }
 
 export function appUrl() {

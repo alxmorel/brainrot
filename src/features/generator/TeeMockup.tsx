@@ -21,7 +21,7 @@ export function TeeMockup({
         height={480}
         className="h-auto w-full"
       />
-      <div className="absolute left-[31%] top-[30%] flex h-[32%] w-[38%] items-center justify-center">
+      <div className="absolute left-[26%] top-[26%] flex h-[42%] w-[48%] items-center justify-center">
         {brainrot ? (
           <Image
             src={brainrot.image}

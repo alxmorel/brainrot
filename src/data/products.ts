@@ -3,7 +3,7 @@ import type { Product } from "@/models";
 const tshirt: Product = {
   id: "tee-classic",
   type: "tshirt",
-  name: "T-shirt",
+  name: "T-shirt bio unisexe",
   baseImage: "/assets/products/tshirt-base.svg",
 };
 
