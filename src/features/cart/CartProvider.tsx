@@ -9,22 +9,38 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { defaultTeeColor, isTeeColor } from "@/data/teeColors";
 import { track } from "@/shared/utils/track";
 import type { CartItem } from "@/models";
 
-const STORAGE_KEY = "brainrot-cart-v2";
+const STORAGE_KEY = "brainrot-cart-v3";
 
 type CartContextValue = {
   items: CartItem[];
   count: number;
-  addItem: (brainrotId: string, productId: string, size: string) => void;
+  addItem: (
+    brainrotId: string,
+    productId: string,
+    size: string,
+    color?: string,
+  ) => void;
   setQuantity: (id: string, quantity: number) => void;
   setSize: (id: string, size: string) => void;
+  setColor: (id: string, color: string) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
+
+function lineId(
+  brainrotId: string,
+  productId: string,
+  size: string,
+  color: string,
+) {
+  return `${brainrotId}__${productId}__${size}__${color}`;
+}
 
 function readStored(): CartItem[] {
   try {
@@ -42,7 +58,13 @@ function readStored(): CartItem[] {
         typeof row.size === "string" &&
         typeof row.quantity === "number"
       );
-    });
+    }).map((row) => ({
+      ...row,
+      color:
+        typeof row.color === "string" && isTeeColor(row.color)
+          ? row.color
+          : defaultTeeColor,
+    }));
   } catch {
     return [];
   }
@@ -63,8 +85,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items, hydrated]);
 
   const addItem = useCallback(
-    (brainrotId: string, productId: string, size: string) => {
-      const id = `${brainrotId}__${productId}__${size}`;
+    (
+      brainrotId: string,
+      productId: string,
+      size: string,
+      color: string = defaultTeeColor,
+    ) => {
+      const id = lineId(brainrotId, productId, size, color);
       setItems((prev) => {
         const existing = prev.find((item) => item.id === id);
         if (existing) {
@@ -72,9 +99,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
             item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
           );
         }
-        return [...prev, { id, brainrotId, productId, size, quantity: 1 }];
+        return [
+          ...prev,
+          { id, brainrotId, productId, size, color, quantity: 1 },
+        ];
       });
-      track("add_to_cart", { brainrotId, productId, size });
+      track("add_to_cart", { brainrotId, productId, size, color });
     },
     [],
   );
@@ -89,22 +119,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  function remapLine(
+    prev: CartItem[],
+    id: string,
+    patch: Partial<Pick<CartItem, "size" | "color">>,
+  ) {
+    const current = prev.find((item) => item.id === id);
+    if (!current) return prev;
+    const size = patch.size ?? current.size;
+    const color = patch.color ?? current.color;
+    if (size === current.size && color === current.color) return prev;
+    const nextId = lineId(current.brainrotId, current.productId, size, color);
+    const rest = prev.filter((item) => item.id !== id);
+    const existing = rest.find((item) => item.id === nextId);
+    if (existing) {
+      return rest.map((item) =>
+        item.id === nextId
+          ? { ...item, quantity: item.quantity + current.quantity }
+          : item,
+      );
+    }
+    return [...rest, { ...current, id: nextId, size, color }];
+  }
+
   const setSize = useCallback((id: string, size: string) => {
-    setItems((prev) => {
-      const current = prev.find((item) => item.id === id);
-      if (!current || current.size === size) return prev;
-      const nextId = `${current.brainrotId}__${current.productId}__${size}`;
-      const rest = prev.filter((item) => item.id !== id);
-      const existing = rest.find((item) => item.id === nextId);
-      if (existing) {
-        return rest.map((item) =>
-          item.id === nextId
-            ? { ...item, quantity: item.quantity + current.quantity }
-            : item,
-        );
-      }
-      return [...rest, { ...current, id: nextId, size }];
-    });
+    setItems((prev) => remapLine(prev, id, { size }));
+  }, []);
+
+  const setColor = useCallback((id: string, color: string) => {
+    setItems((prev) => remapLine(prev, id, { color }));
   }, []);
 
   const removeItem = useCallback((id: string) => {
@@ -123,10 +166,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       addItem,
       setQuantity,
       setSize,
+      setColor,
       removeItem,
       clearCart,
     }),
-    [items, addItem, setQuantity, setSize, removeItem, clearCart],
+    [items, addItem, setQuantity, setSize, setColor, removeItem, clearCart],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

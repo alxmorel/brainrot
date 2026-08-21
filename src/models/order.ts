@@ -21,6 +21,7 @@ export interface OrderItem {
   brainrotId: string;
   productId: string;
   size: string;
+  color: string;
   quantity: number;
   printImage: string;
 }

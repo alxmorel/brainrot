@@ -1,17 +1,36 @@
 import Image from "next/image";
 import type { Brainrototo, Product } from "@/models";
+import { mockupFor } from "@/data/productAssets";
+import { defaultTeeColor } from "@/data/teeColors";
 
 import { cn } from "@/shared/utils/cn";
 
 export function TeeMockup({
   product,
   brainrot,
+  color = defaultTeeColor,
   className,
 }: {
   product: Product;
   brainrot: Brainrototo | null;
+  color?: string;
   className?: string;
 }) {
+  const mockup = mockupFor(brainrot, color);
+  if (mockup && brainrot) {
+    return (
+      <div className={cn("relative mx-auto w-full max-w-[22rem]", className)}>
+        <Image
+          src={mockup}
+          alt={brainrot.name}
+          width={800}
+          height={800}
+          className="h-auto w-full"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={cn("relative mx-auto w-full max-w-[22rem]", className)}>
       <Image

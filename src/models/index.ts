@@ -1,4 +1,4 @@
-export type { Brainrototo, Rarity } from "./brainrot";
+export type { Brainrototo, BrainrotColorAssets, Rarity } from "./brainrot";
 export type { Product, ProductType } from "./product";
 export type { Trait } from "./trait";
 export type { CartItem } from "./cart";

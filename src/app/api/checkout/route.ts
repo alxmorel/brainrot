@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { brainrots } from "@/data/brainrots";
 import { catalogForProduct } from "@/data/fulfillment";
 import { isTeeSize } from "@/data/sizes";
+import { defaultTeeColor, isTeeColor, teeColorLabel } from "@/data/teeColors";
 import {
   attachStripeCheckout,
   createOrder,
@@ -51,10 +52,15 @@ export async function POST(request: Request) {
     const brainrot = brainrots.find((b) => b.id === item.brainrotId);
     if (!brainrot || !item.productId || item.quantity < 1) continue;
     if (!item.size || !isTeeSize(item.size)) continue;
+    const color =
+      typeof item.color === "string" && isTeeColor(item.color)
+        ? item.color
+        : defaultTeeColor;
     items.push({
       brainrotId: item.brainrotId,
       productId: item.productId,
       size: item.size,
+      color,
       quantity: item.quantity,
       printImage: brainrot.image,
     });
@@ -66,6 +72,7 @@ export async function POST(request: Request) {
   const catalog = catalogForProduct(
     items[0].productId,
     isTeeSize(items[0].size) ? items[0].size : undefined,
+    items[0].color,
   );
   const now = new Date().toISOString();
   const order: Order = {
@@ -84,7 +91,7 @@ export async function POST(request: Request) {
     supplier: {
       provider: "gelato",
       productId: catalog?.productUid ?? null,
-      sku: items[0].size,
+      sku: `${items[0].size}-${items[0].color}`,
       externalId: null,
       tracking: null,
       lastError: null,
@@ -113,7 +120,7 @@ export async function POST(request: Request) {
           currency: "eur",
           unit_amount: unit,
           product_data: {
-            name: `T-shirt ${brainrot?.name ?? item.brainrotId} ${item.size}`,
+            name: `T-shirt ${brainrot?.name ?? item.brainrotId} ${item.size} ${teeColorLabel(item.color)}`,
           },
         },
       };

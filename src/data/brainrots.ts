@@ -1,4 +1,5 @@
 import type { Brainrototo } from "@/models";
+import { colorPack } from "@/data/productAssets";
 
 const img = {
   croc: "/assets/brainrots/banana-croc.png",
@@ -6,10 +7,25 @@ const img = {
   elephant: "/assets/brainrots/elephant-cactus.png",
 } as const;
 
+const banacro = "/assets/products/banacrocodilo_bambino";
+const lemonSloth = "/assets/products/lemon_sloth";
+
 export const brainrots: Brainrototo[] = [
-  { id: "banacrocodilo", name: "Banacrocodilo Bambino", animal: "crocodile", ingredient: "banane", vibe: "italian", image: img.croc, rarity: "legendary" },
+  {
+    id: "banacrocodilo",
+    name: "Banacrocodilo Bambino",
+    animal: "crocodile",
+    ingredient: "banane",
+    vibe: "italian",
+    image: img.croc,
+    colors: {
+      white: colorPack(banacro, "white"),
+      "deep-black": colorPack(banacro, "deep-black"),
+    },
+    rarity: "legendary",
+  },
   { id: "crocopizza", name: "Crocopizza Chaos", animal: "crocodile", ingredient: "pizza", vibe: "chaotic", image: img.croc, rarity: "rare" },
-  { id: "fragolafrogo", name: "Fragolafrogo", animal: "grenouille", ingredient: "fraise", vibe: "cute", image: img.sloth, rarity: "epic" },
+  { id: "fragolafrogo", name: "Fragolafrogo", animal: "grenouille", ingredient: "fraise", vibe: "cute", image: img.sloth, mockup: `${lemonSloth}/editor_front.png`, gallery: [`${lemonSloth}/person1_front.png`, `${lemonSloth}/editor_front.png`, `${lemonSloth}/person1_profile-left.png`, `${lemonSloth}/person1_profile-right.png`, `${lemonSloth}/person1_back.png`, `${lemonSloth}/person2_front.png`], rarity: "epic" },
   { id: "melonsharko", name: "Melonsharko", animal: "requin", ingredient: "pasteque", vibe: "cursed", image: img.elephant, rarity: "rare" },
   { id: "ananasinge", name: "Ananasinge Deluxe", animal: "singe", ingredient: "ananas", vibe: "luxury", image: img.sloth, rarity: "epic" },
   { id: "duckpizza", name: "Duckpizza Cursed", animal: "canard", ingredient: "pizza", vibe: "cursed", image: img.elephant, rarity: "common" },

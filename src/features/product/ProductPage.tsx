@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { brainrots } from "@/data/brainrots";
 import { gelatoTee, sellableTeeSizes } from "@/data/fulfillment";
@@ -10,13 +11,20 @@ import {
   shippingNote,
   teePriceLabel,
 } from "@/data/pricing";
+import { colorsForBrainrot, galleryFor } from "@/data/productAssets";
 import { defaultProduct } from "@/data/products";
 import type { TeeSize } from "@/data/sizes";
+import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import { useCart } from "@/features/cart/CartProvider";
 import { TeeMockup } from "@/features/generator/TeeMockup";
+import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { relatedBrainrots } from "@/features/product/relatedBrainrots";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
-import { createPageHref, useTeeSize } from "@/features/product/teeSize";
+import {
+  createPageHref,
+  useTeeColor,
+  useTeeSize,
+} from "@/features/product/teeSize";
 import { TeeGrid } from "@/features/product/TeeGrid";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
@@ -35,19 +43,31 @@ const specCards = [
 export function ProductPage({
   brainrot,
   initialSize,
+  initialColor,
 }: {
   brainrot: Brainrototo;
   initialSize?: TeeSize;
+  initialColor?: TeeColorId;
 }) {
   const { addItem } = useCart();
   const sizes = sellableTeeSizes();
+  const palette = colorsForBrainrot(brainrot);
   const [size, setSize] = useTeeSize(initialSize);
+  const [color, setColor] = useTeeColor(initialColor);
+  const resolvedColor = palette.includes(color) ? color : palette[0] ?? defaultTeeColor;
   const [justAdded, setJustAdded] = useState(false);
+  const shots = galleryFor(brainrot, resolvedColor);
+  const [shotIndex, setShotIndex] = useState(0);
+  const shot = shots[shotIndex] ?? null;
   const [zoomOpen, setZoomOpen] = useState(false);
   const related = relatedBrainrots(brainrot, brainrots);
 
+  useEffect(() => {
+    setShotIndex(0);
+  }, [resolvedColor, brainrot.id]);
+
   function handleAdd() {
-    addItem(brainrot.id, defaultProduct.id, size);
+    addItem(brainrot.id, defaultProduct.id, size, resolvedColor);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1600);
   }
@@ -66,21 +86,75 @@ export function ProductPage({
 
         <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
           <div>
-            <button
-              type="button"
-              onClick={() => setZoomOpen(true)}
-              className="w-full rounded-2xl border-[3px] border-ink bg-sunset p-4 shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-0.5 hover:shadow-sticker sm:p-8"
-              aria-label="Agrandir le mockup"
-            >
-              <TeeMockup
-                product={defaultProduct}
-                brainrot={brainrot}
-                className="max-w-[22rem]"
-              />
-            </button>
-            <p className="mt-2 text-center text-xs font-bold uppercase text-ink/45">
-              Cliquer pour zoomer
-            </p>
+            {shot ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setZoomOpen(true)}
+                  className="w-full overflow-hidden rounded-2xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-0.5 hover:shadow-sticker"
+                  aria-label="Agrandir le mockup"
+                >
+                  <Image
+                    key={shot}
+                    src={shot}
+                    alt={brainrot.name}
+                    width={900}
+                    height={900}
+                    sizes="(max-width: 1024px) 100vw, 640px"
+                    className="h-auto w-full"
+                  />
+                </button>
+                {shots.length > 1 ? (
+                  <ul className="mt-3 grid grid-cols-6 gap-1.5">
+                    {shots.map((src, index) => (
+                      <li key={src}>
+                        <button
+                          type="button"
+                          onClick={() => setShotIndex(index)}
+                          aria-pressed={shotIndex === index}
+                          className={
+                            shotIndex === index
+                              ? "overflow-hidden rounded-lg border-[3px] border-ink shadow-sticker-sm"
+                              : "overflow-hidden rounded-lg border-[3px] border-ink/30"
+                          }
+                        >
+                          <Image
+                            src={src}
+                            alt=""
+                            width={120}
+                            height={120}
+                            sizes="80px"
+                            className="h-auto w-full"
+                          />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                <p className="mt-2 text-center text-xs font-bold uppercase text-ink/45">
+                  Cliquer pour zoomer
+                </p>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setZoomOpen(true)}
+                  className="w-full rounded-2xl border-[3px] border-ink bg-sunset p-4 shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-0.5 hover:shadow-sticker sm:p-8"
+                  aria-label="Agrandir le mockup"
+                >
+                  <TeeMockup
+                    product={defaultProduct}
+                    brainrot={brainrot}
+                    color={resolvedColor}
+                    className="max-w-[22rem]"
+                  />
+                </button>
+                <p className="mt-2 text-center text-xs font-bold uppercase text-ink/45">
+                  Cliquer pour zoomer
+                </p>
+              </>
+            )}
           </div>
 
           <div>
@@ -93,6 +167,14 @@ export function ProductPage({
             <p className="mt-1 text-sm font-bold text-ink/70">
               {shippingNote} · {legal.deliveryEstimate}
             </p>
+
+            <div className="mt-5">
+              <ColorSwatches
+                colors={palette}
+                value={resolvedColor}
+                onChange={setColor}
+              />
+            </div>
 
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3">
@@ -151,7 +233,7 @@ export function ProductPage({
             </div>
 
             <Link
-              href={createPageHref(null, size)}
+              href={createPageHref(null, size, resolvedColor)}
               className="mt-6 inline-flex font-display text-sm font-bold uppercase tracking-tight text-ink underline decoration-2 underline-offset-2 hover:text-hot-pink"
             >
               Explorer d&apos;autres combos →
@@ -206,11 +288,24 @@ export function ProductPage({
             >
               Fermer
             </button>
-            <TeeMockup
-              product={defaultProduct}
-              brainrot={brainrot}
-              className="max-w-none"
-            />
+            {shot ? (
+              <Image
+                key={shot}
+                src={shot}
+                alt={brainrot.name}
+                width={900}
+                height={900}
+                sizes="(max-width: 512px) 100vw, 512px"
+                className="h-auto w-full"
+              />
+            ) : (
+              <TeeMockup
+                product={defaultProduct}
+                brainrot={brainrot}
+                color={resolvedColor}
+                className="max-w-none"
+              />
+            )}
           </div>
         </div>
       ) : null}

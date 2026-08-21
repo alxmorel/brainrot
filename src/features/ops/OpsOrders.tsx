@@ -84,7 +84,7 @@ export function OpsOrders() {
                   </p>
                   <p className="text-sm">
                     {order.items
-                      .map((item) => `${item.brainrotId} ${item.size} ×${item.quantity}`)
+                      .map((item) => `${item.brainrotId} ${item.size} ${item.color} ×${item.quantity}`)
                       .join(" · ")}
                   </p>
                   {order.supplier.externalId ? (

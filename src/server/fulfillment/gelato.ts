@@ -35,7 +35,7 @@ export async function sendToGelato(order: Order): Promise<FulfillmentResult> {
 
   const items = [];
   for (const [index, item] of order.items.entries()) {
-    const productUid = gelatoUidForSize(item.size);
+    const productUid = gelatoUidForSize(item.size, item.color);
     if (!productUid) {
       return {
         ok: false,

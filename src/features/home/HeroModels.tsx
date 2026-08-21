@@ -7,21 +7,32 @@ export function HeroModels({ className }: { className?: string }) {
     <div
       className={cn(
         "pointer-events-none relative z-10 mx-auto flex h-[34vh] w-full items-end justify-center",
-        "sm:absolute sm:bottom-0 sm:right-0 sm:mx-0 sm:h-[58dvh] sm:w-[68%] sm:justify-end",
+        "sm:absolute sm:bottom-0 sm:right-0 sm:mx-0 sm:h-[58dvh] sm:w-[68%]",
         "lg:h-[82dvh] lg:w-[62%]",
         "xl:w-[58%]",
         className,
       )}
     >
-      <Image
-        src="/assets/products/hero-models.png"
-        alt="Deux jeunes avec t-shirts Brainrototo personnalisables"
-        width={1024}
-        height={682}
-        priority
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 62vw"
-        className="h-full w-auto max-w-none origin-bottom object-contain object-bottom sm:scale-[1.08] sm:object-right lg:scale-[1.12]"
-      />
+      <div className="flex h-full w-auto items-end justify-center">
+        <Image
+          src="/assets/products/lemon_sloth/person1_profile-left.png"
+          alt=""
+          width={900}
+          height={900}
+          priority
+          sizes="(max-width: 640px) 55vw, (max-width: 1024px) 40vw, 32vw"
+          className="relative z-10 h-full w-auto max-w-none origin-bottom object-contain object-bottom mix-blend-multiply -mr-[32%]"
+        />
+        <Image
+          src="/assets/products/banacrocodilo_bambino/deep-black/person2_front.png"
+          alt="Deux jeunes avec des tees Banacrocodilo Bambino"
+          width={900}
+          height={900}
+          priority
+          sizes="(max-width: 640px) 55vw, (max-width: 1024px) 40vw, 32vw"
+          className="relative z-20 h-full w-auto max-w-none origin-bottom object-contain object-bottom sm:scale-[0.90] lg:scale-[0.95]"
+        />
+      </div>
     </div>
   );
 }

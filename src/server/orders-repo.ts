@@ -14,6 +14,7 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
         quantity: item.quantity,
         printImage: item.printImage,
         size: item.size,
+        color: item.color,
       }),
     ),
     shipping: {
@@ -60,6 +61,7 @@ export async function createOrder(order: Order) {
           quantity: item.quantity,
           printImage: item.printImage,
           size: item.size,
+          color: item.color,
         })),
       },
     },

@@ -72,34 +72,34 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
 
         <ul
           ref={scroller}
-          className="-mx-3 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-2 sm:mx-0 sm:mt-8 sm:gap-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-3 mt-5 flex items-start snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-4 sm:mx-0 sm:mt-8 sm:gap-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {items.map((brainrot, index) => (
             <li
               key={brainrot.id}
-              className="w-[72%] shrink-0 snap-start sm:w-[15.5rem] lg:w-[17.5rem]"
+              className="w-[min(72%,16.5rem)] shrink-0 snap-start sm:w-56 lg:w-64"
             >
               <Link
                 href={`/tee/${brainrot.id}`}
-                className="group flex h-full flex-col overflow-hidden rounded-xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-1 hover:shadow-sticker"
+                className="group flex flex-col rounded-xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-1 hover:shadow-sticker"
               >
                 <div
                   className={cn(
-                    "relative flex aspect-square items-center justify-center p-3 sm:aspect-[4/5] sm:p-4",
+                    "relative flex aspect-square items-center justify-center overflow-hidden p-3 sm:p-4",
                     packClass[packs[index % packs.length]],
                   )}
                 >
                   <TeeMockup
                     product={defaultProduct}
                     brainrot={brainrot}
-                    className="max-w-[9.5rem] sm:max-w-[14rem]"
+                    className="max-h-full max-w-[9.5rem] sm:max-w-[12rem]"
                   />
                 </div>
-                <div className="flex flex-1 flex-col gap-1 border-t-[3px] border-ink p-3 sm:p-4">
-                  <p className="font-display text-[0.85rem] font-bold uppercase leading-[1.05] tracking-[-0.03em] text-ink sm:text-lg">
+                <div className="shrink-0 border-t-[3px] border-ink p-3 sm:px-4 sm:py-3">
+                  <p className="line-clamp-2 font-display text-[0.85rem] font-bold uppercase leading-[1.05] tracking-[-0.03em] text-ink sm:text-base">
                     {brainrot.name}
                   </p>
-                  <p className="text-xs font-bold text-ink/70 sm:text-sm">
+                  <p className="mt-1 text-xs font-bold text-ink/70 sm:text-sm">
                     {legal.priceTtc}
                   </p>
                 </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { brainrots } from "@/data/brainrots";
 import { isTeeSize } from "@/data/sizes";
+import { isTeeColor } from "@/data/teeColors";
 import { ProductPage } from "@/features/product/ProductPage";
 
 type TeePageProps = {
@@ -33,5 +34,14 @@ export default async function TeePage({ params, searchParams }: TeePageProps) {
   const sizeRaw = query.size;
   const sizeVal = typeof sizeRaw === "string" ? sizeRaw : sizeRaw?.[0];
   const initialSize = sizeVal && isTeeSize(sizeVal) ? sizeVal : undefined;
-  return <ProductPage brainrot={brainrot} initialSize={initialSize} />;
+  const colorRaw = query.color;
+  const colorVal = typeof colorRaw === "string" ? colorRaw : colorRaw?.[0];
+  const initialColor = colorVal && isTeeColor(colorVal) ? colorVal : undefined;
+  return (
+    <ProductPage
+      brainrot={brainrot}
+      initialSize={initialSize}
+      initialColor={initialColor}
+    />
+  );
 }

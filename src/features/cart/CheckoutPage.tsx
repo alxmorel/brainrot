@@ -11,6 +11,7 @@ import {
   teePriceCents,
 } from "@/data/pricing";
 import { defaultProduct, products } from "@/data/products";
+import { teeColorLabel } from "@/data/teeColors";
 import { useCart } from "@/features/cart/CartProvider";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
@@ -107,6 +108,7 @@ export function CheckoutPage() {
                   <TeeMockup
                     product={defaultProduct}
                     brainrot={brainrot}
+                    color={item.color}
                     className="max-w-none"
                   />
                 </div>
@@ -115,7 +117,7 @@ export function CheckoutPage() {
                     {brainrot.name}
                   </p>
                   <p className="text-xs font-bold text-ink/60">
-                    {item.size} · ×{item.quantity}
+                    {item.size} · {teeColorLabel(item.color)} · ×{item.quantity}
                   </p>
                   <p className="mt-1 font-display text-sm font-bold text-ink">
                     {formatEur(item.quantity * teePriceCents)}

@@ -4,16 +4,19 @@ import Link from "next/link";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
 import { formatEur, shippingNote, teePriceCents } from "@/data/pricing";
+import { colorsForBrainrot } from "@/data/productAssets";
 import { defaultProduct, products } from "@/data/products";
 import { isTeeSize } from "@/data/sizes";
+import { isTeeColor, teeColorLabel } from "@/data/teeColors";
 import { useCart } from "@/features/cart/CartProvider";
 import { TeeMockup } from "@/features/generator/TeeMockup";
+import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { teePageHref } from "@/features/product/teeSize";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 
 export function CartPage() {
-  const { items, removeItem, setQuantity, setSize } = useCart();
+  const { items, removeItem, setQuantity, setSize, setColor } = useCart();
   const sizes = sellableTeeSizes();
   const totalCents = items.reduce(
     (sum, item) => sum + item.quantity * teePriceCents,
@@ -53,9 +56,12 @@ export function CartPage() {
                 const product = products.find((p) => p.id === item.productId);
                 if (!brainrot || !product) return null;
                 const lineCents = item.quantity * teePriceCents;
-                const teeHref = isTeeSize(item.size)
-                  ? teePageHref(brainrot.id, item.size)
-                  : `/tee/${brainrot.id}`;
+                const teeHref =
+                  isTeeSize(item.size) && isTeeColor(item.color)
+                    ? teePageHref(brainrot.id, item.size, item.color)
+                    : isTeeSize(item.size)
+                      ? teePageHref(brainrot.id, item.size)
+                      : `/tee/${brainrot.id}`;
                 return (
                   <li
                     key={item.id}
@@ -68,6 +74,7 @@ export function CartPage() {
                       <TeeMockup
                         product={defaultProduct}
                         brainrot={brainrot}
+                        color={item.color}
                         className="max-w-none"
                       />
                     </Link>
@@ -79,8 +86,18 @@ export function CartPage() {
                         {brainrot.name}
                       </Link>
                       <p className="text-sm font-bold text-ink/60">
-                        {product.name} · {formatEur(teePriceCents)}
+                        {product.name} · {teeColorLabel(item.color)} ·{" "}
+                        {formatEur(teePriceCents)}
                       </p>
+                      <div className="mt-2">
+                        <ColorSwatches
+                          colors={colorsForBrainrot(brainrot)}
+                          value={
+                            isTeeColor(item.color) ? item.color : "white"
+                          }
+                          onChange={(id) => setColor(item.id, id)}
+                        />
+                      </div>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {sizes.map((value) => (
                           <button

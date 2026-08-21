@@ -10,16 +10,19 @@ import {
   shippingNote,
   teePriceLabel,
 } from "@/data/pricing";
+import { colorsForBrainrot, mockupFor } from "@/data/productAssets";
 import { defaultProduct } from "@/data/products";
 import { type TeeSize } from "@/data/sizes";
+import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import { animals, ingredients, vibes } from "@/data/traits";
 import { useCart } from "@/features/cart/CartProvider";
 import { BrainrotGrid } from "@/features/generator/BrainrotGrid";
 import { filterBrainrots } from "@/features/generator/filterBrainrots";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { TraitChips } from "@/features/generator/TraitChips";
+import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
-import { teePageHref, useTeeSize } from "@/features/product/teeSize";
+import { teePageHref, useTeeColor, useTeeSize } from "@/features/product/teeSize";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import { Button } from "@/shared/components/ui";
@@ -29,9 +32,11 @@ import type { Brainrototo } from "@/models";
 export function GeneratorStudio({
   initialBrainrotId,
   initialSize,
+  initialColor,
 }: {
   initialBrainrotId?: string;
   initialSize?: TeeSize;
+  initialColor?: TeeColorId;
 }) {
   const { addItem } = useCart();
   const initialBrainrot =
@@ -45,6 +50,11 @@ export function GeneratorStudio({
   const [vibe, setVibe] = useState<string | null>(initialBrainrot?.vibe ?? null);
   const [selected, setSelected] = useState<Brainrototo | null>(initialBrainrot);
   const [size, setSize] = useTeeSize(initialSize);
+  const [color, setColor] = useTeeColor(initialColor);
+  const palette = selected ? colorsForBrainrot(selected) : [defaultTeeColor];
+  const resolvedColor = palette.includes(color)
+    ? color
+    : palette[0] ?? defaultTeeColor;
   const [justAdded, setJustAdded] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(Boolean(initialBrainrot));
 
@@ -81,7 +91,7 @@ export function GeneratorStudio({
 
   function handleAdd() {
     if (!selected) return;
-    addItem(selected.id, defaultProduct.id, size);
+    addItem(selected.id, defaultProduct.id, size, resolvedColor);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1600);
   }
@@ -185,7 +195,7 @@ export function GeneratorStudio({
               {selected ? (
                 <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border-[3px] border-ink bg-acid-yellow lg:hidden">
                   <Image
-                    src={selected.image}
+                    src={mockupFor(selected, resolvedColor) ?? selected.image}
                     alt=""
                     fill
                     className="object-contain p-1"
@@ -202,7 +212,18 @@ export function GeneratorStudio({
               </div>
             </div>
             <div className="hidden lg:block">
-              <TeeMockup product={defaultProduct} brainrot={selected} />
+              <TeeMockup
+                product={defaultProduct}
+                brainrot={selected}
+                color={resolvedColor}
+              />
+            </div>
+            <div className="mt-3">
+              <ColorSwatches
+                colors={palette}
+                value={resolvedColor}
+                onChange={setColor}
+              />
             </div>
             <div className="mt-3 flex items-baseline justify-between gap-3">
               <p className="font-display text-sm font-bold uppercase text-ink">
@@ -243,7 +264,7 @@ export function GeneratorStudio({
             ) : null}
             {selected ? (
               <Link
-                href={teePageHref(selected.id, size)}
+                href={teePageHref(selected.id, size, resolvedColor)}
                 className="mt-2 inline-flex w-full justify-center font-display text-xs font-bold uppercase tracking-tight text-ink/55 underline decoration-2 underline-offset-2 hover:text-hot-pink"
               >
                 Détails du tee

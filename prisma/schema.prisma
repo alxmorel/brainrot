@@ -41,6 +41,7 @@ model OrderItem {
   brainrotId String
   productId  String
   size       String
+  color      String @default("white")
   quantity   Int
   printImage String
 }
