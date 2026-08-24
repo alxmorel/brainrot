@@ -172,8 +172,7 @@ export default function DesignSystemPage() {
         <Section eyebrow="02 / Brand tricks" title="Marker + doodles">
           <Surface variant="paper" className="space-y-5">
             <p className="text-2xl font-bold leading-tight text-ink sm:text-3xl">
-              Des t-shirts <MarkHighlight>Brainrototo</MarkHighlight> aussi absurdes
-              que toi
+              Des créatures <MarkHighlight>Brainrototo</MarkHighlight> qui se portent
             </p>
             <div className="relative min-h-24">
               <Doodle kind="star" className="left-0 top-0" />

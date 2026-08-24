@@ -19,10 +19,10 @@ export async function generateMetadata({
 }: TeePageProps): Promise<Metadata> {
   const { brainrotId } = await params;
   const brainrot = brainrots.find((item) => item.id === brainrotId);
-  if (!brainrot) return { title: "Tee — Brainrototo.com" };
+  if (!brainrot) return { title: "Tee" };
   return {
-    title: `${brainrot.name} — Brainrototo.com`,
-    description: `T-shirt bio unisexe ${brainrot.name}. SOL'S Legend, impression face avant.`,
+    title: brainrot.name,
+    description: `Porte ${brainrot.name}. Un Brainrototo original, imprimé sur tee bio.`,
   };
 }
 

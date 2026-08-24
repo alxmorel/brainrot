@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { brand, rarityLabel } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { gelatoTee, sellableTeeSizes } from "@/data/fulfillment";
 import { legal } from "@/data/legal";
@@ -15,6 +16,7 @@ import { colorsForBrainrot, galleryFor } from "@/data/productAssets";
 import { defaultProduct } from "@/data/products";
 import type { TeeSize } from "@/data/sizes";
 import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
+import { comboLine } from "@/data/traits";
 import { useCart } from "@/features/cart/CartProvider";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
@@ -78,7 +80,7 @@ export function ProductPage({
       <main className="mx-auto w-full max-w-[1100px] flex-1 px-4 py-6 pb-28 sm:px-6 sm:pb-6 lg:px-8">
         <p className="text-xs font-bold uppercase tracking-wide text-ink/55">
           <Link href="/create" className="hover:text-hot-pink">
-            Collection
+            La bande
           </Link>
           <span aria-hidden> / </span>
           {brainrot.name}
@@ -161,6 +163,10 @@ export function ProductPage({
             <h1 className="font-display text-[clamp(1.8rem,4vw,2.8rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em] text-ink">
               {brainrot.name}
             </h1>
+            <p className="mt-2 font-display text-sm font-bold uppercase tracking-tight text-ink/70">
+              {comboLine(brainrot)}
+              {brainrot.rarity ? ` · ${rarityLabel[brainrot.rarity]}` : null}
+            </p>
             <p className="mt-2 font-display text-lg font-bold uppercase text-ink">
               {teePriceLabel}
             </p>
@@ -236,7 +242,7 @@ export function ProductPage({
               href={createPageHref(null, size, resolvedColor)}
               className="mt-6 inline-flex font-display text-sm font-bold uppercase tracking-tight text-ink underline decoration-2 underline-offset-2 hover:text-hot-pink"
             >
-              Explorer d&apos;autres combos →
+              {brand.product.explore}
             </Link>
           </div>
         </div>
@@ -244,7 +250,7 @@ export function ProductPage({
         {related.length > 0 ? (
           <section className="mt-12 border-t-[3px] border-ink/15 pt-8">
             <h2 className="font-display text-xl font-bold uppercase text-ink sm:text-2xl">
-              Tu pourrais aussi aimer
+              {brand.product.related}
             </h2>
             <div className="mt-5">
               <TeeGrid items={related} />

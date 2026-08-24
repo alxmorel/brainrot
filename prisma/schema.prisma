@@ -24,8 +24,9 @@ model Order {
   supplierExternalId String?
   supplierTracking   String?
   supplierLastError  String?
-  stripeCheckoutId   String?
-  items              OrderItem[]
+  stripeCheckoutId        String?
+  confirmationEmailSentAt DateTime?
+  items                   OrderItem[]
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 

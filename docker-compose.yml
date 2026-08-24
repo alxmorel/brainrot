@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: brainrot-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: brainrot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-me}
+      POSTGRES_DB: brainrot
+    volumes:
+      - brainrot_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U brainrot -d brainrot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  brainrot_pg_data:

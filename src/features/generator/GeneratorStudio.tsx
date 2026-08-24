@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
 import {
@@ -105,10 +106,10 @@ export function GeneratorStudio({
       <main className="mx-auto grid max-w-[1500px] gap-6 px-4 pb-36 pt-2 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-8 lg:px-8 lg:pb-12 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <section>
           <h1 className="font-display text-[clamp(1.8rem,5vw,3.4rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em] text-ink">
-            La collection
+            {brand.collection.title}
           </h1>
           <p className="mt-2 max-w-xl text-sm font-bold text-ink/70 sm:text-base">
-            Filtre un combo, choisis l’illu, on l’imprime sur le tee.
+            {brand.collection.lead}
           </p>
 
           <details
@@ -118,7 +119,7 @@ export function GeneratorStudio({
           >
             <summary className="cursor-pointer list-none font-display text-sm font-bold uppercase tracking-tight text-ink [&::-webkit-details-marker]:hidden">
               <span className="flex items-center justify-between gap-2">
-                Filtres
+                {brand.collection.filters}
                 {hasFilters ? (
                   <span className="text-xs text-hot-pink">actifs</span>
                 ) : (
@@ -135,7 +136,7 @@ export function GeneratorStudio({
                 allowAny
               />
               <TraitChips
-                label="Ingrédient"
+                label="Bouffe"
                 traits={ingredients}
                 value={ingredient}
                 onChange={pickIngredient}
@@ -207,7 +208,7 @@ export function GeneratorStudio({
                   {defaultProduct.name} · {teePriceLabel}
                 </p>
                 <h2 className="mt-1 font-display text-xl font-bold uppercase leading-none text-ink sm:text-2xl">
-                  {selected?.name ?? "Choisis un Brainrototo"}
+                  {selected?.name ?? brand.collection.pick}
                 </h2>
               </div>
             </div>

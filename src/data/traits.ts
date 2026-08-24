@@ -1,4 +1,4 @@
-import type { Trait } from "@/models";
+import type { Brainrototo, Trait } from "@/models";
 
 export const animals: Trait[] = [
   { id: "crocodile", label: "Crocodile" },
@@ -25,3 +25,13 @@ export const vibes: Trait[] = [
   { id: "chaotic", label: "Chaotic" },
   { id: "luxury", label: "Luxury" },
 ];
+
+function labelOf(list: Trait[], id: string) {
+  return list.find((trait) => trait.id === id)?.label ?? id;
+}
+
+export function comboLine(
+  brainrot: Pick<Brainrototo, "animal" | "ingredient" | "vibe">,
+) {
+  return `${labelOf(animals, brainrot.animal)} × ${labelOf(ingredients, brainrot.ingredient)} × ${labelOf(vibes, brainrot.vibe)}`;
+}

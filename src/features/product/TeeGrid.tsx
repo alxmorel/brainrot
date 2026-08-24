@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { brand } from "@/data/brand";
 import { legal } from "@/data/legal";
 import { defaultProduct } from "@/data/products";
 import { TeeMockup } from "@/features/generator/TeeMockup";
@@ -44,7 +45,7 @@ export function TeeGrid({ items }: { items: Brainrototo[] }) {
                 {legal.priceTtc}
               </p>
               <span className="mt-auto hidden font-display text-sm font-bold uppercase tracking-tight text-hot-pink sm:inline">
-                Voir le tee →
+                {brand.product.wear}
               </span>
             </div>
           </Link>

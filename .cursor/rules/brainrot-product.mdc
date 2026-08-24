@@ -5,16 +5,34 @@ alwaysApply: true
 
 # Brainrototo.com — Product Vision
 
-Brainrototo.com is a colorful collectible toy brand living on the internet: create a brainrot from predefined combos, then wear it on merch.
+Brainrototo.com is a colorful collectible toy brand living on the internet: compose a brainrot from predefined combos, then wear it on merch.
 
 Visual canvas is light (white/off-white). Colors explode on top — not a dark neon/gaming site.
 
 V1 is intentionally simple. **No dynamic AI generation.** Illustrations are pre-generated assets. Data-driven catalogue (~20–30 brainrots).
 
+## Brand platform
+
+**Category:** Collectible toy brand you wear — not a meme merch shop, not Temu/Amazon bootleg, not crypto, not AI slop.
+
+**Positioning:** We own the *grammar* of Italian brainrot (animal × food × italianized name × vibe) as an original creature catalogue. We never reprint viral TikTok characters (Tralalero, Tung Tung, Ballerina Cappuccina, etc.).
+
+**Tagline:** Compose. Porte. Collectionne.
+
+**Hero claim:** Des créatures Brainrototo qui se portent.
+
+**Differentiator:** Original IP, pre-drawn, family-safe, EU print quality. The creature is the product; the tee is how you wear it.
+
+**Voice:** Toy-catalogue absurd. Short. Sticker-like. Creature names are the heroes. French first; Italianate play lives in the names only.
+
+Never say: viral, trending, meme shop, AI-generated, skibidi, crypto. Never generic streetwear ("tees that slap", "kiffe ton style").
+
+Copy source of truth: `src/data/brand.ts`.
+
 ## User journey
 
-1. Land → instantly get the concept
-2. Select traits (Animal, Ingredient/Food, Vibe; optional name)
+1. Land → instantly get the concept (creatures you compose and wear)
+2. Select traits (Animal, Bouffe/Food, Vibe)
 3. See matching brainrots → pick one illustration
 4. Apply to product mockup (T-shirt / Hoodie / Cap)
 5. Add to cart
@@ -22,9 +40,9 @@ V1 is intentionally simple. **No dynamic AI generation.** Illustrations are pre-
 ## Generator categories (V1)
 
 - **Animal**: crocodile, chat, grenouille, requin, singe, canard…
-- **Ingredient**: banane, fraise, pastèque, ananas, pomme, pizza…
+- **Bouffe**: banane, fraise, pastèque, ananas, pomme, pizza…
 - **Vibe**: italian, cute, cursed, chaotic, luxury…
-- Name can be derived from the combo (e.g. Banacrocodilo Bambino)
+- Name is derived from the combo (e.g. Banacrocodilo Bambino)
 
 ## Products V1
 
@@ -36,4 +54,4 @@ Only: T-shirt, Hoodie, Cap. Architecture must allow later tote, mug, sticker, po
 2. Fluidity & responsive
 3. Architecture & performance
 
-Feel: click → create → choose → share → buy. Not a classic e-commerce shop.
+Feel: click → compose → choose → wear → buy. Not a classic e-commerce shop.

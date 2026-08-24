@@ -126,6 +126,35 @@ export async function updateOrderShipping(
   });
 }
 
+export async function updateOrderEmail(
+  id: string,
+  email: string,
+  name?: string,
+) {
+  return prisma.order.update({
+    where: { id },
+    data: {
+      email,
+      ...(name ? { name } : {}),
+    },
+  });
+}
+
+export async function claimConfirmationEmailSend(id: string) {
+  const result = await prisma.order.updateMany({
+    where: { id, confirmationEmailSentAt: null },
+    data: { confirmationEmailSentAt: new Date() },
+  });
+  return result.count > 0;
+}
+
+export async function clearConfirmationEmailSend(id: string) {
+  await prisma.order.update({
+    where: { id },
+    data: { confirmationEmailSentAt: null },
+  });
+}
+
 export async function saveOrder(order: Order) {
   await prisma.order.update({
     where: { id: order.id },

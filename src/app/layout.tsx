@@ -6,6 +6,7 @@ import {
   Nunito_Sans,
   Titan_One,
 } from "next/font/google";
+import { brand } from "@/data/brand";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -43,9 +44,11 @@ const body = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Brainrototo.com",
-  description:
-    "Create your brainrot. Wear the chaos. Colorful collectible toy brand on the internet.",
+  title: {
+    default: brand.seo.title,
+    template: "%s — Brainrototo",
+  },
+  description: brand.seo.description,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

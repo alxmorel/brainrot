@@ -1,12 +1,12 @@
+import { brand } from "@/data/brand";
 import { isTeeSize } from "@/data/sizes";
 import { isTeeColor } from "@/data/teeColors";
 import { GeneratorStudio } from "@/features/generator/GeneratorStudio";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Collection — Brainrototo.com",
-  description:
-    "Parcours les Brainrototo, compose un combo et porte-le sur un tee.",
+  title: brand.seo.collectionTitle,
+  description: brand.seo.collectionDescription,
 };
 
 export default async function CreatePage({

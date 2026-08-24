@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { brand } from "@/data/brand";
 
 const primaryLinks = [
-  { href: "/create", label: "Collection" },
+  { href: "/create", label: "La bande" },
   { href: "/cart", label: "Panier" },
   { href: "/guide-tailles", label: "Guide des tailles" },
 ] as const;
@@ -14,9 +15,18 @@ const legalLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t-[3px] border-ink/15 px-4 py-4 sm:py-5">
+    <footer className="mt-auto border-t-[3px] border-ink/15 px-4 py-5 sm:py-6">
+      <p className="text-center font-display text-sm font-bold uppercase tracking-tight text-ink">
+        {brand.name}
+      </p>
+      <p className="mt-1 text-center text-[0.65rem] font-bold uppercase tracking-wide text-ink/55 sm:text-xs">
+        {brand.tagline}
+      </p>
+      <p className="mt-0.5 text-center text-[0.65rem] font-bold text-ink/40 sm:text-xs">
+        {brand.footer.line}
+      </p>
       <nav
-        className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink/55 sm:gap-x-4 sm:text-xs"
+        className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink/55 sm:gap-x-4 sm:text-xs"
       >
         {primaryLinks.map((link) => (
           <Link key={link.href} href={link.href} className="hover:text-hot-pink">

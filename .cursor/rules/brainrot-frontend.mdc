@@ -28,7 +28,7 @@ Avoid `any`. No business logic dumped in templates. No overengineering the MVP.
 ```
 features/   home | generator | brainrot | products | cart
 shared/     components | hooks | utils
-data/       brainrots | products | traits
+data/       brainrots | products | traits | brand
 models/     domain types
 ```
 

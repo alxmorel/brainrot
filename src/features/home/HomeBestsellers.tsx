@@ -2,21 +2,9 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { legal } from "@/data/legal";
-import { defaultProduct } from "@/data/products";
-import { TeeMockup } from "@/features/generator/TeeMockup";
-import { cn } from "@/shared/utils/cn";
-import type { CardPack } from "@/shared/components/ui";
+import { brand } from "@/data/brand";
+import { GangTeeCard } from "@/features/home/GangTeeCard";
 import type { Brainrototo } from "@/models";
-
-const packs: CardPack[] = ["sunset", "ocean", "acid", "candy"];
-
-const packClass: Record<CardPack, string> = {
-  sunset: "bg-sunset",
-  ocean: "bg-ocean",
-  acid: "bg-acid",
-  candy: "bg-candy",
-};
 
 export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
   const scroller = useRef<HTMLUListElement>(null);
@@ -26,7 +14,7 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
     if (!el) return;
     const card = el.querySelector("li");
     const gap = 16;
-    const width = card ? card.getBoundingClientRect().width + gap : 280;
+    const width = card ? card.getBoundingClientRect().width + gap : 320;
     el.scrollBy({ left: direction * width, behavior: "smooth" });
   }
 
@@ -38,10 +26,10 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
         <header className="flex items-end justify-between gap-3">
           <div>
             <p className="text-[0.65rem] font-bold uppercase tracking-wide text-hot-pink sm:text-xs">
-              Les plus vendus
+              {brand.gang.eyebrow}
             </p>
             <h2 className="mt-0.5 font-display text-[clamp(1.45rem,4vw,3rem)] font-bold uppercase leading-none tracking-[-0.04em] text-ink">
-              La collection
+              {brand.gang.title}
             </h2>
           </div>
           <div className="flex items-center gap-2">
@@ -65,45 +53,21 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
               href="/create"
               className="shrink-0 font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 sm:text-base"
             >
-              Voir tout
+              {brand.gang.seeAll}
             </Link>
           </div>
         </header>
 
         <ul
           ref={scroller}
-          className="-mx-3 mt-5 flex items-start snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-4 sm:mx-0 sm:mt-8 sm:gap-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-3 mt-5 flex items-stretch snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-4 sm:mx-0 sm:mt-8 sm:gap-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {items.map((brainrot, index) => (
+          {items.map((brainrot) => (
             <li
               key={brainrot.id}
-              className="w-[min(72%,16.5rem)] shrink-0 snap-start sm:w-56 lg:w-64"
+              className="w-[min(88%,18rem)] shrink-0 snap-start sm:w-[20rem]"
             >
-              <Link
-                href={`/tee/${brainrot.id}`}
-                className="group flex flex-col overflow-hidden rounded-xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-1 hover:shadow-sticker"
-              >
-                <div
-                  className={cn(
-                    "relative flex aspect-square items-center justify-center overflow-hidden rounded-t-[9px] p-3 sm:p-4",
-                    packClass[packs[index % packs.length]],
-                  )}
-                >
-                  <TeeMockup
-                    product={defaultProduct}
-                    brainrot={brainrot}
-                    className="max-h-full max-w-[9.5rem] sm:max-w-[12rem]"
-                  />
-                </div>
-                <div className="shrink-0 border-t-[3px] border-ink p-3 sm:px-4 sm:py-3">
-                  <p className="line-clamp-2 font-display text-[0.85rem] font-bold uppercase leading-[1.05] tracking-[-0.03em] text-ink sm:text-base">
-                    {brainrot.name}
-                  </p>
-                  <p className="mt-1 text-xs font-bold text-ink/70 sm:text-sm">
-                    {legal.priceTtc}
-                  </p>
-                </div>
-              </Link>
+              <GangTeeCard brainrot={brainrot} />
             </li>
           ))}
         </ul>

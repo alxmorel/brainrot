@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { trySendOrderConfirmation } from "@/server/email/trySendOrderConfirmation";
 import {
   createEvent,
   markOrderPaid,
+  updateOrderEmail,
   updateOrderShipping,
 } from "@/server/orders-repo";
 import { getStripe } from "@/server/stripe";
@@ -71,8 +73,19 @@ export async function POST(request: Request) {
       const shipping = shippingFromSession(session);
       if (shipping) {
         await updateOrderShipping(orderId, shipping);
+      } else {
+        const email = session.customer_details?.email?.trim();
+        const name = session.customer_details?.name?.trim();
+        if (email) {
+          await updateOrderEmail(orderId, email, name || undefined);
+        }
       }
       await markOrderPaid(orderId, session.id);
+      try {
+        await trySendOrderConfirmation(orderId);
+      } catch {
+        // ne pas faire échouer le webhook Stripe
+      }
       try {
         await createEvent({
           id: `ev_${event.id}`,

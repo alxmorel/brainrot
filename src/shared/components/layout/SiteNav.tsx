@@ -29,7 +29,7 @@ export function SiteNav() {
               : "bg-white text-ink hover:bg-acid-yellow",
           )}
         >
-          Collection
+          La bande
         </Link>
         <Link
           href="/cart"

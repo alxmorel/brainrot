@@ -108,7 +108,7 @@ export async function POST(request: Request) {
     mode: "payment",
     metadata: { orderId: order.id },
     success_url: `${origin}/checkout/merci?id=${order.id}`,
-    cancel_url: `${origin}/checkout`,
+    cancel_url: `${origin}/cart`,
     shipping_address_collection: {
       allowed_countries: [...SHIPPING_COUNTRIES],
     },
