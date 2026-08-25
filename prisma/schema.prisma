@@ -22,10 +22,12 @@ model Order {
   supplierProductId  String?
   supplierSku        String?
   supplierExternalId String?
-  supplierTracking   String?
-  supplierLastError  String?
+  supplierTracking    String?
+  supplierTrackingUrl String?
+  supplierLastError   String?
   stripeCheckoutId        String?
   confirmationEmailSentAt DateTime?
+  shippingEmailSentAt     DateTime?
   items                   OrderItem[]
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt

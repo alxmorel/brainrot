@@ -94,6 +94,7 @@ export async function POST(request: Request) {
       sku: `${items[0].size}-${items[0].color}`,
       externalId: null,
       tracking: null,
+      trackingUrl: null,
       lastError: null,
     },
     createdAt: now,

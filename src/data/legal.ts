@@ -23,4 +23,6 @@ export const legal = {
   deliveryShort: "2–7 jours",
   deliveryEstimate:
     "2 à 7 jours ouvrés après paiement (France et UE, délai indicatif)",
+  trackingFollowUp:
+    "Tu recevras un second email dès que le transporteur aura un lien de suivi.",
 };

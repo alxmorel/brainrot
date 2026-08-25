@@ -86,6 +86,9 @@ export function buildOrderConfirmationHtml(order: Order) {
                 <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
                   ${escapeHtml(shippingNote)} · ${escapeHtml(legal.deliveryEstimate)}
                 </p>
+                <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
+                  ${escapeHtml(legal.trackingFollowUp)}
+                </p>
               </td>
             </tr>
             <tr>
@@ -135,6 +138,7 @@ export function buildOrderConfirmationText(order: Order) {
     shipping.country,
     "",
     `${shippingNote} · ${legal.deliveryEstimate}`,
+    legal.trackingFollowUp,
     "",
     customProductNote,
     `Contact : ${legal.email}`,

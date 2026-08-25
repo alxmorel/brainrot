@@ -31,6 +31,7 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
       sku: row.supplierSku,
       externalId: row.supplierExternalId,
       tracking: row.supplierTracking,
+      trackingUrl: row.supplierTrackingUrl,
       lastError: row.supplierLastError,
     },
     createdAt: row.createdAt.toISOString(),
@@ -155,6 +156,49 @@ export async function clearConfirmationEmailSend(id: string) {
   });
 }
 
+export async function getOrderByExternalId(externalId: string): Promise<Order | null> {
+  const row = await prisma.order.findFirst({
+    where: { supplierExternalId: externalId },
+    include: { items: true },
+  });
+  return row ? toOrder(row) : null;
+}
+
+export async function applyGelatoTracking(
+  id: string,
+  tracking: { code: string | null; url: string | null },
+) {
+  const data: Prisma.OrderUpdateManyMutationInput = {
+    status: "shipped",
+  };
+  if (tracking.code) data.supplierTracking = tracking.code;
+  if (tracking.url) data.supplierTrackingUrl = tracking.url;
+
+  const result = await prisma.order.updateMany({
+    where: {
+      id,
+      status: { notIn: ["cancelled", "pending_payment"] },
+    },
+    data,
+  });
+  return result.count > 0;
+}
+
+export async function claimShippingEmailSend(id: string) {
+  const result = await prisma.order.updateMany({
+    where: { id, shippingEmailSentAt: null },
+    data: { shippingEmailSentAt: new Date() },
+  });
+  return result.count > 0;
+}
+
+export async function clearShippingEmailSend(id: string) {
+  await prisma.order.update({
+    where: { id },
+    data: { shippingEmailSentAt: null },
+  });
+}
+
 export async function saveOrder(order: Order) {
   await prisma.order.update({
     where: { id: order.id },
@@ -164,6 +208,7 @@ export async function saveOrder(order: Order) {
       supplierSku: order.supplier.sku,
       supplierExternalId: order.supplier.externalId,
       supplierTracking: order.supplier.tracking,
+      supplierTrackingUrl: order.supplier.trackingUrl,
       supplierLastError: order.supplier.lastError,
     },
   });

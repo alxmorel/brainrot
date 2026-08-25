@@ -174,6 +174,9 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
               <p className="mt-2 text-sm font-bold text-ink/55">
                 {shippingNote} · {legal.deliveryEstimate}
               </p>
+              <p className="mt-2 max-w-md mx-auto text-sm font-bold text-ink/55">
+                {legal.trackingFollowUp}
+              </p>
             </div>
 
             <div className="mt-8 w-full rotate-[-1deg] rounded-[1.5rem] border-[3px] border-ink bg-white p-4 shadow-sticker sm:p-5">

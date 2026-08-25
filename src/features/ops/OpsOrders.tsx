@@ -95,6 +95,22 @@ export function OpsOrders() {
                         : ""}
                     </p>
                   ) : null}
+                  {order.supplier.trackingUrl ? (
+                    <p className="text-xs font-bold">
+                      <a
+                        href={order.supplier.trackingUrl}
+                        className="underline"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Suivi {order.supplier.tracking ?? "colis"}
+                      </a>
+                    </p>
+                  ) : order.supplier.tracking ? (
+                    <p className="text-xs font-bold text-ink/50">
+                      Suivi {order.supplier.tracking}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {order.status === "paid" ? (

@@ -38,6 +38,7 @@ export interface Order {
     sku: string | null;
     externalId: string | null;
     tracking: string | null;
+    trackingUrl: string | null;
     lastError: string | null;
   };
   createdAt: string;
