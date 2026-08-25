@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/ops", label: "Dashboard", exact: true },
-  { href: "/ops/commandes", label: "Commandes" },
-  { href: "/ops/sessions", label: "Sessions" },
-  { href: "/ops/report", label: "Analytics" },
+  { href: "/ops", label: "Dashboard", exact: true as const },
+  { href: "/ops/commandes", label: "Commandes", exact: false as const },
+  { href: "/ops/sessions", label: "Sessions", exact: false as const },
+  { href: "/ops/report", label: "Analytics", exact: false as const },
 ] as const;
 
 export function OpsNav() {

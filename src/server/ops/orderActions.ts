@@ -39,8 +39,8 @@ export async function handleOpsOrderAction(
     const result = await markOrderAsShipped(orderId, { tracking, trackingUrl });
     if (!result.ok) return { ok: false, error: result.error };
     await recordOrderEvent(orderId, "shipped", {
-      tracking: tracking ?? undefined,
-      trackingUrl: trackingUrl ?? undefined,
+      tracking,
+      trackingUrl,
       emailSent: result.emailSent,
     });
     return { ok: true, emailSent: result.emailSent };

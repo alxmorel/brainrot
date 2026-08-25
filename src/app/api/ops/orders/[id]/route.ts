@@ -42,5 +42,11 @@ export async function PATCH(
   }
 
   const order = await getOpsOrderDetail(id);
-  return NextResponse.json({ ok: true, order, ...result });
+  return NextResponse.json({
+    ok: true,
+    order,
+    refunded: result.refunded,
+    refundError: result.refundError,
+    emailSent: result.emailSent,
+  });
 }
