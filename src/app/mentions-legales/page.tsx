@@ -3,7 +3,7 @@ import { legal } from "@/data/legal";
 import { LegalPage, LegalSection } from "@/shared/components/layout/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Mentions légales — Brainrototo",
+  title: "Mentions légales - Brainrototo",
 };
 
 export default function Page() {
@@ -20,7 +20,7 @@ export default function Page() {
         <p>TVA : {legal.vat}</p>
         <p>
           Contact : {legal.email}
-          {legal.phone ? ` — ${legal.phone}` : null}
+          {legal.phone ? ` - ${legal.phone}` : null}
         </p>
       </LegalSection>
       <LegalSection title="Directeur de la publication">

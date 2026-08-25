@@ -14,7 +14,7 @@ export function LegalPage({
       <SiteNav />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
         <p className="rounded-xl border-[3px] border-ink bg-acid-yellow px-3 py-2 text-xs font-bold text-ink">
-          Textes types — à valider avec un conseil. Complète{" "}
+          Textes types - à valider avec un conseil. Complète{" "}
           <code className="font-mono">src/data/legal.ts</code> (identité, SIRET,
           email).
         </p>

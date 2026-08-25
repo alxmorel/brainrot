@@ -4,42 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { brand } from "@/data/brand";
 import { legal } from "@/data/legal";
-import { defaultProduct } from "@/data/products";
-import { formatEur, shippingNote } from "@/data/pricing";
+import { shippingNote } from "@/data/pricing";
 import { useCart } from "@/features/cart/CartProvider";
 import { CheckoutProgress } from "@/features/cart/CheckoutProgress";
-import { TeeMockup } from "@/features/generator/TeeMockup";
+import { OrderStatusCard, OrderStatusLinks } from "@/features/cart/OrderStatusCard";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import { getSessionId } from "@/shared/utils/track";
-import { brainrots } from "@/data/brainrots";
-
-type PublicOrderLine = {
-  brainrotId: string;
-  name: string;
-  size: string;
-  color: string;
-  colorLabel: string;
-  quantity: number;
-  lineCents: number;
-};
-
-type PublicOrder = {
-  id: string;
-  status: string;
-  isPaid: boolean;
-  email: string | null;
-  items: PublicOrderLine[];
-  totalCents: number;
-};
+import type { PublicOrderView } from "@/models";
 
 type LoadState =
   | { kind: "loading" }
   | { kind: "pending" }
-  | { kind: "paid"; order: PublicOrder }
+  | { kind: "paid"; order: PublicOrderView }
   | { kind: "failed"; message: string };
 
-async function fetchOrder(id: string): Promise<PublicOrder | null> {
+async function fetchOrder(id: string): Promise<PublicOrderView | null> {
   const response = await fetch(
     `/api/orders/${encodeURIComponent(id)}?sessionId=${encodeURIComponent(getSessionId())}`,
   );
@@ -54,7 +34,7 @@ async function fetchOrder(id: string): Promise<PublicOrder | null> {
   ) {
     return null;
   }
-  return (json as { order: PublicOrder }).order;
+  return (json as { order: PublicOrderView }).order;
 }
 
 export function OrderConfirm({ orderId }: { orderId?: string }) {
@@ -168,7 +148,7 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
 
               <p className="mt-4 max-w-md mx-auto text-sm font-bold leading-snug text-ink/70 sm:text-base">
                 {state.order.email
-                  ? `On prépare ton tee — un récap arrive à ${state.order.email}.`
+                  ? `On prépare ton tee - un récap arrive à ${state.order.email}.`
                   : "On prépare ton tee Brainrototo. Tu recevras des nouvelles à l’adresse indiquée lors du paiement."}
               </p>
               <p className="mt-2 text-sm font-bold text-ink/55">
@@ -177,67 +157,19 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
               <p className="mt-2 max-w-md mx-auto text-sm font-bold text-ink/55">
                 {legal.trackingFollowUp}
               </p>
-            </div>
-
-            <div className="mt-8 w-full rotate-[-1deg] rounded-[1.5rem] border-[3px] border-ink bg-white p-4 shadow-sticker sm:p-5">
-              <p className="font-display text-xs font-bold uppercase tracking-tight text-ink/50">
-                Numéro de commande
-              </p>
-              <p className="mt-1 break-all font-display text-2xl font-bold uppercase leading-none tracking-[-0.04em] text-ink">
-                {state.order.id}
-              </p>
-
-              <ul className="mt-5 flex flex-col gap-3 border-t-[3px] border-ink/10 pt-4">
-                {state.order.items.map((item) => {
-                  const brainrot = brainrots.find((b) => b.id === item.brainrotId);
-                  return (
-                    <li key={`${item.brainrotId}-${item.size}-${item.color}`} className="flex gap-3">
-                      <div className="w-16 shrink-0">
-                        {brainrot ? (
-                          <TeeMockup
-                            product={defaultProduct}
-                            brainrot={brainrot}
-                            color={item.color}
-                            className="max-w-none"
-                          />
-                        ) : null}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-display text-sm font-bold uppercase leading-tight text-ink">
-                          {item.name}
-                        </p>
-                        <p className="text-xs font-bold text-ink/60">
-                          {item.size} · {item.colorLabel} · ×{item.quantity}
-                        </p>
-                        <p className="mt-1 font-display text-sm font-bold text-ink">
-                          {formatEur(item.lineCents)}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <p className="mt-4 flex items-baseline justify-between border-t-[3px] border-ink pt-3 font-display text-base font-bold uppercase">
-                <span>Total</span>
-                <span>{formatEur(state.order.totalCents)} TTC</span>
-              </p>
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
-                href="/create"
-                className="inline-flex rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker"
+                href="/commande"
+                className="mt-3 inline-block text-sm font-bold text-hot-pink underline"
               >
-                Créer un autre →
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex rounded-pill border-[3px] border-ink bg-white px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
-              >
-                Accueil
+                Suivre ma commande plus tard →
               </Link>
             </div>
+
+            <div className="mt-8">
+              <OrderStatusCard order={state.order} />
+            </div>
+
+            <OrderStatusLinks />
           </>
         ) : null}
       </main>

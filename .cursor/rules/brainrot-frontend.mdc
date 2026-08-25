@@ -3,9 +3,9 @@ description: Stack, architecture frontend, data-driven UI, state, assets, perf
 alwaysApply: true
 ---
 
-# Brainrototo.com — Frontend Architecture
+# Brainrototo.com - Frontend Architecture
 
-## Stack (V1 — do not diverge without explicit ask)
+## Stack (V1 - do not diverge without explicit ask)
 
 | Layer | Choice |
 |---|---|
@@ -16,7 +16,7 @@ alwaysApply: true
 | UI | Homegrown components; shadcn/ui only as optional base |
 | State | React state; Zustand only if shared state needs it |
 | Validation | Zod |
-| Data V1 | TypeScript/JSON files — no e-commerce backend yet |
+| Data V1 | TypeScript/JSON files - no e-commerce backend yet |
 | Deploy | Vercel |
 | Tests | Vitest + Playwright |
 | Lint | ESLint + Prettier |

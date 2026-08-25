@@ -7,7 +7,7 @@ import {
 } from "@/data/teeColors";
 
 /**
- * Unisex Organic T-shirt — SOL'S Legend 03981, print face (gpr_4-0).
+ * Unisex Organic T-shirt - SOL'S Legend 03981, print face (gpr_4-0).
  * Blanc : …_gsi_xs_gco_white_gpr_4-0_sols_03981
  * Noir  : …_gco_deep-black_…  Override : GELATO_UID_M_DEEP_BLACK, …
  */

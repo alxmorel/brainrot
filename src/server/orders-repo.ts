@@ -164,6 +164,14 @@ export async function getOrderByExternalId(externalId: string): Promise<Order | 
   return row ? toOrder(row) : null;
 }
 
+export async function getOrderStripeCheckoutId(id: string) {
+  const row = await prisma.order.findUnique({
+    where: { id },
+    select: { stripeCheckoutId: true },
+  });
+  return row?.stripeCheckoutId ?? null;
+}
+
 export async function applyGelatoTracking(
   id: string,
   tracking: { code: string | null; url: string | null },

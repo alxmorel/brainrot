@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server";
-import type { AnalyticsEvent, AnalyticsEventName } from "@/models";
+import type { AnalyticsEventName } from "@/models";
 import { createEvent } from "@/server/orders-repo";
 
 const names: AnalyticsEventName[] = [
   "page_view",
+  "view_create",
   "add_to_cart",
   "remove_from_cart",
   "preview_open",
   "trait_select",
+  "brainrot_select",
+  "size_change",
+  "color_change",
+  "quantity_change",
+  "view_cart",
   "begin_checkout",
+  "checkout_error",
+  "consent_choice",
   "order_placed",
 ];
 
@@ -26,14 +34,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const event: AnalyticsEvent = {
+  const event = {
     id: `ev_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
     sessionId,
     name: name as AnalyticsEventName,
     path,
     payload:
       typeof record.payload === "object" && record.payload !== null
-        ? (record.payload as AnalyticsEvent["payload"])
+        ? (record.payload as Record<string, string | number | boolean | null>)
         : undefined,
     createdAt: new Date().toISOString(),
   };

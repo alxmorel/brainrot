@@ -7,6 +7,7 @@ function isPublic(request: NextRequest) {
   if (pathname === "/api/ops/login") return true;
   if (pathname === "/api/ops/logout") return true;
   if (pathname === "/api/checkout" && request.method === "POST") return true;
+  if (pathname === "/api/orders/lookup" && request.method === "POST") return true;
   if (pathname.startsWith("/api/orders/") && request.method === "GET") return true;
   if (pathname.startsWith("/api/stripe/")) return true;
   if (pathname.startsWith("/api/gelato/")) return true;

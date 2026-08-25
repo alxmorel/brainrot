@@ -1,6 +1,6 @@
 import { teePriceLabel } from "@/data/pricing";
 
-/** Identité légale — à compléter avant de vendre. Affichée telle quelle sur les pages. */
+/** Identité légale - à compléter avant de vendre. Affichée telle quelle sur les pages. */
 export const legal = {
   brand: "Brainrototo",
   siteName: "brainrototo.com",
@@ -8,8 +8,8 @@ export const legal = {
   publisherName: "Alexandre Morel",
   legalForm: "SARL",
   address: "167 rue sous marin casabianca, 83000, Toulon (France)",
-  siret: "[SIRET — à compléter]",
-  rcs: "[RCS Ville — à compléter, ou « non inscrit »]",
+  siret: "[SIRET - à compléter]",
+  rcs: "[RCS Ville - à compléter, ou « non inscrit »]",
   vat: "[N° TVA ou « TVA non applicable, art. 293 B du CGI »]",
   email: "alexandre.morel69@gmail.com",
   phone: "+33 6 14 51 10 27",

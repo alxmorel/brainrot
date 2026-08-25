@@ -1,85 +1,162 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { formatEur } from "@/data/pricing";
+import { Button } from "@/shared/components/ui";
 
 type Report = {
-  totals: { events: number; orders: number; sessionsWithCart: number };
-  counts: Record<string, number>;
-  funnel: Record<string, number>;
+  periodDays: number;
+  revenue: {
+    totalCents: number;
+    orderCount: number;
+    averageCents: number;
+    byDay: Record<string, { orders: number; cents: number }>;
+  };
+  analytics: {
+    counts: Record<string, number>;
+    funnel: Record<string, number>;
+    conversionRate: number;
+    abandonedCheckout: number;
+    topBrainrots: { brainrotId: string; count: number }[];
+    totalEvents: number;
+    sessionsWithCart: number;
+  };
   ordersByStatus: Record<string, number>;
+  totals: { orders: number; events: number; sessionsWithCart: number };
 };
 
 export function OpsReport() {
+  const [days, setDays] = useState(7);
   const [report, setReport] = useState<Report | null>(null);
 
   useEffect(() => {
-    void fetch("/api/ops/report")
+    void fetch(`/api/ops/report?days=${days}`)
       .then((res) => res.json())
       .then((json: unknown) => {
-        if (json && typeof json === "object" && "funnel" in json) {
+        if (json && typeof json === "object" && "analytics" in json) {
           setReport(json as Report);
         }
       });
-  }, []);
+  }, [days]);
 
-  if (!report) {
-    return <p className="p-6 font-bold">Chargement…</p>;
-  }
+  if (!report) return <p className="font-bold">Chargement…</p>;
 
   return (
-    <div className="min-h-dvh px-4 py-6 sm:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-bold uppercase">Ops — reporting</h1>
-        <Link href="/ops" className="font-display text-sm font-bold uppercase underline">
-          Commandes
-        </Link>
-      </header>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-2xl font-bold uppercase">Analytics</h2>
+          <p className="text-sm font-bold text-ink/60">{report.periodDays} derniers jours</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[7, 30, 90].map((value) => (
+            <Button
+              key={value}
+              size="sm"
+              variant={days === value ? "primary" : "ghost"}
+              onClick={() => setDays(value)}
+            >
+              {value}j
+            </Button>
+          ))}
+          <a
+            href={`/api/ops/export?type=orders&days=${days}`}
+            className="inline-flex items-center rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-sm font-bold uppercase shadow-sticker-sm"
+          >
+            Export commandes
+          </a>
+          <a
+            href={`/api/ops/export?type=events&days=${days}`}
+            className="inline-flex items-center rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-sm font-bold uppercase shadow-sticker-sm"
+          >
+            Export events
+          </a>
+        </div>
+      </div>
 
-      <section className="mt-6 grid gap-3 sm:grid-cols-3">
-        <Stat label="Events" value={report.totals.events} />
-        <Stat label="Sessions panier" value={report.totals.sessionsWithCart} />
-        <Stat label="Commandes" value={report.totals.orders} />
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="CA" value={formatEur(report.revenue.totalCents)} />
+        <Stat label="Commandes" value={report.revenue.orderCount} />
+        <Stat label="Events" value={report.analytics.totalEvents} />
+        <Stat label="Abandons checkout" value={report.analytics.abandonedCheckout} />
       </section>
 
-      <h2 className="mt-8 font-display text-xl font-bold uppercase">Funnel</h2>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-        {Object.entries(report.funnel).map(([name, value]) => (
-          <li key={name} className="rounded-xl border-[3px] border-ink bg-white px-3 py-2">
-            <span className="text-xs font-bold uppercase text-ink/50">{name}</span>
-            <p className="font-display text-2xl">{value}</p>
-          </li>
-        ))}
-      </ul>
+      <section className="grid gap-3 lg:grid-cols-2">
+        <Panel title="Funnel">
+          <ul className="space-y-2 text-sm font-bold">
+            {Object.entries(report.analytics.funnel).map(([name, value]) => (
+              <li key={name} className="flex justify-between">
+                <span className="text-ink/60">{name}</span>
+                <span>{value}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm font-bold">
+            Conversion checkout → commande : {report.analytics.conversionRate}%
+          </p>
+        </Panel>
+        <Panel title="Events (top)">
+          <ul className="space-y-2 text-sm font-bold">
+            {Object.entries(report.analytics.counts)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 12)
+              .map(([name, value]) => (
+                <li key={name} className="flex justify-between">
+                  <span className="text-ink/60">{name}</span>
+                  <span>{value}</span>
+                </li>
+              ))}
+          </ul>
+        </Panel>
+      </section>
 
-      <h2 className="mt-8 font-display text-xl font-bold uppercase">Events</h2>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-        {Object.entries(report.counts).map(([name, value]) => (
-          <li key={name} className="rounded-xl border-[3px] border-ink bg-white px-3 py-2">
-            <span className="text-xs font-bold uppercase text-ink/50">{name}</span>
-            <p className="font-display text-2xl">{value}</p>
-          </li>
-        ))}
-      </ul>
+      <Panel title="Top brainrots (sélections)">
+        {report.analytics.topBrainrots.length === 0 ? (
+          <p className="text-sm text-ink/50">Pas encore de données.</p>
+        ) : (
+          <ul className="space-y-2 text-sm font-bold">
+            {report.analytics.topBrainrots.map((row) => (
+              <li key={row.brainrotId} className="flex justify-between">
+                <span>{row.brainrotId}</span>
+                <span>{row.count}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Panel>
 
-      <h2 className="mt-8 font-display text-xl font-bold uppercase">Statuts commandes</h2>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-        {Object.entries(report.ordersByStatus).map(([name, value]) => (
-          <li key={name} className="rounded-xl border-[3px] border-ink bg-white px-3 py-2">
-            <span className="text-xs font-bold uppercase text-ink/50">{name}</span>
-            <p className="font-display text-2xl">{value}</p>
-          </li>
-        ))}
-      </ul>
+      <Panel title="CA par jour">
+        <ul className="space-y-2 text-sm font-bold">
+          {Object.entries(report.revenue.byDay)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([day, row]) => (
+              <li key={day} className="flex justify-between">
+                <span className="text-ink/60">{day}</span>
+                <span>
+                  {row.orders} cmd · {formatEur(row.cents)}
+                </span>
+              </li>
+            ))}
+        </ul>
+      </Panel>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-2xl border-[3px] border-ink bg-acid-yellow p-4 shadow-sticker-sm">
-      <p className="text-xs font-bold uppercase">{label}</p>
-      <p className="font-display text-3xl">{value}</p>
+    <div className="rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm">
+      <p className="text-xs font-bold uppercase text-ink/50">{label}</p>
+      <p className="mt-1 font-display text-2xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm">
+      <h3 className="font-display text-lg font-bold uppercase">{title}</h3>
+      <div className="mt-3">{children}</div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { legal } from "@/data/legal";
 import { LegalPage, LegalSection } from "@/shared/components/layout/LegalPage";
 
 export const metadata: Metadata = {
-  title: "CGV — Brainrototo",
+  title: "CGV - Brainrototo",
 };
 
 export default function Page() {

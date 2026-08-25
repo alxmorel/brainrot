@@ -1,10 +1,10 @@
 ---
-description: Catalogue Brainrototo, traits, naming, assets contenu — data hors UI
+description: Catalogue Brainrototo, traits, naming, assets contenu - data hors UI
 globs: data/**/*.{ts,tsx,json}
 alwaysApply: false
 ---
 
-# Brainrototo.com — Content & Catalogue
+# Brainrototo.com - Content & Catalogue
 
 ## Catalogue V1
 
@@ -29,7 +29,7 @@ V1 types only: tshirt, hoodie, cap. Product mockups compose `baseImage` + select
 ## Assets
 
 - Placeholders OK early; keep paths centralized
-- Illustrations are the star — prioritize large, clean character art
+- Illustrations are the star - prioritize large, clean character art
 - Decorative stickers/blobs are secondary and optional per section
 
 ## Copy tone

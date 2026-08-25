@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/shared/utils/cn";
 
-/** Black marker / brush stroke behind a brand word — reference hero highlight. */
+/** Black marker / brush stroke behind a brand word - reference hero highlight. */
 export function MarkHighlight({
   children,
   className,

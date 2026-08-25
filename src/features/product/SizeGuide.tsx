@@ -12,7 +12,7 @@ export function SizeGuideTable() {
     <div className="overflow-x-auto">
       <table className="w-full min-w-[20rem] border-collapse text-left text-sm">
         <caption className="mb-3 text-left font-display text-base font-bold uppercase text-ink">
-          {sizeGuideMeta.title} — {sizeGuideMeta.fit}
+          {sizeGuideMeta.title} - {sizeGuideMeta.fit}
         </caption>
         <thead>
           <tr className="border-b-[3px] border-ink">

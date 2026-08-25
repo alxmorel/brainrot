@@ -53,7 +53,7 @@ export function buildOrderConfirmationHtml(order: Order) {
                 <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#ff2fb3;">Brainrototo</p>
                 <h1 style="margin:0;font-size:28px;line-height:1.05;text-transform:uppercase;">C’est commandé</h1>
                 <p style="margin:12px 0 0;font-size:15px;line-height:1.5;color:#3d3d3d;">
-                  Merci ${escapeHtml(shipping.name)} — on prépare ton tee. Voici le récap de ta commande.
+                  Merci ${escapeHtml(shipping.name)} - on prépare ton tee. Voici le récap de ta commande.
                 </p>
               </td>
             </tr>
@@ -89,6 +89,9 @@ export function buildOrderConfirmationHtml(order: Order) {
                 <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
                   ${escapeHtml(legal.trackingFollowUp)}
                 </p>
+                <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
+                  Suivi en ligne : <a href="${escapeHtml(legal.siteUrl)}/commande" style="color:#0a0a0a;">${escapeHtml(legal.siteUrl)}/commande</a>
+                </p>
               </td>
             </tr>
             <tr>
@@ -112,7 +115,7 @@ export function buildOrderConfirmationText(order: Order) {
     const brainrot = brainrots.find((b) => b.id === item.brainrotId);
     const name = brainrot?.name ?? item.brainrotId;
     const lineCents = item.quantity * teePriceCents;
-    return `• ${name} — ${item.size} · ${teeColorLabel(item.color)} · ×${item.quantity} — ${formatEur(lineCents)}`;
+    return `• ${name} - ${item.size} · ${teeColorLabel(item.color)} · ×${item.quantity} - ${formatEur(lineCents)}`;
   });
   const totalCents = order.items.reduce(
     (sum, item) => sum + item.quantity * teePriceCents,
@@ -121,9 +124,9 @@ export function buildOrderConfirmationText(order: Order) {
   const { shipping } = order;
 
   return [
-    "Brainrototo — C’est commandé",
+    "Brainrototo - C’est commandé",
     "",
-    `Merci ${shipping.name} — on prépare ton tee.`,
+    `Merci ${shipping.name} - on prépare ton tee.`,
     "",
     `Commande ${order.id}`,
     "",
@@ -139,6 +142,7 @@ export function buildOrderConfirmationText(order: Order) {
     "",
     `${shippingNote} · ${legal.deliveryEstimate}`,
     legal.trackingFollowUp,
+    `Suivi : ${legal.siteUrl}/commande`,
     "",
     customProductNote,
     `Contact : ${legal.email}`,

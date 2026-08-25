@@ -29,6 +29,7 @@ model Order {
   confirmationEmailSentAt DateTime?
   shippingEmailSentAt     DateTime?
   items                   OrderItem[]
+  events                  OrderEvent[]
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 
@@ -47,6 +48,18 @@ model OrderItem {
   color      String @default("white")
   quantity   Int
   printImage String
+}
+
+model OrderEvent {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind      String
+  detail    Json?
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([createdAt])
 }
 
 model AnalyticsEvent {

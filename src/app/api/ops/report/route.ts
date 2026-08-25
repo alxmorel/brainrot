@@ -1,42 +1,36 @@
 import { NextResponse } from "next/server";
-import {
-  countOrders,
-  listEvents,
-  ordersGroupedByStatus,
-} from "@/server/orders-repo";
+import { countOrders, ordersGroupedByStatus } from "@/server/orders-repo";
+import { revenueStats } from "@/server/ops/orders";
+import { analyticsReport } from "@/server/ops/sessions";
 
-export async function GET() {
-  const events = await listEvents();
-  const counts: Record<string, number> = {};
-  const sessionsWithCart = new Set<string>();
-  const funnel = {
-    page_view: 0,
-    view_create: 0,
-    add_to_cart: 0,
-    begin_checkout: 0,
-    order_placed: 0,
-  };
+function parseDays(value: string | null) {
+  const days = Number(value ?? "7");
+  if (!Number.isFinite(days) || days < 1) return 7;
+  return Math.min(days, 90);
+}
 
-  for (const event of events) {
-    counts[event.name] = (counts[event.name] ?? 0) + 1;
-    if (event.name === "add_to_cart") sessionsWithCart.add(event.sessionId);
-    if (event.name === "page_view") {
-      funnel.page_view += 1;
-      if (event.path.startsWith("/create")) funnel.view_create += 1;
-    }
-    if (event.name === "add_to_cart") funnel.add_to_cart += 1;
-    if (event.name === "begin_checkout") funnel.begin_checkout += 1;
-    if (event.name === "order_placed") funnel.order_placed += 1;
-  }
+export async function GET(request: Request) {
+  const params = new URL(request.url).searchParams;
+  const days = parseDays(params.get("days"));
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  const [revenue, analytics, ordersByStatus, totalOrders] = await Promise.all([
+    revenueStats(since),
+    analyticsReport(since),
+    ordersGroupedByStatus(),
+    countOrders(),
+  ]);
 
   return NextResponse.json({
+    ok: true,
+    periodDays: days,
+    revenue,
+    analytics,
+    ordersByStatus,
     totals: {
-      events: events.length,
-      orders: await countOrders(),
-      sessionsWithCart: sessionsWithCart.size,
+      orders: totalOrders,
+      events: analytics.totalEvents,
+      sessionsWithCart: analytics.sessionsWithCart,
     },
-    counts,
-    funnel,
-    ordersByStatus: await ordersGroupedByStatus(),
   });
 }

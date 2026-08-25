@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { tryFulfillOrder } from "@/server/fulfillment/tryFulfillOrder";
 import { trySendOrderConfirmation } from "@/server/email/trySendOrderConfirmation";
+import { recordOrderEvent } from "@/server/orders/orderEvents";
 import {
   createEvent,
   markOrderPaid,
@@ -81,15 +83,28 @@ export async function POST(request: Request) {
         }
       }
       await markOrderPaid(orderId, session.id);
+      await recordOrderEvent(orderId, "paid", { stripeSessionId: session.id });
       try {
-        await trySendOrderConfirmation(orderId);
+        const sent = await trySendOrderConfirmation(orderId);
+        if (sent) {
+          await recordOrderEvent(orderId, "email_confirmation", { sent: true });
+        }
       } catch {
         // ne pas faire échouer le webhook Stripe
       }
       try {
+        await tryFulfillOrder(orderId);
+      } catch {
+        // ne pas faire échouer le webhook Stripe
+      }
+      try {
+        const analyticsSessionId =
+          typeof session.metadata?.sessionId === "string"
+            ? session.metadata.sessionId
+            : null;
         await createEvent({
           id: `ev_${event.id}`,
-          sessionId: "stripe",
+          sessionId: analyticsSessionId ?? "unknown",
           name: "order_placed",
           path: "/api/stripe/webhook",
           payload: { orderId },

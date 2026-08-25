@@ -1,7 +1,7 @@
 import type { TeeSize } from "@/data/sizes";
 import { gelatoTee } from "@/data/fulfillment";
 
-/** Chart officiel SOL'S Legend 03981 — longueur (A) / 1/2 poitrine (B), ±2 cm. */
+/** Chart officiel SOL'S Legend 03981 - longueur (A) / 1/2 poitrine (B), ±2 cm. */
 export const sizeGuideRows: Record<
   TeeSize,
   { length: number; halfChest: number }

@@ -84,6 +84,29 @@ export function GeneratorStudio({
     track("trait_select", { trait: "vibe", id: id ?? "any" });
   }
 
+  function selectBrainrot(brainrot: Brainrototo) {
+    setSelected(brainrot);
+    track("brainrot_select", { brainrotId: brainrot.id });
+    track("preview_open", {
+      brainrotId: brainrot.id,
+      productId: defaultProduct.id,
+    });
+  }
+
+  function pickSize(value: TeeSize) {
+    setSize(value);
+    if (selected) {
+      track("size_change", { size: value, brainrotId: selected.id });
+    }
+  }
+
+  function pickColor(value: TeeColorId) {
+    setColor(value);
+    if (selected) {
+      track("color_change", { color: value, brainrotId: selected.id });
+    }
+  }
+
   function resetFilters() {
     setAnimal(null);
     setIngredient(null);
@@ -184,7 +207,7 @@ export function GeneratorStudio({
               <BrainrotGrid
                 items={matches}
                 selectedId={selected?.id ?? null}
-                onSelect={setSelected}
+                onSelect={selectBrainrot}
               />
             </div>
           )}
@@ -223,7 +246,7 @@ export function GeneratorStudio({
               <ColorSwatches
                 colors={palette}
                 value={resolvedColor}
-                onChange={setColor}
+                onChange={pickColor}
               />
             </div>
             <div className="mt-3 flex items-baseline justify-between gap-3">
@@ -237,7 +260,7 @@ export function GeneratorStudio({
                 <button
                   key={value}
                   type="button"
-                  onClick={() => setSize(value)}
+                  onClick={() => pickSize(value)}
                   className={
                     size === value
                       ? "rounded-pill border-[3px] border-ink bg-acid-yellow px-2.5 py-1 font-display text-xs font-bold uppercase shadow-sticker-sm"

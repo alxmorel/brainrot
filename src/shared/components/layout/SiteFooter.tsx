@@ -4,6 +4,7 @@ import { brand } from "@/data/brand";
 const primaryLinks = [
   { href: "/create", label: "La bande" },
   { href: "/cart", label: "Panier" },
+  { href: "/commande", label: "Ma commande" },
   { href: "/guide-tailles", label: "Guide des tailles" },
 ] as const;
 

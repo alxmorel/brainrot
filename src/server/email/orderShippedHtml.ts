@@ -1,5 +1,6 @@
 import { legal } from "@/data/legal";
 import type { Order } from "@/models";
+import { isHttpUrl } from "@/server/fulfillment/gelatoWebhook";
 
 function escapeHtml(value: string) {
   return value
@@ -9,9 +10,46 @@ function escapeHtml(value: string) {
     .replaceAll('"', "&quot;");
 }
 
-export function buildOrderShippedHtml(order: Order) {
-  const trackingUrl = order.supplier.trackingUrl ?? "";
+function trackingBlock(order: Order) {
+  const trackingUrl =
+    order.supplier.trackingUrl && isHttpUrl(order.supplier.trackingUrl)
+      ? order.supplier.trackingUrl
+      : null;
   const trackingCode = order.supplier.tracking;
+  const commandeUrl = `${legal.siteUrl}/commande`;
+
+  const codeHtml = trackingCode
+    ? `<tr>
+              <td style="padding:16px 24px 0;">
+                <p style="margin:0;font-size:12px;font-weight:700;text-transform:uppercase;color:#7a7a7a;">N° de suivi</p>
+                <p style="margin:4px 0 0;font-size:16px;font-weight:700;">${escapeHtml(trackingCode)}</p>
+              </td>
+            </tr>`
+    : "";
+
+  const linkHtml = trackingUrl
+    ? `<tr>
+              <td style="padding:20px 24px 0;">
+                <a href="${escapeHtml(trackingUrl)}" style="display:inline-block;background:#ff2fb3;color:#ffffff;font-weight:700;text-transform:uppercase;text-decoration:none;padding:12px 22px;border:3px solid #0a0a0a;border-radius:999px;">
+                  Suivre le colis →
+                </a>
+                <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;word-break:break-all;">
+                  ${escapeHtml(trackingUrl)}
+                </p>
+              </td>
+            </tr>`
+    : `<tr>
+              <td style="padding:20px 24px 0;">
+                <p style="margin:0;font-size:13px;line-height:1.5;color:#5c5c5c;">
+                  Retrouve le suivi sur <a href="${escapeHtml(commandeUrl)}" style="color:#0a0a0a;">${escapeHtml(commandeUrl)}</a> avec ton n° de commande et ton email.
+                </p>
+              </td>
+            </tr>`;
+
+  return codeHtml + linkHtml;
+}
+
+export function buildOrderShippedHtml(order: Order) {
   const { shipping } = order;
 
   return `<!DOCTYPE html>
@@ -36,26 +74,7 @@ export function buildOrderShippedHtml(order: Order) {
                 <p style="margin:4px 0 0;font-size:22px;font-weight:700;letter-spacing:-0.02em;">${escapeHtml(order.id)}</p>
               </td>
             </tr>
-            ${
-              trackingCode
-                ? `<tr>
-              <td style="padding:16px 24px 0;">
-                <p style="margin:0;font-size:12px;font-weight:700;text-transform:uppercase;color:#7a7a7a;">N° de suivi</p>
-                <p style="margin:4px 0 0;font-size:16px;font-weight:700;">${escapeHtml(trackingCode)}</p>
-              </td>
-            </tr>`
-                : ""
-            }
-            <tr>
-              <td style="padding:20px 24px 0;">
-                <a href="${escapeHtml(trackingUrl)}" style="display:inline-block;background:#ff2fb3;color:#ffffff;font-weight:700;text-transform:uppercase;text-decoration:none;padding:12px 22px;border:3px solid #0a0a0a;border-radius:999px;">
-                  Suivre le colis →
-                </a>
-                <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;word-break:break-all;">
-                  ${escapeHtml(trackingUrl)}
-                </p>
-              </td>
-            </tr>
+            ${trackingBlock(order)}
             <tr>
               <td style="padding:20px 24px 28px;">
                 <p style="margin:0;font-size:13px;line-height:1.5;color:#5c5c5c;">
@@ -72,16 +91,24 @@ export function buildOrderShippedHtml(order: Order) {
 }
 
 export function buildOrderShippedText(order: Order) {
-  const trackingUrl = order.supplier.trackingUrl ?? "";
+  const trackingUrl =
+    order.supplier.trackingUrl && isHttpUrl(order.supplier.trackingUrl)
+      ? order.supplier.trackingUrl
+      : null;
   const trackingCode = order.supplier.tracking;
   const lines = [
-    "Brainrototo — Ton tee est parti",
+    "Brainrototo - Ton tee est parti",
     "",
     `${order.shipping.name}, le transporteur a pris en charge ta commande.`,
     "",
     `Commande ${order.id}`,
   ];
   if (trackingCode) lines.push(`N° de suivi : ${trackingCode}`);
-  lines.push(`Suivi : ${trackingUrl}`, "", `Contact : ${legal.email}`);
+  if (trackingUrl) {
+    lines.push(`Suivi : ${trackingUrl}`);
+  } else {
+    lines.push(`Suivi en ligne : ${legal.siteUrl}/commande`);
+  }
+  lines.push("", `Contact : ${legal.email}`);
   return lines.join("\n");
 }

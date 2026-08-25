@@ -81,11 +81,11 @@ export async function POST(request: Request) {
     status: "pending_payment",
     items,
     shipping: {
-      name: "—",
-      email: "—",
-      line1: "—",
-      city: "—",
-      postalCode: "—",
+      name: "-",
+      email: "-",
+      line1: "-",
+      city: "-",
+      postalCode: "-",
       country: "FR",
     },
     supplier: {
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
   const origin = appUrl();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    metadata: { orderId: order.id },
+    metadata: { orderId: order.id, sessionId },
     success_url: `${origin}/checkout/merci?id=${order.id}`,
     cancel_url: `${origin}/cart`,
     shipping_address_collection: {

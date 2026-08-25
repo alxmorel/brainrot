@@ -72,7 +72,7 @@ function PromiseIcon({ icon }: { icon: (typeof promises)[number]["icon"] }) {
   );
 }
 
-/** Full-bleed divider between hero and the rest — not a floating overlap card. */
+/** Full-bleed divider between hero and the rest - not a floating overlap card. */
 export function PromisesBar({ className }: { className?: string }) {
   return (
     <section

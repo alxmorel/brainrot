@@ -1,6 +1,6 @@
 import { cn } from "@/shared/utils/cn";
 
-/** Sharp, irregular paint / ink splashes — homepage campaign only. No blur-dominant look. */
+/** Sharp, irregular paint / ink splashes - homepage campaign only. No blur-dominant look. */
 export function PaintSplashField({ className }: { className?: string }) {
   return (
     <div

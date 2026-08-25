@@ -1,68 +1,52 @@
 import { NextResponse } from "next/server";
-import { brainrots } from "@/data/brainrots";
-import { teePriceCents } from "@/data/pricing";
-import { teeColorLabel } from "@/data/teeColors";
-import { sendToGelato } from "@/server/fulfillment/gelato";
-import { getOrder, saveOrder } from "@/server/orders-repo";
-import type { OrderStatus } from "@/models";
+import { cancelOrder } from "@/server/orders/cancelOrder";
+import {
+  buildPublicOrderView,
+  orderEmailMatches,
+} from "@/server/orders/publicOrder";
+import { markOrderAsShipped } from "@/server/orders/shipOrder";
+import { retryFulfillOrder } from "@/server/fulfillment/tryFulfillOrder";
+import { getOrder } from "@/server/orders-repo";
 
-const PAID_STATUSES: OrderStatus[] = [
-  "paid",
-  "validated",
-  "fulfillment_queued",
-  "fulfillment_sent",
-  "shipped",
-];
+export const runtime = "nodejs";
+
+function parseShipInput(body: unknown) {
+  if (!body || typeof body !== "object") return {};
+  const record = body as Record<string, unknown>;
+  return {
+    tracking: typeof record.tracking === "string" ? record.tracking : null,
+    trackingUrl: typeof record.trackingUrl === "string" ? record.trackingUrl : null,
+  };
+}
 
 export async function GET(
   request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
   const { id } = await context.params;
-  const sessionId = new URL(request.url).searchParams.get("sessionId");
-  if (!sessionId) {
-    return NextResponse.json({ ok: false, error: "Session requise." }, { status: 400 });
+  const params = new URL(request.url).searchParams;
+  const sessionId = params.get("sessionId");
+  const email = params.get("email");
+
+  if (!sessionId && !email) {
+    return NextResponse.json(
+      { ok: false, error: "Session ou email requis." },
+      { status: 400 },
+    );
   }
 
   const order = await getOrder(id);
   if (!order) {
     return NextResponse.json({ ok: false, error: "Commande introuvable." }, { status: 404 });
   }
-  if (order.sessionId !== sessionId) {
+
+  const sessionOk = sessionId && order.sessionId === sessionId;
+  const emailOk = email && orderEmailMatches(order, email);
+  if (!sessionOk && !emailOk) {
     return NextResponse.json({ ok: false, error: "Accès refusé." }, { status: 403 });
   }
 
-  const items = order.items.map((item) => {
-    const brainrot = brainrots.find((b) => b.id === item.brainrotId);
-    return {
-      brainrotId: item.brainrotId,
-      name: brainrot?.name ?? item.brainrotId,
-      size: item.size,
-      color: item.color,
-      colorLabel: teeColorLabel(item.color),
-      quantity: item.quantity,
-      lineCents: item.quantity * teePriceCents,
-    };
-  });
-
-  const totalCents = items.reduce((sum, item) => sum + item.lineCents, 0);
-  const isPaid = PAID_STATUSES.includes(order.status);
-  const email =
-    order.shipping.email && order.shipping.email !== "—"
-      ? order.shipping.email
-      : null;
-
-  return NextResponse.json({
-    ok: true,
-    order: {
-      id: order.id,
-      status: order.status,
-      isPaid,
-      email,
-      items,
-      totalCents,
-    },
-  });
+  return NextResponse.json({ ok: true, order: buildPublicOrderView(order) });
 }
 
 export async function PATCH(
@@ -75,45 +59,42 @@ export async function PATCH(
     body && typeof body === "object" && "action" in body
       ? (body as { action: unknown }).action
       : null;
-  if (
-    action !== "validate" &&
-    action !== "fulfill" &&
-    action !== "ship" &&
-    action !== "cancel"
-  ) {
+  if (action !== "fulfill" && action !== "ship" && action !== "cancel") {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const order = await getOrder(id);
-  if (!order) return NextResponse.json({ ok: false }, { status: 404 });
-
-  if (action === "validate") {
-    if (order.status !== "paid") {
-      return NextResponse.json({ ok: false }, { status: 409 });
+  if (action === "cancel") {
+    const result = await cancelOrder(id);
+    if (!result.ok) {
+      return NextResponse.json({ ok: false, error: result.error }, { status: 409 });
     }
-    order.status = "validated";
+    const order = await getOrder(id);
+    return NextResponse.json({
+      ok: true,
+      order,
+      refunded: result.refunded,
+      refundError: result.refundError,
+    });
   }
 
-  if (action === "cancel") order.status = "cancelled";
-  if (action === "ship") order.status = "shipped";
-
-  if (action === "fulfill") {
-    if (order.status !== "validated" && order.status !== "failed") {
-      return NextResponse.json({ ok: false }, { status: 409 });
+  if (action === "ship") {
+    const shipInput = parseShipInput(body);
+    const result = await markOrderAsShipped(id, shipInput);
+    if (!result.ok) {
+      return NextResponse.json({ ok: false, error: result.error }, { status: 409 });
     }
-    order.status = "fulfillment_queued";
-    const sent = await sendToGelato(order);
-    if (!sent.ok) {
-      order.status = "failed";
-      order.supplier.lastError = sent.error;
-    } else {
-      order.status = "fulfillment_sent";
-      order.supplier.externalId = sent.externalId;
-      order.supplier.lastError = sent.mode === "simulated" ? "simulated" : null;
-    }
+    const order = await getOrder(id);
+    return NextResponse.json({
+      ok: true,
+      order,
+      emailSent: result.emailSent,
+    });
   }
 
-  order.updatedAt = new Date().toISOString();
-  await saveOrder(order);
-  return NextResponse.json({ ok: true, order });
+  const retried = await retryFulfillOrder(id);
+  if (!retried) {
+    return NextResponse.json({ ok: false }, { status: 409 });
+  }
+  const updated = await getOrder(id);
+  return NextResponse.json({ ok: true, order: updated });
 }

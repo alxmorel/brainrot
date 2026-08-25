@@ -1,10 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { trySendOrderShipped } from "@/server/email/trySendOrderShipped";
-import {
-  isHttpUrl,
-  parseGelatoTrackingEvent,
-} from "@/server/fulfillment/gelatoWebhook";
+import { parseGelatoTrackingEvent } from "@/server/fulfillment/gelatoWebhook";
+import { recordOrderEvent } from "@/server/orders/orderEvents";
 import {
   applyGelatoTracking,
   getOrder,
@@ -69,12 +67,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
 
-  if (payload.trackingUrl && isHttpUrl(payload.trackingUrl)) {
-    try {
-      await trySendOrderShipped(order.id);
-    } catch {
-      // ne pas faire échouer le webhook Gelato
+  await recordOrderEvent(order.id, "shipped", {
+    trackingCode: payload.trackingCode,
+    trackingUrl: payload.trackingUrl,
+    source: "gelato_webhook",
+  });
+
+  try {
+    const sent = await trySendOrderShipped(order.id);
+    if (sent) {
+      await recordOrderEvent(order.id, "email_shipped", { sent: true });
     }
+  } catch {
+    // ne pas faire échouer le webhook Gelato
   }
 
   return NextResponse.json({ received: true });

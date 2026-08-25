@@ -117,6 +117,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
     );
+    track("quantity_change", { id, quantity });
   }, []);
 
   function remapLine(
@@ -143,16 +144,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const setSize = useCallback((id: string, size: string) => {
-    setItems((prev) => remapLine(prev, id, { size }));
+    setItems((prev) => {
+      const current = prev.find((item) => item.id === id);
+      if (current) {
+        track("size_change", { id, size, brainrotId: current.brainrotId });
+      }
+      return remapLine(prev, id, { size });
+    });
   }, []);
 
   const setColor = useCallback((id: string, color: string) => {
-    setItems((prev) => remapLine(prev, id, { color }));
+    setItems((prev) => {
+      const current = prev.find((item) => item.id === id);
+      if (current) {
+        track("color_change", { id, color, brainrotId: current.brainrotId });
+      }
+      return remapLine(prev, id, { color });
+    });
   }, []);
 
   const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    track("remove_from_cart", { id });
+    setItems((prev) => {
+      const current = prev.find((item) => item.id === id);
+      if (current) {
+        track("remove_from_cart", {
+          id,
+          brainrotId: current.brainrotId,
+          productId: current.productId,
+        });
+      }
+      return prev.filter((item) => item.id !== id);
+    });
   }, []);
 
   const clearCart = useCallback(() => {

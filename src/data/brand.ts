@@ -1,6 +1,6 @@
 import type { Rarity } from "@/models";
 
-/** Identité commerciale — source unique du copy de marque. */
+/** Identité commerciale - source unique du copy de marque. */
 export const brand = {
   name: "Brainrototo",
   line: "Wear",
@@ -16,7 +16,7 @@ export const brand = {
   manifesto: {
     eyebrow: "La formule",
     title: "Un Brainrototo, c’est un combo.",
-    body: "Le brainrot a une grammaire. On en a fait une bande — pas le requin Nike de TikTok.",
+    body: "Le brainrot a une grammaire. On en a fait une bande - pas le requin Nike de TikTok.",
     traits: [
       { id: "animal", label: "Animal", hint: "Croc, requin, grenouille…", tone: "green" },
       { id: "bouffe", label: "Bouffe", hint: "Banane, pizza, fraise…", tone: "yellow" },
@@ -53,7 +53,7 @@ export const brand = {
   },
   collection: {
     title: "Compose ton Brainrototo",
-    lead: "Animal, bouffe, vibe. Trouve ta créature — on l’imprime sur le tee.",
+    lead: "Animal, bouffe, vibe. Trouve ta créature - on l’imprime sur le tee.",
     filters: "Le combo",
     pick: "Choisis un Brainrototo",
   },
@@ -66,9 +66,9 @@ export const brand = {
     line: "Des créatures brainrot. Qui se portent.",
   },
   seo: {
-    title: "Brainrototo — Des créatures brainrot qui se portent",
+    title: "Brainrototo - Des créatures brainrot qui se portent",
     description:
-      "Compose un combo (animal × bouffe × vibe), choisis ta créature originale, porte-la sur un tee bio. Collection officielle Brainrototo — pas un meme volé.",
+      "Compose un combo (animal × bouffe × vibe), choisis ta créature originale, porte-la sur un tee bio. Collection officielle Brainrototo - pas un meme volé.",
     collectionTitle: "Compose ton Brainrototo",
     collectionDescription:
       "Animal, bouffe, vibe. Parcours la bande, pick ta créature, on l’imprime sur un tee.",

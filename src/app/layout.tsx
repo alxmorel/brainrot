@@ -46,7 +46,7 @@ const body = Nunito_Sans({
 export const metadata: Metadata = {
   title: {
     default: brand.seo.title,
-    template: "%s — Brainrototo",
+    template: "%s - Brainrototo",
   },
   description: brand.seo.description,
 };

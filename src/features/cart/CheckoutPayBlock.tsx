@@ -25,7 +25,7 @@ export function CheckoutPayBlock({
         Paiement
       </h2>
       <p className="mt-1 text-sm font-bold text-ink/70">
-        Adresse et carte sur la page sécurisée Stripe — {shippingNote},{" "}
+        Adresse et carte sur la page sécurisée Stripe - {shippingNote},{" "}
         {legal.deliveryEstimate.toLowerCase()}.
       </p>
 

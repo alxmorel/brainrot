@@ -34,7 +34,7 @@ const displayCandidates = [
     fontClass: "font-fredoka",
     verdict: "CHOISI",
     selected: true,
-    note: "Bubble + lisible — base logo / hero / noms.",
+    note: "Bubble + lisible - base logo / hero / noms.",
   },
   {
     id: "titan",
@@ -42,7 +42,7 @@ const displayCandidates = [
     fontClass: "font-titan",
     verdict: "ALT",
     selected: false,
-    note: "Plus comic lourd — accents ponctuels possibles.",
+    note: "Plus comic lourd - accents ponctuels possibles.",
   },
   {
     id: "lilita",
@@ -58,7 +58,7 @@ const displayCandidates = [
     fontClass: "font-coiny",
     verdict: "ALT",
     selected: false,
-    note: "Très jouet — trop niche en display global.",
+    note: "Très jouet - trop niche en display global.",
   },
 ] as const;
 
@@ -127,7 +127,7 @@ export default function DesignSystemPage() {
           <Surface variant="sticker" className="overflow-hidden !rotate-[-1deg] !p-0">
             <Image
               src="/assets/decorations/reference-brainrot-wear.png"
-              alt="Référence visuelle Brainrototo Wear — collage sticker et paint splash"
+              alt="Référence visuelle Brainrototo Wear - collage sticker et paint splash"
               width={1600}
               height={900}
               className="h-auto w-full"
@@ -266,7 +266,7 @@ export default function DesignSystemPage() {
             <Input
               label="Brainrototo name"
               placeholder="Banacrocodilo Bambino"
-              hint="Label body neutre — pas display bubble."
+              hint="Label body neutre - pas display bubble."
             />
             <Select
               label="Vibe"

@@ -1,11 +1,11 @@
 ---
-description: Motion system — timings, hover/selection, hero float, reduced motion
+description: Motion system - timings, hover/selection, hero float, reduced motion
 alwaysApply: true
 ---
 
-# Brainrototo.com — Motion System
+# Brainrototo.com - Motion System
 
-Animation = brand personality, but **controlled**. Playful, tactile, responsive — never slow, corporate, or distracting.
+Animation = brand personality, but **controlled**. Playful, tactile, responsive - never slow, corporate, or distracting.
 
 ## Durations
 
@@ -21,9 +21,9 @@ Avoid long animations.
 ## Patterns
 
 - **Hover cards**: slight scale + rotate + translateY + glow increase
-- **Selection**: highlight selected; optionally dim others; animate product preview on switch — selection must stay clear **without** motion
+- **Selection**: highlight selected; optionally dim others; animate product preview on switch - selection must stay clear **without** motion
 - **Hero**: subtle float via CSS transforms (no JS animation loops)
-- **Holo**: slow shared gradient motion; reuse CSS keyframes — don't animate every gradient independently
+- **Holo**: slow shared gradient motion; reuse CSS keyframes - don't animate every gradient independently
 
 ## Reduced motion
 

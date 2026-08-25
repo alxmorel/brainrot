@@ -12,6 +12,9 @@ export function AnalyticsBeacon() {
       if (pathname.startsWith("/ops")) return;
       if (!hasAnalyticsConsent()) return;
       track("page_view");
+      if (pathname.startsWith("/create")) {
+        track("view_create");
+      }
     }
     ping();
     window.addEventListener(CONSENT_EVENT, ping);

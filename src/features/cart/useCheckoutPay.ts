@@ -48,6 +48,7 @@ export function useCheckoutPay(items: CartItem[]) {
           ? String((json as { error: unknown }).error)
           : "Paiement indisponible. Réessaie.";
       setError(message);
+      track("checkout_error", { error: message });
       return;
     }
     window.location.href = (json as { url: string }).url;

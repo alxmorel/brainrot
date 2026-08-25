@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getConsent, setConsent } from "@/shared/utils/track";
+import { getConsent, setConsent, track } from "@/shared/utils/track";
 
 export function CookieBanner() {
   const pathname = usePathname();
@@ -34,6 +34,7 @@ export function CookieBanner() {
             className="rounded-pill border-[3px] border-ink bg-hot-pink px-4 py-2 font-display text-xs font-bold uppercase text-white shadow-sticker-sm"
             onClick={() => {
               setConsent("all");
+              track("consent_choice", { choice: "all" });
               setVisible(false);
             }}
           >
@@ -44,6 +45,7 @@ export function CookieBanner() {
             className="rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-xs font-bold uppercase text-ink shadow-sticker-sm"
             onClick={() => {
               setConsent("necessary");
+              track("consent_choice", { choice: "necessary" });
               setVisible(false);
             }}
           >

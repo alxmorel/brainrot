@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
@@ -21,11 +22,16 @@ import { SizeGuideDialog } from "@/features/product/SizeGuide";
 import { teePageHref } from "@/features/product/teeSize";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
+import { track } from "@/shared/utils/track";
 
 export function CartPage() {
   const { items, removeItem, setQuantity, setSize, setColor } = useCart();
   const sizes = sellableTeeSizes();
   const { pay, error, totalCents, pending } = useCheckoutPay(items);
+
+  useEffect(() => {
+    track("view_cart", { items: items.length });
+  }, [items.length]);
 
   return (
     <div className="flex min-h-dvh flex-col">

@@ -5,7 +5,7 @@ import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 
 export const metadata: Metadata = {
-  title: "Guide des tailles — Brainrototo.com",
+  title: "Guide des tailles - Brainrototo.com",
   description: `Guide des tailles du t-shirt bio unisexe ${gelatoTee.brand} ${gelatoTee.sku}.`,
 };
 

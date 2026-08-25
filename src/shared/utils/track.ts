@@ -37,7 +37,7 @@ export function track(
   payload?: Record<string, string | number | boolean | null>,
 ) {
   if (typeof window === "undefined") return;
-  if (!hasAnalyticsConsent()) return;
+  if (name !== "consent_choice" && !hasAnalyticsConsent()) return;
   void fetch("/api/events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

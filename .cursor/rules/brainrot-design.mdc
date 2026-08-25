@@ -1,13 +1,13 @@
 ---
-description: Design system / DA Brainrototo — sticker bomb, paint splash, collectible toy
+description: Design system / DA Brainrototo - sticker bomb, paint splash, collectible toy
 alwaysApply: true
 ---
 
-# Brainrototo.com — Design System
+# Brainrototo.com - Design System
 
 **One-liner:** Brainrototo.com is a colorful collectible toy brand living on the internet.
 
-Reference energy: **Brainrototo Wear** — light scrapbook canvas, paint splashes, thick black outlines, bubble logo, sticker characters, clean functional UI.
+Reference energy: **Brainrototo Wear** - light scrapbook canvas, paint splashes, thick black outlines, bubble logo, sticker characters, clean functional UI.
 
 **NOT** neon gaming, cyberpunk, crypto, synthwave, soft lifestyle/surf, or dark SaaS.
 
@@ -22,7 +22,7 @@ Reference energy: **Brainrototo Wear** — light scrapbook canvas, paint splashe
 Brand UI should feel sticker-bombed:
 
 - Thick black borders (`3px`)
-- Hard offset shadows (`4px 4px 0 #0a0a0a`) — not soft colored glow
+- Hard offset shadows (`4px 4px 0 #0a0a0a`) - not soft colored glow
 - Occasional slight rotation
 - Black marker / brush shapes behind key words
 - Doodles (stars, bolts, smiles) as accents only
@@ -43,8 +43,8 @@ Brand UI should feel sticker-bombed:
 
 ## Typography
 
-- **Brand / bubble**: Fredoka — logo, hero, Brainrototo names, badges, key CTAs
-- **Functional**: Nunito Sans — nav, labels, prices, forms
+- **Brand / bubble**: Fredoka - logo, hero, Brainrototo names, badges, key CTAs
+- **Functional**: Nunito Sans - nav, labels, prices, forms
 - Logo can use white fill + black stroke + hard shadow
 - Highlight words with `MarkHighlight` (black jagged mark + pink→purple gradient text)
 
