@@ -19,6 +19,7 @@ export type OpsOrderSummary = {
   name: string;
   totalCents: number;
   itemCount: number;
+  lastError: string | null;
   createdAt: string;
   updatedAt: string;
 };

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { OpsOrderSummary } from "@/models";
+import { isFulfillmentFailed } from "@/models";
 import { formatEur } from "@/data/pricing";
 import { Button, Input } from "@/shared/components/ui";
 
@@ -11,10 +12,25 @@ const STATUSES = [
   "pending_payment",
   "paid",
   "fulfillment_sent",
+  "fulfillment_failed",
   "shipped",
-  "failed",
   "cancelled",
 ] as const;
+
+const STATUS_LABELS: Record<string, string> = {
+  "": "Tous",
+  pending_payment: "En attente paiement",
+  paid: "Payée",
+  fulfillment_sent: "Chez Gelato",
+  fulfillment_failed: "Erreur Gelato",
+  shipped: "Expédiée",
+  cancelled: "Annulée",
+};
+
+function opsStatusLabel(status: string) {
+  if (status === "failed" || status === "fulfillment_failed") return "Erreur Gelato";
+  return STATUS_LABELS[status] ?? status;
+}
 
 export function OpsOrdersList() {
   const [orders, setOrders] = useState<OpsOrderSummary[]>([]);
@@ -94,7 +110,7 @@ export function OpsOrdersList() {
             >
               {STATUSES.map((value) => (
                 <option key={value || "all"} value={value}>
-                  {value || "Tous"}
+                  {STATUS_LABELS[value] ?? value}
                 </option>
               ))}
             </select>
@@ -114,7 +130,11 @@ export function OpsOrdersList() {
           orders.map((order) => (
             <li
               key={order.id}
-              className="rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm"
+              className={
+                isFulfillmentFailed(order.status)
+                  ? "rounded-2xl border-[3px] border-hot-pink bg-white p-4 shadow-sticker-sm"
+                  : "rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm"
+              }
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
@@ -125,11 +145,19 @@ export function OpsOrdersList() {
                     {order.id}
                   </Link>
                   <p className="text-sm font-bold text-ink/60">
-                    {order.status} · {order.email}
+                    {opsStatusLabel(order.status)} · {order.email}
                   </p>
                   <p className="text-sm font-bold">
                     {formatEur(order.totalCents)} · {order.itemCount} article(s)
                   </p>
+                  {isFulfillmentFailed(order.status) ? (
+                    <p className="mt-1 text-xs font-bold text-hot-pink">
+                      Paiement OK - relancer Gelato
+                      {order.lastError && order.lastError !== "simulated"
+                        ? ` · ${order.lastError}`
+                        : ""}
+                    </p>
+                  ) : null}
                   <p className="text-xs text-ink/50">
                     {new Date(order.createdAt).toLocaleString("fr-FR")}
                   </p>

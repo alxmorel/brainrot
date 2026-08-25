@@ -4,13 +4,17 @@ import { recordOrderEvent } from "@/server/orders/orderEvents";
 import { getOrder, saveOrder } from "@/server/orders-repo";
 
 const AUTO_FULFILL_STATUSES: OrderStatus[] = ["paid"];
-const RETRY_FULFILL_STATUSES: OrderStatus[] = ["validated", "failed"];
+const RETRY_FULFILL_STATUSES: OrderStatus[] = [
+  "validated",
+  "failed",
+  "fulfillment_failed",
+];
 
 async function fulfillOrder(order: Order) {
   order.status = "fulfillment_queued";
   const sent = await sendToGelato(order);
   if (!sent.ok) {
-    order.status = "failed";
+    order.status = "fulfillment_failed";
     order.supplier.lastError = sent.error;
   } else {
     order.status = "fulfillment_sent";

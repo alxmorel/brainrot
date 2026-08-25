@@ -10,6 +10,7 @@ const CANCELLABLE_STATUSES: OrderStatus[] = [
   "validated",
   "fulfillment_queued",
   "fulfillment_sent",
+  "fulfillment_failed",
   "failed",
 ];
 

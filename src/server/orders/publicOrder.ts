@@ -9,19 +9,23 @@ export const PAID_STATUSES: OrderStatus[] = [
   "validated",
   "fulfillment_queued",
   "fulfillment_sent",
+  "fulfillment_failed",
+  "failed",
   "shipped",
 ];
 
 export type { PublicOrderLine, PublicOrderView } from "@/models/publicOrder";
+
 const STATUS_LABELS: Record<OrderStatus, string> = {
   pending_payment: "En attente de paiement",
-  paid: "Confirmée — on prépare ton tee",
-  validated: "Confirmée — on prépare ton tee",
+  paid: "Confirmée - on prépare ton tee",
+  validated: "Confirmée - on prépare ton tee",
   fulfillment_queued: "Envoi à l’imprimeur…",
   fulfillment_sent: "En production",
+  fulfillment_failed: "Confirmée - on prépare ton tee",
   shipped: "Expédiée",
   cancelled: "Annulée",
-  failed: "Problème — contacte-nous",
+  failed: "Confirmée - on prépare ton tee",
 };
 
 export function orderStatusLabel(status: OrderStatus) {

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { OpsOrderDetail } from "@/models";
+import { isFulfillmentFailed, needsGelatoRetry } from "@/models";
 import { formatEur } from "@/data/pricing";
 import { Button, Input } from "@/shared/components/ui";
 
@@ -79,6 +80,11 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
           {order.status} · {formatEur(order.totalCents)} ·{" "}
           {new Date(order.createdAt).toLocaleString("fr-FR")}
         </p>
+        {isFulfillmentFailed(order.status) ? (
+          <p className="mt-2 font-bold text-hot-pink">
+            Paiement reçu - échec Gelato. Relance l’envoi ci-dessous.
+          </p>
+        ) : null}
         {note ? <p className="mt-2 text-sm font-bold text-ink/70">{note}</p> : null}
       </div>
 
@@ -111,8 +117,8 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
           ) : (
             <p className="text-ink/50">Pas de Stripe ID</p>
           )}
-          <p>Gelato : {order.supplier.externalId ?? "—"}</p>
-          <p>Suivi : {order.supplier.tracking ?? "—"}</p>
+          <p>Gelato : {order.supplier.externalId ?? "-"}</p>
+          <p>Suivi : {order.supplier.tracking ?? "-"}</p>
           {order.supplier.trackingUrl ? (
             <p>
               <a href={order.supplier.trackingUrl} className="underline" target="_blank" rel="noreferrer">
@@ -165,7 +171,7 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
 
       <Panel title="Actions">
         <div className="flex flex-wrap gap-2">
-          {order.status === "validated" || order.status === "failed" ? (
+          {needsGelatoRetry(order.status) ? (
             <Button size="sm" variant="secondary" onClick={() => void act("fulfill")}>
               Réessayer Gelato
             </Button>

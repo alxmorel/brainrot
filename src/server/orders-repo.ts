@@ -251,6 +251,8 @@ const SOLD_STATUSES = [
   "validated",
   "fulfillment_queued",
   "fulfillment_sent",
+  "fulfillment_failed",
+  "failed",
   "shipped",
 ] as const;
 

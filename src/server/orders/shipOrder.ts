@@ -32,6 +32,8 @@ const SHIPPABLE_STATUSES = new Set([
   "validated",
   "fulfillment_queued",
   "fulfillment_sent",
+  "fulfillment_failed",
+  "failed",
   "shipped",
 ]);
 

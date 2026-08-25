@@ -4,9 +4,18 @@ export type OrderStatus =
   | "validated"
   | "fulfillment_queued"
   | "fulfillment_sent"
+  | "fulfillment_failed"
   | "shipped"
   | "cancelled"
   | "failed";
+
+export function isFulfillmentFailed(status: OrderStatus) {
+  return status === "fulfillment_failed" || status === "failed";
+}
+
+export function needsGelatoRetry(status: OrderStatus) {
+  return isFulfillmentFailed(status) || status === "validated";
+}
 
 export interface ShippingAddress {
   name: string;

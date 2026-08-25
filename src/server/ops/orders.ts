@@ -49,6 +49,7 @@ export function toOpsOrderSummary(row: OrderRow): OpsOrderSummary {
     name: row.name,
     totalCents: orderTotalCents(row),
     itemCount: row.items.reduce((sum, item) => sum + item.quantity, 0),
+    lastError: row.supplierLastError,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -100,7 +101,9 @@ export async function listOpsOrders(params: ListOrdersParams = {}) {
   const pageSize = Math.min(100, Math.max(1, params.pageSize ?? 25));
   const where: Prisma.OrderWhereInput = {};
 
-  if (params.status) {
+  if (params.status === "fulfillment_failed") {
+    where.status = { in: ["fulfillment_failed", "failed"] };
+  } else if (params.status) {
     where.status = params.status;
   }
 
@@ -147,6 +150,8 @@ const SOLD_STATUSES = [
   "validated",
   "fulfillment_queued",
   "fulfillment_sent",
+  "fulfillment_failed",
+  "failed",
   "shipped",
 ] as const;
 
