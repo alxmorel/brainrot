@@ -262,4 +262,8 @@
   .animate-gloss::after {
     animation: gloss-sweep 1.1s var(--ease-out);
   }
+
+  .animate-tee-reveal {
+    animation: tee-reveal 360ms var(--ease-out) both;
+  }
 }

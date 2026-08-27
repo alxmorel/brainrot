@@ -53,9 +53,14 @@ export const brand = {
   },
   collection: {
     title: "Compose ton Brainrototo",
-    lead: "Animal, bouffe, vibe. Trouve ta créature - on l’imprime sur le tee.",
+    lead: "Choisis ce que tu veux — génère quand tu veux.",
     filters: "Le combo",
-    pick: "Choisis un Brainrototo",
+    pick: "Compose ton combo puis génère",
+    generate: "Générer",
+    generateAgain: "Encore !",
+    generating: "…",
+    emptyCombo: "Aucun Brainrototo pour ce combo",
+    emptyHint: "Change un trait du combo.",
   },
   product: {
     related: "Le reste de la bande",
@@ -71,7 +76,7 @@ export const brand = {
       "Compose un combo (animal × bouffe × vibe), choisis ta créature originale, porte-la sur un tee bio. Collection officielle Brainrototo - pas un meme volé.",
     collectionTitle: "Compose ton Brainrototo",
     collectionDescription:
-      "Animal, bouffe, vibe. Parcours la bande, pick ta créature, on l’imprime sur un tee.",
+      "Compose un combo (animal × bouffe × vibe), génère ta créature, on l’imprime sur un tee.",
   },
 } as const;
 

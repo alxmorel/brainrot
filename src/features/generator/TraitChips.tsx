@@ -133,7 +133,7 @@ const icons: Record<string, ReactNode> = {
   ),
 };
 
-const stickerTone: Record<string, string> = {
+export const traitStickerTone: Record<string, string> = {
   crocodile: "bg-acid-green",
   chat: "bg-hot-pink",
   grenouille: "bg-acid-green",
@@ -154,6 +154,24 @@ const stickerTone: Record<string, string> = {
   any: "bg-white",
 };
 
+const lightTones = new Set([
+  "bg-white",
+  "bg-acid-yellow",
+  "bg-acid-green",
+  "bg-electric-cyan",
+]);
+
+export function traitToneText(traitId: string) {
+  const tone = traitStickerTone[traitId] ?? "bg-acid-yellow";
+  return lightTones.has(tone) ? "text-ink" : "text-white";
+}
+
+export function traitToneMuted(traitId: string) {
+  return lightTones.has(traitStickerTone[traitId] ?? "")
+    ? "text-ink/65"
+    : "text-white/85";
+}
+
 const tilts = ["-rotate-6", "rotate-3", "-rotate-2", "rotate-6", "-rotate-4", "rotate-2"];
 
 function TraitSticker({
@@ -161,12 +179,14 @@ function TraitSticker({
   label,
   selected,
   tilt,
+  compact,
   onClick,
 }: {
   id: string;
   label: string;
   selected: boolean;
   tilt?: string;
+  compact?: boolean;
   onClick: () => void;
 }) {
   return (
@@ -176,16 +196,20 @@ function TraitSticker({
       aria-label={label}
       onClick={onClick}
       className={cn(
-        "flex w-[4.25rem] flex-col items-center gap-1 sm:w-[4.75rem]",
+        "flex flex-col items-center gap-1",
+        compact ? "w-[3.6rem] lg:w-[4.5rem]" : "w-[4.25rem] sm:w-[4.75rem]",
         tilt,
         selected && "z-10 -rotate-2",
       )}
     >
       <span
         className={cn(
-          "inline-flex h-12 w-12 items-center justify-center rounded-xl border-[3px] border-ink shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-button)] sm:h-14 sm:w-14",
+          "inline-flex items-center justify-center rounded-xl border-[3px] border-ink shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-button)]",
+          compact
+            ? "h-11 w-11 [&>svg]:h-6 [&>svg]:w-6 lg:h-14 lg:w-14 lg:[&>svg]:h-8 lg:[&>svg]:w-8"
+            : "h-12 w-12 sm:h-14 sm:w-14",
           selected
-            ? cn(stickerTone[id] ?? "bg-acid-yellow", "scale-110 shadow-sticker")
+            ? cn(traitStickerTone[id] ?? "bg-acid-yellow", "scale-110 shadow-sticker")
             : "bg-white hover:bg-ink-soft",
         )}
       >
@@ -193,7 +217,10 @@ function TraitSticker({
       </span>
       <span
         className={cn(
-          "font-display text-[0.62rem] font-bold uppercase leading-none tracking-tight sm:text-[0.7rem]",
+          "font-display font-bold uppercase leading-none tracking-tight",
+          compact
+            ? "text-[0.58rem] lg:text-[0.72rem]"
+            : "text-[0.62rem] sm:text-[0.7rem]",
           selected ? "text-hot-pink" : "text-ink",
         )}
       >
@@ -209,25 +236,34 @@ export function TraitChips({
   value,
   onChange,
   allowAny,
+  compact,
+  hideLabel,
 }: {
   label: string;
   traits: Trait[];
   value: string | null;
   onChange: (id: string | null) => void;
   allowAny?: boolean;
+  compact?: boolean;
+  hideLabel?: boolean;
 }) {
   return (
     <fieldset>
-      <legend className="mb-2 font-display text-sm font-bold uppercase tracking-tight text-ink">
-        {label}
-      </legend>
-      <div className="flex flex-wrap gap-x-2 gap-y-3 sm:gap-x-3">
+      {hideLabel ? (
+        <legend className="sr-only">{label}</legend>
+      ) : (
+        <legend className="mb-2 font-display text-sm font-bold uppercase tracking-tight text-ink">
+          {label}
+        </legend>
+      )}
+      <div className={cn("flex flex-wrap", compact ? "gap-x-1.5 gap-y-2" : "gap-x-2 gap-y-3 sm:gap-x-3")}>
         {allowAny ? (
           <TraitSticker
             id="any"
             label="Peu importe"
             selected={value === null}
             tilt={tilts[0]}
+            compact={compact}
             onClick={() => onChange(null)}
           />
         ) : null}
@@ -238,10 +274,9 @@ export function TraitChips({
             label={trait.label}
             selected={value === trait.id}
             tilt={tilts[(index + (allowAny ? 1 : 0)) % tilts.length]}
+            compact={compact}
             onClick={() =>
-              onChange(
-                allowAny && value === trait.id ? null : trait.id,
-              )
+              onChange(value === trait.id ? null : trait.id)
             }
           />
         ))}
@@ -270,7 +305,7 @@ export function PickedTraits({
   if (picks.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="mt-2 flex flex-wrap items-center gap-2">
       {picks.map(({ step, trait }) => (
         <button
           key={step}
@@ -278,7 +313,7 @@ export function PickedTraits({
           onClick={() => onEdit(step)}
           className={cn(
             "inline-flex items-center gap-1.5 rounded-pill border-[3px] border-ink px-2 py-1 font-display text-[0.65rem] font-bold uppercase tracking-tight shadow-sticker-sm sm:text-xs",
-            stickerTone[trait.id] ?? "bg-white",
+            traitStickerTone[trait.id] ?? "bg-white",
           )}
         >
           <span className="inline-flex h-6 w-6 items-center justify-center [&>svg]:h-5 [&>svg]:w-5">
