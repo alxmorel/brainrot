@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { legal } from "@/data/legal";
-import { customProductNote, formatEur, shippingNote } from "@/data/pricing";
+import { customProductLegalNote, formatEur, shippingNote } from "@/data/pricing";
 import { Button } from "@/shared/components/ui";
 
 export function CheckoutPayBlock({
@@ -30,7 +30,7 @@ export function CheckoutPayBlock({
       </p>
 
       <p className="mt-3 rounded-xl border-[3px] border-ink/15 bg-ink-soft px-3 py-2 text-xs font-bold leading-snug text-ink/75">
-        {customProductNote}
+        {customProductLegalNote}
       </p>
 
       <label className="mt-4 flex items-start gap-2 text-sm font-bold text-ink/75">

@@ -1,6 +1,6 @@
 import { brainrots } from "@/data/brainrots";
 import { legal } from "@/data/legal";
-import { customProductNote, formatEur, shippingNote, teePriceCents } from "@/data/pricing";
+import { customProductLegalNote, formatEur, shippingNote, teePriceCents } from "@/data/pricing";
 import { teeColorLabel } from "@/data/teeColors";
 import type { Order } from "@/models";
 
@@ -97,7 +97,7 @@ export function buildOrderConfirmationHtml(order: Order) {
             <tr>
               <td style="padding:20px 24px 28px;">
                 <p style="margin:0;font-size:13px;line-height:1.5;color:#5c5c5c;">
-                  ${escapeHtml(customProductNote)}<br />
+                  ${escapeHtml(customProductLegalNote)}<br />
                   Une question ? Écris à <a href="mailto:${escapeHtml(legal.email)}" style="color:#0a0a0a;">${escapeHtml(legal.email)}</a> avec ton n° de commande.
                 </p>
               </td>
@@ -144,7 +144,7 @@ export function buildOrderConfirmationText(order: Order) {
     legal.trackingFollowUp,
     `Suivi : ${legal.siteUrl}/commande`,
     "",
-    customProductNote,
+    customProductLegalNote,
     `Contact : ${legal.email}`,
   ].join("\n");
 }

@@ -106,5 +106,5 @@ export function createPageHref(
   if (brainrotId) params.set("brainrot", brainrotId);
   params.set("size", size);
   params.set("color", color);
-  return `/create?${params.toString()}`;
+  return `/?${params.toString()}#compose`;
 }

@@ -96,7 +96,7 @@ export function OrderStatusLinks() {
   return (
     <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
       <Link
-        href="/create"
+        href="/#compose"
         className="inline-flex rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker"
       >
         Créer un autre →

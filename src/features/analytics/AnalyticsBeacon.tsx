@@ -12,7 +12,7 @@ export function AnalyticsBeacon() {
       if (pathname.startsWith("/ops")) return;
       if (!hasAnalyticsConsent()) return;
       track("page_view");
-      if (pathname.startsWith("/create")) {
+      if (pathname === "/" && window.location.hash === "#compose") {
         track("view_create");
       }
     }

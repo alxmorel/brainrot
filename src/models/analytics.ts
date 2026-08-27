@@ -13,7 +13,9 @@ export type AnalyticsEventName =
   | "begin_checkout"
   | "checkout_error"
   | "consent_choice"
-  | "order_placed";
+  | "order_placed"
+  | "cta_composer"
+  | "cta_bande";
 
 export interface AnalyticsEvent {
   id: string;

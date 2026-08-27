@@ -3,7 +3,8 @@ import { legal } from "@/data/legal";
 import { LegalPage, LegalSection } from "@/shared/components/layout/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Confidentialité - Brainrototo",
+  title: "Confidentialité",
+  alternates: { canonical: "/confidentialite" },
 };
 
 export default function Page() {
@@ -53,9 +54,9 @@ export default function Page() {
       </LegalSection>
       <LegalSection title="Cookies">
         <p>
-          Cookie de session ops (interne, back-office). Boutique : panier en
-          localStorage (nécessaire). Mesure d’audience seulement après « OK ».
-          Pas de cookie pub.
+          Cookie de session ops (interne, back-office). Boutique : panier et
+          combo en localStorage (nécessaire). Mesure d’audience seulement après
+          « OK ». Pas de cookie pub.
         </p>
       </LegalSection>
     </LegalPage>

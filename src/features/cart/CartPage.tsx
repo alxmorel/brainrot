@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
@@ -20,14 +20,22 @@ import { TeeMockup } from "@/features/generator/TeeMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
 import { teePageHref } from "@/features/product/teeSize";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
+import { Button } from "@/shared/components/ui";
 import { track } from "@/shared/utils/track";
 
 export function CartPage() {
   const { items, removeItem, setQuantity, setSize, setColor } = useCart();
   const sizes = sellableTeeSizes();
   const { pay, error, totalCents, pending } = useCheckoutPay(items);
+  const [removeId, setRemoveId] = useState<string | null>(null);
+  const pendingRemove = items.find((item) => item.id === removeId);
+  const pendingName = pendingRemove
+    ? (brainrots.find((item) => item.id === pendingRemove.brainrotId)?.name ??
+      "cet article")
+    : "";
 
   useEffect(() => {
     track("view_cart", { items: items.length });
@@ -55,12 +63,13 @@ export function CartPage() {
               Compose un combo. Rejoins la bande.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
-              <Link
-                href="/create"
+              <ComposeLink
+                cta="composer"
+                source="cart"
                 className="inline-flex items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker"
               >
                 {brand.hero.cta}
-              </Link>
+              </ComposeLink>
             </div>
           </div>
         ) : (
@@ -132,10 +141,16 @@ export function CartPage() {
                       <div className="mt-2 flex items-center gap-2">
                         <button
                           type="button"
-                          aria-label="Moins"
-                          onClick={() =>
-                            setQuantity(item.id, item.quantity - 1)
+                          aria-label={
+                            item.quantity <= 1 ? "Retirer l’article" : "Moins"
                           }
+                          onClick={() => {
+                            if (item.quantity <= 1) {
+                              setRemoveId(item.id);
+                              return;
+                            }
+                            setQuantity(item.id, item.quantity - 1);
+                          }}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-pill border-[3px] border-ink bg-white font-display text-sm font-bold"
                         >
                           −
@@ -158,13 +173,6 @@ export function CartPage() {
                         </span>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      className="self-end font-display text-xs font-bold uppercase text-hot-pink sm:self-center"
-                    >
-                      Retirer
-                    </button>
                   </li>
                 );
               })}
@@ -172,7 +180,7 @@ export function CartPage() {
 
             <div className="mt-4">
               <Link
-                href="/create"
+                href="/#compose"
                 className="font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2"
               >
                 Continuer mes achats →
@@ -231,6 +239,72 @@ export function CartPage() {
       ) : null}
 
       <SiteFooter />
+      {removeId ? (
+        <RemoveItemDialog
+          name={pendingName}
+          onCancel={() => setRemoveId(null)}
+          onConfirm={() => {
+            removeItem(removeId);
+            setRemoveId(null);
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function RemoveItemDialog({
+  name,
+  onCancel,
+  onConfirm,
+}: {
+  name: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onCancel();
+    };
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [onCancel]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="remove-item-title"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-3 sm:items-center"
+      onClick={onCancel}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl border-[3px] border-ink bg-white p-5 shadow-sticker sm:p-6"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h2
+          id="remove-item-title"
+          className="font-display text-xl font-bold uppercase leading-none text-ink"
+        >
+          Retirer du panier ?
+        </h2>
+        <p className="mt-3 text-sm font-bold text-ink/70">
+          {name} sera enlevé du panier.
+        </p>
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
+          <Button variant="ghost" size="sm" onClick={onCancel}>
+            Annuler
+          </Button>
+          <Button variant="danger" size="sm" onClick={onConfirm}>
+            Retirer
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

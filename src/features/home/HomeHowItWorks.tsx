@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { brand } from "@/data/brand";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -111,12 +111,13 @@ export function HomeHowItWorks() {
           }}
           className="mt-5 origin-left sm:mt-8 lg:mt-10"
         >
-          <Link
-            href="/create"
+          <ComposeLink
+            cta="composer"
+            source="how"
             className="inline-flex w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker sm:w-auto lg:px-10 lg:py-4 lg:text-lg"
           >
             {brand.how.cta}
-          </Link>
+          </ComposeLink>
         </motion.div>
       </div>
     </section>

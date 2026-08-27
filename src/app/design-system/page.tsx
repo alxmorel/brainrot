@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +17,11 @@ import {
   Surface,
 } from "@/shared/components/ui";
 import { cn } from "@/shared/utils/cn";
+
+export const metadata: Metadata = {
+  title: "Design system",
+  robots: { index: false, follow: false },
+};
 
 const palette = [
   { name: "Pink", token: "--br-pink", className: "bg-hot-pink" },

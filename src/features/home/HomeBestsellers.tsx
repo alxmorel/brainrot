@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { motion, useReducedMotion } from "motion/react";
 import { brand } from "@/data/brand";
 import { customProductNote, shippingNote, teePriceLabel } from "@/data/pricing";
@@ -12,7 +12,7 @@ import type { Brainrototo } from "@/models";
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const spring = [0.34, 1.45, 0.64, 1] as const;
 
-/** Only the first cards get a staged entrance — the rest stay cheap to paint. */
+/** Only the first cards get a staged entrance - the rest stay cheap to paint. */
 const ANIMATED_CARDS = 4;
 
 export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
@@ -127,12 +127,11 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
             >
               →
             </button>
-            <Link
-              href="/create"
+            <ComposeLink
               className="shrink-0 font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 sm:text-base lg:text-lg"
             >
               {brand.gang.seeAll}
-            </Link>
+            </ComposeLink>
           </motion.div>
         </motion.header>
 

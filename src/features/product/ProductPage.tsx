@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { brand, rarityLabel } from "@/data/brand";
-import { brainrots } from "@/data/brainrots";
 import { gelatoTee, sellableTeeSizes } from "@/data/fulfillment";
 import { legal } from "@/data/legal";
 import {
-  customProductNote,
+  customProductLegalNote,
   shippingNote,
   teePriceLabel,
 } from "@/data/pricing";
@@ -19,15 +18,15 @@ import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import { comboLine } from "@/data/traits";
 import { useCart } from "@/features/cart/CartProvider";
 import { TeeMockup } from "@/features/generator/TeeMockup";
+import { HomeBestsellers } from "@/features/home/HomeBestsellers";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
-import { relatedBrainrots } from "@/features/product/relatedBrainrots";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
 import {
   createPageHref,
   useTeeColor,
   useTeeSize,
 } from "@/features/product/teeSize";
-import { TeeGrid } from "@/features/product/TeeGrid";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import { Button } from "@/shared/components/ui";
@@ -44,10 +43,12 @@ const specCards = [
 
 export function ProductPage({
   brainrot,
+  gang,
   initialSize,
   initialColor,
 }: {
   brainrot: Brainrototo;
+  gang: Brainrototo[];
   initialSize?: TeeSize;
   initialColor?: TeeColorId;
 }) {
@@ -62,7 +63,6 @@ export function ProductPage({
   const [shotIndex, setShotIndex] = useState(0);
   const shot = shots[shotIndex] ?? null;
   const [zoomOpen, setZoomOpen] = useState(false);
-  const related = relatedBrainrots(brainrot, brainrots);
 
   useEffect(() => {
     setShotIndex(0);
@@ -79,9 +79,9 @@ export function ProductPage({
       <SiteNav />
       <main className="mx-auto w-full max-w-[1100px] flex-1 px-4 py-6 pb-28 sm:px-6 sm:pb-6 lg:px-8">
         <p className="text-xs font-bold uppercase tracking-wide text-ink/55">
-          <Link href="/create" className="hover:text-hot-pink">
+          <ComposeLink cta="bande" source="product" className="hover:text-hot-pink">
             La bande
-          </Link>
+          </ComposeLink>
           <span aria-hidden> / </span>
           {brainrot.name}
         </p>
@@ -219,7 +219,7 @@ export function ProductPage({
               </Link>
             ) : null}
             <p className="mt-3 text-xs font-bold leading-snug text-ink/55">
-              {customProductNote}
+              {customProductLegalNote}
             </p>
 
             <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -246,18 +246,11 @@ export function ProductPage({
             </Link>
           </div>
         </div>
-
-        {related.length > 0 ? (
-          <section className="mt-12 border-t-[3px] border-ink/15 pt-8">
-            <h2 className="font-display text-xl font-bold uppercase text-ink sm:text-2xl">
-              {brand.product.related}
-            </h2>
-            <div className="mt-5">
-              <TeeGrid items={related} />
-            </div>
-          </section>
-        ) : null}
       </main>
+
+      <div className="pb-28 sm:pb-0">
+        <HomeBestsellers items={gang} />
+      </div>
 
       <div className="fixed inset-x-3 bottom-3 z-30 lg:hidden">
         <div className="rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker">

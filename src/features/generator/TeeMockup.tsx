@@ -23,7 +23,7 @@ export function TeeMockup({
     return (
       <div
         className={cn(
-          "relative mx-auto flex h-full min-h-0 w-full max-w-[22rem] items-center justify-center",
+          "relative mx-auto flex h-full min-h-0 w-full items-center justify-center",
           className,
         )}
       >
@@ -43,7 +43,7 @@ export function TeeMockup({
   return (
     <div
       className={cn(
-        "relative mx-auto aspect-[5/6] h-full min-h-0 w-full max-w-[22rem]",
+        "relative mx-auto aspect-[5/6] h-full min-h-0 w-full",
         className,
       )}
     >
@@ -63,11 +63,11 @@ export function TeeMockup({
             height={220}
             className="h-full w-full object-contain drop-shadow-[3px_3px_0_rgba(10,10,10,0.25)]"
           />
-        ) : (
-          <span className="rotate-[-6deg] rounded-md border-[3px] border-dashed border-ink/40 bg-white/80 px-2 py-1 text-center font-display text-[0.65rem] font-bold uppercase leading-tight text-ink/50 lg:text-sm">
+        ) : emptyLabel ? (
+          <span className="rotate-[-6deg] rounded-md border-[3px] border-dashed border-ink/40 bg-white/80 px-2 py-1 text-center font-display text-[0.65rem] font-bold uppercase leading-tight text-ink/50 sm:text-xs lg:px-3 lg:py-2 lg:text-sm xl:text-base">
             {emptyLabel}
           </span>
-        )}
+        ) : null}
       </div>
     </div>
   );

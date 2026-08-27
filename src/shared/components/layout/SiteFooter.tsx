@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { brand } from "@/data/brand";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 
 const primaryLinks = [
-  { href: "/create", label: "La bande" },
   { href: "/cart", label: "Panier" },
   { href: "/commande", label: "Ma commande" },
   { href: "/guide-tailles", label: "Guide des tailles" },
@@ -29,6 +29,9 @@ export function SiteFooter() {
       <nav
         className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink/55 sm:gap-x-4 sm:text-xs"
       >
+        <ComposeLink cta="bande" source="footer" className="hover:text-hot-pink">
+          La bande
+        </ComposeLink>
         {primaryLinks.map((link) => (
           <Link key={link.href} href={link.href} className="hover:text-hot-pink">
             {link.label}

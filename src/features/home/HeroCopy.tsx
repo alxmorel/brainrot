@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { brand } from "@/data/brand";
 import { StickerLabel } from "@/features/home/HeroStickers";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 
 const strokeTitle = {
   WebkitTextStroke: "4px #0a0a0a",
@@ -121,12 +121,13 @@ export function HeroCopy() {
         variants={fadeUp}
         className="pointer-events-auto relative mt-1 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
       >
-        <Link
-          href="/create"
+        <ComposeLink
+          cta="composer"
+          source="hero"
           className="inline-flex w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker transition-[transform,box-shadow] duration-[var(--duration-button)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-sticker-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8] sm:w-auto sm:px-8 sm:py-4 sm:text-base lg:px-10 lg:py-5 lg:text-lg xl:text-xl"
         >
           {brand.hero.cta}
-        </Link>
+        </ComposeLink>
       </motion.div>
     </motion.div>
   );

@@ -5,14 +5,23 @@ import { HomeHowItWorks } from "@/features/home/HomeHowItWorks";
 import { HomeManifesto } from "@/features/home/HomeManifesto";
 import { PromisesBar } from "@/features/home/PromisesBar";
 import { ScatteredBrainrots } from "@/features/home/ScatteredBrainrots";
+import { GeneratorStudio } from "@/features/generator/GeneratorStudio";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import type { Brainrototo } from "@/models";
+import type { TeeSize } from "@/data/sizes";
+import type { TeeColorId } from "@/data/teeColors";
 
 export function HomeCampaign({
   bestsellers,
+  initialBrainrotId,
+  initialSize,
+  initialColor,
 }: {
   bestsellers: Brainrototo[];
+  initialBrainrotId?: string;
+  initialSize?: TeeSize;
+  initialColor?: TeeColorId;
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -45,6 +54,11 @@ export function HomeCampaign({
 
         <PromisesBar />
         <HomeManifesto />
+        <GeneratorStudio
+          initialBrainrotId={initialBrainrotId}
+          initialSize={initialSize}
+          initialColor={initialColor}
+        />
         <HomeBestsellers items={bestsellers} />
         <HomeHowItWorks />
       </main>

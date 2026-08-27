@@ -266,4 +266,52 @@
   .animate-tee-reveal {
     animation: tee-reveal 360ms var(--ease-out) both;
   }
+
+  .pack-open-stage {
+    animation: pack-stage 1000ms var(--ease-out) both;
+  }
+
+  .pack-open-card {
+    animation: pack-pop-shake 420ms cubic-bezier(0.34, 1.45, 0.64, 1) both;
+  }
+
+  .pack-open-inner {
+    transform-style: preserve-3d;
+    animation: pack-flip 380ms cubic-bezier(0.22, 1, 0.36, 1) 400ms both;
+  }
+
+  .pack-open-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .pack-open-face-front {
+    transform: rotateY(180deg);
+  }
+
+  .pack-open-flash {
+    animation: pack-flash 320ms var(--ease-out) 380ms both;
+  }
+
+  .pack-open-slash {
+    animation: pack-slash 280ms var(--ease-out) 390ms both;
+  }
+
+  .pack-open-burst {
+    animation: pack-burst 520ms cubic-bezier(0.34, 1.5, 0.64, 1) 400ms both;
+  }
+
+  .pack-open-shine::after {
+    content: "";
+    position: absolute;
+    inset: -20% -40%;
+    background: linear-gradient(
+      115deg,
+      transparent 35%,
+      rgb(255 255 255 / 0.7) 48%,
+      transparent 62%
+    );
+    animation: gloss-sweep 0.55s var(--ease-out) 0.38s both;
+    pointer-events: none;
+  }
 }

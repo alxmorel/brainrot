@@ -11,5 +11,7 @@ export const teePriceLabel = `${formatEur(teePriceCents)} TTC`;
 
 export const shippingNote = "Livraison comprise";
 
-export const customProductNote =
+export const customProductNote = "Tee imprimé à la commande.";
+
+export const customProductLegalNote =
   "Tee imprimé à la commande : pas de rétractation de 14 jours.";

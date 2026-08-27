@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { brand } from "@/data/brand";
 import { cn } from "@/shared/utils/cn";
@@ -169,29 +168,6 @@ export function HomeManifesto() {
               {manifesto.result}
             </motion.p>
           </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={
-            reduced
-              ? false
-              : { opacity: 0, y: 36, scale: 0.86, rotate: -10 }
-          }
-          whileInView={{ opacity: 1, y: 0, scale: 1, rotate: -2 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{
-            delay: reduced ? 0 : 0.65,
-            duration: reduced ? 0.01 : 0.45,
-            ease: spring,
-          }}
-          className="mt-8 w-fit sm:mt-10 lg:mt-12"
-        >
-          <Link
-            href="/create"
-            className="inline-flex w-full min-w-[16rem] items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-8 py-4 font-display text-base font-bold uppercase tracking-tight text-white shadow-[6px_6px_0_#0a0a0a] transition-[transform,box-shadow] duration-[var(--duration-button)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0a0a0a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--br-bg)] sm:w-auto sm:min-w-0 sm:px-12 sm:py-5 sm:text-xl lg:px-14 lg:py-6 lg:text-2xl"
-          >
-            {brand.hero.cta}
-          </Link>
         </motion.div>
       </div>
     </section>

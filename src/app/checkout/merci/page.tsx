@@ -2,7 +2,8 @@ import { OrderConfirm } from "@/features/cart/OrderConfirm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Commande confirmée - Brainrototo.com",
+  title: "Commande confirmée",
+  robots: { index: false, follow: false },
 };
 
 export default async function MerciPage({

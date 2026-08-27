@@ -18,6 +18,8 @@ const names: AnalyticsEventName[] = [
   "checkout_error",
   "consent_choice",
   "order_placed",
+  "cta_composer",
+  "cta_bande",
 ];
 
 export async function POST(request: Request) {

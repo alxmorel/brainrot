@@ -3,7 +3,8 @@ import { legal } from "@/data/legal";
 import { LegalPage, LegalSection } from "@/shared/components/layout/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Mentions légales - Brainrototo",
+  title: "Mentions légales",
+  alternates: { canonical: "/mentions-legales" },
 };
 
 export default function Page() {

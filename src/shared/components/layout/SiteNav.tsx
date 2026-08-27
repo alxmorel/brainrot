@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandWordmark } from "@/shared/components/brand";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { useCart } from "@/features/cart/CartProvider";
 import { cn } from "@/shared/utils/cn";
 
@@ -20,17 +21,18 @@ export function SiteNav() {
       </Link>
 
       <nav className="flex items-center gap-1 sm:gap-3">
-        <Link
-          href="/create"
+        <ComposeLink
+          cta="bande"
+          source="nav"
           className={cn(
             "rounded-pill border-[3px] border-ink px-2 py-1 font-display text-[0.65rem] font-bold uppercase tracking-tight shadow-sticker-sm sm:px-3 sm:py-1.5 sm:text-sm",
-            pathname === "/create" || pathname.startsWith("/tee")
+            pathname.startsWith("/tee")
               ? "bg-hot-pink text-white"
               : "bg-white text-ink hover:bg-acid-yellow",
           )}
         >
           La bande
-        </Link>
+        </ComposeLink>
         <Link
           href="/cart"
           className={cn(

@@ -53,7 +53,7 @@ export const brand = {
   },
   collection: {
     title: "Compose ton Brainrototo",
-    lead: "Choisis ce que tu veux — génère quand tu veux.",
+    lead: "Choisis ce que tu veux - génère quand tu veux.",
     filters: "Le combo",
     pick: "Compose ton combo puis génère",
     generate: "Générer",
@@ -68,15 +68,15 @@ export const brand = {
     explore: "Explorer d’autres combos →",
   },
   footer: {
-    line: "Des créatures brainrot. Qui se portent.",
+    line: "Des créatures Brainrototo. Qui se portent.",
   },
   seo: {
-    title: "Brainrototo - Des créatures brainrot qui se portent",
+    title: "Brainrototo | Site officiel - des créatures qui se portent",
     description:
-      "Compose un combo (animal × bouffe × vibe), choisis ta créature originale, porte-la sur un tee bio. Collection officielle Brainrototo - pas un meme volé.",
+      "Brainrototo est le site officiel de la marque Brainrototo. Compose une créature originale (animal × bouffe × vibe) et porte-la sur un tee bio. brainrototo.com",
     collectionTitle: "Compose ton Brainrototo",
     collectionDescription:
-      "Compose un combo (animal × bouffe × vibe), génère ta créature, on l’imprime sur un tee.",
+      "Compose un combo (animal × bouffe × vibe), génère ta créature Brainrototo, on l’imprime sur un tee.",
   },
 } as const;
 

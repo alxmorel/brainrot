@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { brand, rarityLabel } from "@/data/brand";
+import { motion, useReducedMotion } from "motion/react";
+import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
 import {
@@ -17,18 +18,22 @@ import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import { animals, ingredients, vibes } from "@/data/traits";
 import { useCart } from "@/features/cart/CartProvider";
 import { filterBrainrots } from "@/features/generator/filterBrainrots";
+import { PackRevealOverlay } from "@/features/generator/PackRevealOverlay";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { TraitChips, traitStickerTone, traitToneMuted, traitToneText } from "@/features/generator/TraitChips";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
 import { teePageHref, useTeeColor, useTeeSize } from "@/features/product/teeSize";
-import { SiteNav } from "@/shared/components/layout/SiteNav";
-import { Badge, Button } from "@/shared/components/ui";
+import { Button } from "@/shared/components/ui";
 import { cn } from "@/shared/utils/cn";
 import { track } from "@/shared/utils/track";
 import type { Brainrototo, Trait } from "@/models";
 
-const GENERATE_MS = 380;
+const PACK_MS = 1000;
+const PACK_REVEAL_AT = 480;
+const COMBO_KEY = "brainrot-combo-v1";
+const easeOut = [0.22, 1, 0.36, 1] as const;
+const spring = [0.34, 1.4, 0.64, 1] as const;
 
 type Category = "animal" | "ingredient" | "vibe";
 
@@ -54,6 +59,48 @@ function traitById(list: Trait[], id: string | null) {
   return id ? (list.find((t) => t.id === id) ?? null) : null;
 }
 
+function validTraitId(list: Trait[], value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  return list.some((trait) => trait.id === value) ? value : null;
+}
+
+type StoredCombo = {
+  animal: string | null;
+  ingredient: string | null;
+  vibe: string | null;
+  brainrotId: string | null;
+};
+
+function readStoredCombo(): StoredCombo | null {
+  try {
+    const raw = localStorage.getItem(COMBO_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    const row = parsed as Record<string, unknown>;
+    const animal = validTraitId(animals, row.animal);
+    const ingredient = validTraitId(ingredients, row.ingredient);
+    const vibe = validTraitId(vibes, row.vibe);
+    const brainrotId =
+      typeof row.brainrotId === "string" &&
+      brainrots.some((item) => item.id === row.brainrotId)
+        ? row.brainrotId
+        : null;
+    if (!animal && !ingredient && !vibe && !brainrotId) return null;
+    return { animal, ingredient, vibe, brainrotId };
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredCombo(combo: StoredCombo) {
+  try {
+    localStorage.setItem(COMBO_KEY, JSON.stringify(combo));
+  } catch {
+    /* ignore */
+  }
+}
+
 export function GeneratorStudio({
   initialBrainrotId,
   initialSize,
@@ -64,6 +111,7 @@ export function GeneratorStudio({
   initialColor?: TeeColorId;
 }) {
   const { addItem } = useCart();
+  const reduced = useReducedMotion();
   const initialBrainrot =
     brainrots.find((item) => item.id === initialBrainrotId) ?? null;
   const [animal, setAnimal] = useState<string | null>(
@@ -84,6 +132,9 @@ export function GeneratorStudio({
   const [justAdded, setJustAdded] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [revealKey, setRevealKey] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
+  const [packBrainrot, setPackBrainrot] = useState<Brainrototo | null>(null);
+  const packTimers = useRef<number[]>([]);
 
   const matches = useMemo(
     () => filterBrainrots(brainrots, { animal, ingredient, vibe }),
@@ -93,26 +144,49 @@ export function GeneratorStudio({
   const hasFilters = Boolean(animal || ingredient || vibe);
 
   useEffect(() => {
-    if (!selected) return;
-    if (matches.some((item) => item.id === selected.id)) return;
-    setSelected(null);
-  }, [matches, selected]);
+    if (!initialBrainrot) {
+      const stored = readStoredCombo();
+      if (stored) {
+        setAnimal(stored.animal);
+        setIngredient(stored.ingredient);
+        setVibe(stored.vibe);
+        const found = stored.brainrotId
+          ? (brainrots.find((item) => item.id === stored.brainrotId) ?? null)
+          : null;
+        if (found) setSelected(found);
+      }
+    }
+    setHydrated(true);
+  }, [initialBrainrot]);
+
+  useEffect(() => {
+    return () => {
+      packTimers.current.forEach((id) => window.clearTimeout(id));
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    writeStoredCombo({
+      animal,
+      ingredient,
+      vibe,
+      brainrotId: selected?.id ?? null,
+    });
+  }, [animal, ingredient, vibe, selected, hydrated]);
 
   function pickAnimal(id: string | null) {
     setAnimal(id);
-    setSelected(null);
     if (id) track("trait_select", { trait: "animal", id });
   }
 
   function pickIngredient(id: string | null) {
     setIngredient(id);
-    setSelected(null);
     if (id) track("trait_select", { trait: "ingredient", id });
   }
 
   function pickVibe(id: string | null) {
     setVibe(id);
-    setSelected(null);
     if (id) track("trait_select", { trait: "vibe", id });
   }
 
@@ -120,7 +194,6 @@ export function GeneratorStudio({
     setAnimal(null);
     setIngredient(null);
     setVibe(null);
-    setSelected(null);
     setActiveCategory(null);
   }
 
@@ -184,14 +257,31 @@ export function GeneratorStudio({
     });
   }
 
+  function clearPackTimers() {
+    packTimers.current.forEach((id) => window.clearTimeout(id));
+    packTimers.current = [];
+  }
+
   function handleGenerate() {
     if (isGenerating || matches.length === 0) return;
+    const next = pickRandom(matches, selected?.id);
+    if (!next) return;
+
+    if (reduced) {
+      reveal(next);
+      return;
+    }
+
+    clearPackTimers();
     setIsGenerating(true);
-    window.setTimeout(() => {
-      const next = pickRandom(matches, selected?.id);
-      if (next) reveal(next);
-      setIsGenerating(false);
-    }, GENERATE_MS);
+    setPackBrainrot(next);
+    packTimers.current = [
+      window.setTimeout(() => reveal(next), PACK_REVEAL_AT),
+      window.setTimeout(() => {
+        setIsGenerating(false);
+        setPackBrainrot(null);
+      }, PACK_MS),
+    ];
   }
 
   function pickSize(value: TeeSize) {
@@ -217,27 +307,82 @@ export function GeneratorStudio({
 
   const canGenerate = matches.length > 0 && !isGenerating;
 
+  const fadeUp = {
+    hidden: { opacity: 0, y: reduced ? 0 : 24 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: reduced ? 0.01 : 0.38, ease: easeOut },
+    },
+  };
+
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
-      <SiteNav />
+    <section
+      id="compose"
+      className="scroll-mt-[4.75rem] px-3 py-6 sm:px-6 sm:py-8 lg:flex lg:h-[80dvh] lg:flex-col lg:overflow-hidden lg:px-10 lg:py-4 xl:px-12"
+    >
+      <div className="mx-auto w-full max-w-[1760px] lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.4 }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: reduced ? 0 : 0.08,
+                delayChildren: reduced ? 0 : 0.04,
+              },
+            },
+          }}
+        >
+          <motion.p
+            variants={fadeUp}
+            className="shrink-0 text-[0.65rem] font-bold uppercase tracking-wide text-hot-pink sm:text-xs lg:text-sm"
+          >
+            {brand.collection.filters}
+          </motion.p>
+          <motion.h2
+            variants={{
+              hidden: {
+                opacity: 0,
+                y: reduced ? 0 : 28,
+                scale: reduced ? 1 : 0.92,
+              },
+              show: {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                transition: { duration: reduced ? 0.01 : 0.42, ease: spring },
+              },
+            }}
+            className="mt-0.5 origin-left shrink-0 font-display text-[clamp(1.45rem,4vw,3.75rem)] font-bold uppercase leading-none tracking-[-0.04em] text-ink"
+          >
+            {brand.collection.title}
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            className="mt-2 max-w-xl shrink-0 font-sans text-sm font-bold leading-snug text-ink/75 sm:text-base lg:mt-3 lg:max-w-2xl lg:text-lg xl:text-xl"
+          >
+            {brand.collection.lead}
+          </motion.p>
+        </motion.div>
 
-      <main className="mx-auto grid min-h-0 w-full max-w-[1200px] flex-1 grid-rows-[auto_minmax(0,1fr)] gap-3 px-3 pt-2 pb-4 sm:gap-4 sm:px-6 sm:pt-3 sm:pb-5 lg:grid-cols-[24rem_minmax(0,1fr)] lg:grid-rows-1 lg:items-stretch lg:gap-6 lg:px-8 lg:pb-6 xl:max-w-[1280px] xl:grid-cols-[26rem_minmax(0,1fr)] xl:gap-8">
-        <section className="flex min-h-0 flex-col gap-2 lg:gap-3">
-          <div className="shrink-0">
-            <h1 className="font-display text-[clamp(1.35rem,3.5vw,2.4rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em] text-ink">
-              {brand.collection.title}
-            </h1>
-            <p className="mt-1 text-xs font-bold text-ink/65 sm:text-sm lg:text-base">
-              {brand.collection.lead}
-            </p>
-          </div>
-
-          <div className="flex flex-col rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker sm:p-4 lg:p-4">
-            <p className="shrink-0 font-display text-sm font-bold uppercase tracking-tight text-ink lg:text-base">
-              {brand.collection.filters}
-            </p>
-
-            <div className="mt-3 flex shrink-0 gap-2 lg:gap-2.5">
+        <div className="mt-4 grid gap-4 sm:mt-5 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:items-stretch lg:gap-8 xl:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] xl:gap-10">
+          <motion.div
+            initial={
+              reduced ? false : { opacity: 0, y: 28, rotate: -3, scale: 0.96 }
+            }
+            whileInView={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{
+              delay: reduced ? 0 : 0.18,
+              duration: reduced ? 0.01 : 0.42,
+              ease: spring,
+            }}
+            className="flex h-fit flex-col self-start rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker sm:p-4 lg:max-h-full lg:overflow-y-auto lg:rounded-[1.35rem] lg:p-5"
+          >
+            <div className="flex gap-2 lg:gap-3">
               {categories.map((category) => {
                 const picked = categoryPick(category.id);
                 const open = activeCategory === category.id;
@@ -251,7 +396,7 @@ export function GeneratorStudio({
                     aria-pressed={open}
                     onClick={() => toggleCategory(category.id)}
                     className={cn(
-                      "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl border-[3px] border-ink px-1.5 py-2 font-display text-[0.65rem] font-bold uppercase leading-tight shadow-sticker-sm transition-[transform,background-color,box-shadow,color] duration-[var(--duration-button)] sm:text-xs lg:gap-1 lg:px-2 lg:py-2.5 lg:text-sm",
+                      "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl border-[3px] border-ink px-2 py-2 font-display text-[0.65rem] font-bold uppercase leading-tight shadow-sticker-sm transition-[transform,background-color,box-shadow,color] duration-[var(--duration-button)] sm:text-sm lg:gap-1 lg:rounded-2xl lg:px-3 lg:py-2.5 lg:text-base xl:text-lg",
                       open && "scale-[1.03] shadow-sticker",
                       tone
                         ? cn(tone, traitToneText(picked!.id))
@@ -264,7 +409,7 @@ export function GeneratorStudio({
                     {picked ? (
                       <span
                         className={cn(
-                          "truncate max-w-full text-[0.55rem] normal-case tracking-tight lg:text-xs",
+                          "truncate max-w-full text-[0.55rem] normal-case tracking-tight sm:text-xs lg:text-sm",
                           traitToneMuted(picked.id),
                         )}
                       >
@@ -276,7 +421,7 @@ export function GeneratorStudio({
               })}
             </div>
 
-            <div className="mt-3">
+            <div className="mt-4">
               {activeTraits && activeOnChange ? (
                 <TraitChips
                   label={activeLabel}
@@ -287,93 +432,34 @@ export function GeneratorStudio({
                   hideLabel
                 />
               ) : (
-                <p className="rounded-xl border-[3px] border-dashed border-ink/25 bg-ink-soft px-3 py-3 text-center text-xs font-bold text-ink/50 lg:text-sm">
+                <p className="rounded-xl border-[3px] border-dashed border-ink/25 bg-ink-soft px-4 py-4 text-center text-xs font-bold text-ink/55 sm:text-sm lg:text-base">
                   Choisis Animal, Bouffe ou Vibe
                 </p>
               )}
             </div>
 
-            <div className="mt-3 flex shrink-0 flex-col gap-2">
-              {matches.length === 0 ? (
-                <p className="text-center text-xs font-bold text-ink/55 lg:text-sm">
-                  {brand.collection.emptyCombo}
-                </p>
-              ) : null}
-              <Button
-                className="w-full lg:text-base"
-                size="lg"
-                disabled={!canGenerate}
-                onClick={handleGenerate}
-              >
-                {isGenerating
-                  ? brand.collection.generating
-                  : selected
-                    ? brand.collection.generateAgain
-                    : brand.collection.generate}
-              </Button>
-              {hasFilters ? (
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="self-start text-xs font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 lg:text-sm"
-                >
-                  Réinitialiser
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </section>
-
-        <section className="flex min-h-0 flex-col items-center">
-          <div className="flex min-h-0 w-full max-w-[min(100%,26rem)] flex-1 flex-col xl:max-w-[30rem]">
-            <div
-              key={revealKey}
-              className={cn(
-                "flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden",
-                selected && "animate-tee-reveal",
-              )}
-            >
-              <TeeMockup
-                product={defaultProduct}
-                brainrot={selected}
-                color={resolvedColor}
-                className="h-full max-h-full w-full max-w-full"
-                emptyLabel={brand.collection.pick}
-              />
-            </div>
-
-            <div className="mt-2 w-full shrink-0 text-center sm:mt-3">
-              <p className="font-display text-xs font-bold uppercase tracking-tight text-ink/70 sm:text-sm lg:text-base">
-                {defaultProduct.name} · {teePriceLabel}
+            {matches.length === 0 ? (
+              <p className="mt-3 text-center text-xs font-bold text-ink/55 sm:text-sm lg:text-base">
+                {brand.collection.emptyCombo}
               </p>
-              <h2 className="mt-1 font-display text-xl font-bold uppercase leading-none text-ink sm:text-2xl lg:text-3xl">
-                {selected && !isGenerating
-                  ? selected.name
-                  : brand.collection.pick}
-              </h2>
-              {selected?.rarity && !isGenerating ? (
-                <div className="mt-2 flex justify-center">
-                  <Badge rarity={selected.rarity} className="px-3 py-1 text-xs lg:text-sm">
-                    {rarityLabel[selected.rarity]}
-                  </Badge>
-                </div>
-              ) : null}
-            </div>
+            ) : null}
 
             {selected ? (
-              <div className="mt-3 mb-1 w-full shrink-0 rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker-sm sm:p-4 lg:mt-4">
-                <ColorSwatches
-                  colors={palette}
-                  value={resolvedColor}
-                  onChange={pickColor}
-                />
+              <>
+                <div className="mt-4">
+                  <ColorSwatches
+                    colors={palette}
+                    value={resolvedColor}
+                    onChange={pickColor}
+                  />
+                </div>
                 <div className="mt-3 flex items-baseline justify-between gap-3">
-                  <p className="font-display text-sm font-bold uppercase text-ink lg:text-base">
+                  <p className="font-display text-xs font-bold uppercase text-ink sm:text-sm lg:text-base">
                     Taille
                   </p>
                   <SizeGuideDialog />
                 </div>
-                <div className="mt-2 flex flex-wrap justify-center gap-2">
+                <div className="mt-2 flex flex-wrap gap-1.5">
                   {sellableTeeSizes().map((value) => (
                     <button
                       key={value}
@@ -381,50 +467,171 @@ export function GeneratorStudio({
                       onClick={() => pickSize(value)}
                       className={
                         size === value
-                          ? "min-w-[2.75rem] rounded-pill border-[3px] border-ink bg-acid-yellow px-3 py-2 font-display text-sm font-bold uppercase shadow-sticker-sm lg:min-w-[3.25rem] lg:px-3.5 lg:text-base"
-                          : "min-w-[2.75rem] rounded-pill border-[3px] border-ink bg-white px-3 py-2 font-display text-sm font-bold uppercase text-ink/70 lg:min-w-[3.25rem] lg:px-3.5 lg:text-base"
+                          ? "min-w-[2.25rem] rounded-pill border-[3px] border-ink bg-acid-yellow px-2 py-1 font-display text-xs font-bold uppercase shadow-sticker-sm sm:min-w-[2.5rem] sm:px-2.5 sm:py-1.5 sm:text-sm lg:text-base"
+                          : "min-w-[2.25rem] rounded-pill border-[3px] border-ink bg-white px-2 py-1 font-display text-xs font-bold uppercase text-ink/70 sm:min-w-[2.5rem] sm:px-2.5 sm:py-1.5 sm:text-sm lg:text-base"
                       }
                     >
                       {value}
                     </button>
                   ))}
                 </div>
-                <Button
-                  className="mt-4 w-full lg:text-base"
-                  size="lg"
-                  disabled={!selected || isGenerating}
-                  onClick={handleAdd}
-                >
-                  {justAdded ? "Ajouté ✓" : "Ajouter au panier"}
-                </Button>
+                <div className="mt-4 flex items-stretch gap-2 lg:mt-5 lg:gap-3">
+                  <Button
+                    className="shrink-0 px-4 lg:px-5"
+                    size="lg"
+                    variant="secondary"
+                    disabled={!canGenerate}
+                    aria-label={brand.collection.generateAgain}
+                    onClick={handleGenerate}
+                  >
+                    <svg
+                      viewBox="0 0 32 32"
+                      className="h-7 w-7 lg:h-8 lg:w-8"
+                      aria-hidden
+                    >
+                      <rect
+                        x="4"
+                        y="4"
+                        width="24"
+                        height="24"
+                        rx="6"
+                        fill="#fff"
+                        stroke="#0a0a0a"
+                        strokeWidth="2.5"
+                      />
+                      <circle cx="11" cy="11" r="2" fill="#0a0a0a" />
+                      <circle cx="21" cy="11" r="2" fill="#0a0a0a" />
+                      <circle cx="16" cy="16" r="2" fill="#0a0a0a" />
+                      <circle cx="11" cy="21" r="2" fill="#0a0a0a" />
+                      <circle cx="21" cy="21" r="2" fill="#0a0a0a" />
+                    </svg>
+                  </Button>
+                  <Button
+                    className="min-w-0 flex-1 text-sm sm:text-base lg:text-lg xl:text-xl"
+                    size="lg"
+                    disabled={isGenerating}
+                    onClick={handleAdd}
+                  >
+                    {justAdded ? "Ajouté ✓" : "Ajouter au panier"}
+                  </Button>
+                </div>
                 {justAdded ? (
                   <Link
                     href="/cart"
-                    className="mt-2 inline-flex w-full justify-center font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2"
+                    className="mt-2 inline-flex font-display text-xs font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 sm:text-sm lg:text-base"
                   >
                     Voir le panier →
                   </Link>
                 ) : null}
-                <div className="mt-2 flex items-center justify-center gap-3">
+              </>
+            ) : (
+              <Button
+                className="mt-4 w-full text-sm sm:text-base lg:mt-5 lg:text-lg xl:text-xl"
+                size="lg"
+                disabled={!canGenerate}
+                onClick={handleGenerate}
+              >
+                {isGenerating
+                  ? brand.collection.generating
+                  : brand.collection.generate}
+              </Button>
+            )}
+            {hasFilters ? (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-2 self-start text-xs font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 sm:text-sm lg:text-base"
+              >
+                Réinitialiser
+              </button>
+            ) : null}
+          </motion.div>
+
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 32, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{
+              delay: reduced ? 0 : 0.28,
+              duration: reduced ? 0.01 : 0.45,
+              ease: spring,
+            }}
+            className="flex w-full flex-col lg:min-h-0"
+          >
+            <div className="relative flex w-full items-center justify-center lg:min-h-0 lg:flex-1">
+              <div
+                key={revealKey}
+                className={cn(
+                  "flex w-full items-center justify-center lg:h-full",
+                  packBrainrot && "invisible",
+                  selected && !packBrainrot && "animate-tee-reveal",
+                )}
+              >
+              {selected ? (
+                <Link
+                  href={teePageHref(selected.id, size, resolvedColor)}
+                  aria-label={selected.name}
+                  className="flex h-full w-full max-w-[36rem] items-center justify-center"
+                >
+                  <TeeMockup
+                    product={defaultProduct}
+                    brainrot={selected}
+                    color={resolvedColor}
+                    className="h-full w-full max-w-full lg:max-h-full lg:!aspect-auto"
+                    emptyLabel={brand.collection.pick}
+                  />
+                </Link>
+              ) : (
+                <TeeMockup
+                  product={defaultProduct}
+                  brainrot={selected}
+                  color={resolvedColor}
+                  className="w-full max-w-[36rem] lg:h-full lg:max-h-full lg:!aspect-auto"
+                  emptyLabel={brand.collection.pick}
+                />
+              )}
+            </div>
+              {packBrainrot ? <PackRevealOverlay brainrot={packBrainrot} /> : null}
+            </div>
+
+            <div className="mt-2 w-full shrink-0 text-center">
+              <p className="font-display text-[0.65rem] font-bold uppercase tracking-tight text-ink/70 sm:text-xs lg:text-sm xl:text-base">
+                {defaultProduct.name} · {teePriceLabel}
+              </p>
+              {selected ? (
+                <div className="mt-0.5 flex flex-wrap items-center justify-center gap-2">
                   <Link
                     href={teePageHref(selected.id, size, resolvedColor)}
-                    className="font-display text-xs font-bold uppercase tracking-tight text-ink/55 underline decoration-2 underline-offset-2 hover:text-hot-pink lg:text-sm"
+                    className="font-display text-xl font-bold uppercase leading-none text-ink hover:text-hot-pink sm:text-2xl lg:text-3xl xl:text-4xl"
                   >
-                    Détails
+                    {selected.name}
                   </Link>
-                  <p className="text-xs font-bold leading-snug text-ink/45 lg:text-sm">
-                    {shippingNote}
-                  </p>
+                  <Button
+                    size="sm"
+                    className="shrink-0 px-2.5 py-2"
+                    disabled={isGenerating}
+                    aria-label={justAdded ? "Ajouté au panier" : "Ajouter au panier"}
+                    onClick={handleAdd}
+                  >
+                    {justAdded ? (
+                      <span className="font-display text-lg leading-none">✓</span>
+                    ) : (
+                      <span className="font-display text-lg leading-none">+</span>
+                    )}
+                  </Button>
                 </div>
-              </div>
-            ) : (
-              <p className="mt-3 shrink-0 text-center text-xs font-bold text-ink/40 lg:text-sm">
+              ) : (
+                <p className="mt-0.5 font-display text-xl font-bold uppercase leading-none text-ink sm:text-2xl lg:text-3xl xl:text-4xl">
+                  {brand.collection.pick}
+                </p>
+              )}
+              <p className="mt-1.5 text-[0.65rem] font-bold text-ink/45 sm:text-xs lg:text-sm">
                 {shippingNote}. {customProductNote}
               </p>
-            )}
-          </div>
-        </section>
-      </main>
-    </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
   );
 }

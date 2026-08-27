@@ -197,7 +197,7 @@ function TraitSticker({
       onClick={onClick}
       className={cn(
         "flex flex-col items-center gap-1",
-        compact ? "w-[3.6rem] lg:w-[4.5rem]" : "w-[4.25rem] sm:w-[4.75rem]",
+        compact ? "w-[3.6rem] lg:w-[4.75rem] xl:w-[5.5rem]" : "w-[4.25rem] sm:w-[4.75rem]",
         tilt,
         selected && "z-10 -rotate-2",
       )}
@@ -206,7 +206,7 @@ function TraitSticker({
         className={cn(
           "inline-flex items-center justify-center rounded-xl border-[3px] border-ink shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-button)]",
           compact
-            ? "h-11 w-11 [&>svg]:h-6 [&>svg]:w-6 lg:h-14 lg:w-14 lg:[&>svg]:h-8 lg:[&>svg]:w-8"
+            ? "h-11 w-11 [&>svg]:h-6 [&>svg]:w-6 lg:h-16 lg:w-16 lg:[&>svg]:h-9 lg:[&>svg]:w-9 xl:h-[4.5rem] xl:w-[4.5rem]"
             : "h-12 w-12 sm:h-14 sm:w-14",
           selected
             ? cn(traitStickerTone[id] ?? "bg-acid-yellow", "scale-110 shadow-sticker")
@@ -219,8 +219,8 @@ function TraitSticker({
         className={cn(
           "font-display font-bold uppercase leading-none tracking-tight",
           compact
-            ? "text-[0.58rem] lg:text-[0.72rem]"
-            : "text-[0.62rem] sm:text-[0.7rem]",
+            ? "text-[0.58rem] sm:text-xs lg:text-sm"
+            : "text-[0.62rem] sm:text-xs lg:text-sm",
           selected ? "text-hot-pink" : "text-ink",
         )}
       >

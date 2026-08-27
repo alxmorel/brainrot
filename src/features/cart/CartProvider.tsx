@@ -110,10 +110,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const setQuantity = useCallback((id: string, quantity: number) => {
-    if (quantity < 1) {
-      setItems((prev) => prev.filter((item) => item.id !== id));
-      return;
-    }
+    if (quantity < 1) return;
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
     );

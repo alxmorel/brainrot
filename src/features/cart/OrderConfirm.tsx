@@ -8,6 +8,7 @@ import { shippingNote } from "@/data/pricing";
 import { useCart } from "@/features/cart/CartProvider";
 import { CheckoutProgress } from "@/features/cart/CheckoutProgress";
 import { OrderStatusCard, OrderStatusLinks } from "@/features/cart/OrderStatusCard";
+import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import { getSessionId } from "@/shared/utils/track";
@@ -124,12 +125,13 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
               >
                 Retour au panier
               </Link>
-              <Link
-                href="/create"
+              <ComposeLink
+                cta="composer"
+                source="confirm"
                 className="inline-flex rounded-pill border-[3px] border-ink bg-white px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
               >
                 {brand.hero.cta}
-              </Link>
+              </ComposeLink>
             </div>
           </div>
         ) : null}
