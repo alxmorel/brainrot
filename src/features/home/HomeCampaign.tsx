@@ -1,6 +1,7 @@
 import { HeroCopy, heroH } from "@/features/home/HeroCopy";
 import { HeroModels } from "@/features/home/HeroModels";
 import { HomeBestsellers } from "@/features/home/HomeBestsellers";
+import { HomeArchiveWall } from "@/features/home/HomeArchiveWall";
 import { HomeHowItWorks } from "@/features/home/HomeHowItWorks";
 import { HomeManifesto } from "@/features/home/HomeManifesto";
 import { PromisesBar } from "@/features/home/PromisesBar";
@@ -61,6 +62,7 @@ export function HomeCampaign({
         />
         <HomeBestsellers items={bestsellers} />
         <HomeHowItWorks />
+        <HomeArchiveWall />
       </main>
 
       <SiteFooter />

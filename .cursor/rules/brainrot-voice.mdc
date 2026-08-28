@@ -1,0 +1,39 @@
+---
+description: Voix copy Brainrototo - pas d’antithèse affirmation/négation façon IA
+alwaysApply: true
+---
+
+# Brainrototo.com - Voix
+
+Copy = catalogue jouet absurde. Court. Autocollant. Le nom de la créature est le héros.
+
+Dire **ce que c’est**. Ne pas plaider **ce que ce n’est pas**.
+
+## Interdit : couplet affirmation / contradiction
+
+Rythme LLM typique : une phrase pose, la suivante nie, ou « Pas X. C’est Y. »
+
+```
+❌ On documente le phénomène. On ne vend pas ces visages.
+❌ On ne vend pas ces persos TikTok. Compose une créature originale.
+❌ Pas un shop de memes. Une vraie marque.
+❌ Ce n’est pas du lore officiel. Ce sont des fiches.
+```
+
+```
+✅ Les persos TikTok, en fiches.
+✅ Noms, clips, d’où ça vient.
+✅ Un combo. Une créature. Un tee.
+```
+
+Même idée, une seule face. Pas de « on X, on ne Y pas » collé pour sonner malin ou légal.
+
+## Aussi à éviter
+
+- Antithèse en punchline : « X, pas Y » / « Pas X, mais Y »
+- Disclaimer marketing (« on tient à préciser que… »)
+- Deux phrases qui se corrigent l’une l’autre
+
+Le vrai disclaimer archive (on ne vend pas les persos TikTok) reste **sur la fiche**, factuel, pas en teaser home.
+
+Source copy : `src/data/brand.ts`. Français d’abord.

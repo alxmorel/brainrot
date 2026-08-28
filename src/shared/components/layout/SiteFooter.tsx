@@ -3,6 +3,8 @@ import { brand } from "@/data/brand";
 import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 
 const primaryLinks = [
+  { href: "/brainrots", label: "Archive" },
+  { href: "/blog", label: "Blog" },
   { href: "/cart", label: "Panier" },
   { href: "/commande", label: "Ma commande" },
   { href: "/guide-tailles", label: "Guide des tailles" },

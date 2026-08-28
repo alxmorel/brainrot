@@ -1,4 +1,19 @@
 export type { Brainrototo, BrainrotColorAssets, Rarity } from "./brainrot";
+export type {
+  ArchiveArticle,
+  ArchiveArticleKind,
+  ArchiveArticleSection,
+  ArchiveCharacter,
+  ArchiveFactSheet,
+  ArchiveFamilyEdge,
+  ArchiveFamilyNode,
+  ArchiveFamilyTree,
+  ArchiveRelatedLink,
+  ArchiveStickerTone,
+  ArchiveTag,
+  ArchiveVideo,
+  ArchiveWave,
+} from "./archive";
 export type { Product, ProductType } from "./product";
 export type { Trait } from "./trait";
 export type { CartItem } from "./cart";

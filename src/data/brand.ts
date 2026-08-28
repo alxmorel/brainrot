@@ -70,6 +70,20 @@ export const brand = {
   footer: {
     line: "Des créatures Brainrototo. Qui se portent.",
   },
+  archive: {
+    nav: "Archive",
+    eyebrow: "The Brainrot Archive",
+    tagline: "Les persos TikTok, en bref.",
+    indexTitle: "Les personnages",
+    indexLead: "Les persos TikTok du brainrot, en fiches courtes.",
+    blogNav: "Blog",
+    blogTitle: "Le blog",
+    blogLead: "C’est quoi le brainrot, les noms, les liens entre persos.",
+    homeEyebrow: "The Brainrot Archive",
+    homeTitle: "Les persos TikTok, en fiches.",
+    homeLead: "Noms, clips, d’où ça vient.",
+    homeCta: "L’archive →",
+  },
   seo: {
     title: "Brainrototo | Site officiel - des créatures qui se portent",
     description:
