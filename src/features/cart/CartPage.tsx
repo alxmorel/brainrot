@@ -6,15 +6,17 @@ import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
 import { legal } from "@/data/legal";
-import { formatEur, shippingNote, teePriceCents } from "@/data/pricing";
+import { formatEur, formatWelcomeOffer, shippingNote } from "@/data/pricing";
 import { colorsForBrainrot } from "@/data/productAssets";
 import { defaultProduct, products } from "@/data/products";
 import { isTeeSize } from "@/data/sizes";
 import { isTeeColor, teeColorLabel } from "@/data/teeColors";
+import { UnusedCredit } from "@/features/account/UnusedCredit";
 import { CartReassurance } from "@/features/cart/CartReassurance";
 import { CheckoutPayBlock } from "@/features/cart/CheckoutPayBlock";
 import { CheckoutProgress } from "@/features/cart/CheckoutProgress";
 import { useCart } from "@/features/cart/CartProvider";
+import { useCartQuote } from "@/features/cart/useCartQuote";
 import { useCheckoutPay } from "@/features/cart/useCheckoutPay";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
@@ -29,7 +31,14 @@ import { track } from "@/shared/utils/track";
 export function CartPage() {
   const { items, removeItem, setQuantity, setSize, setColor } = useCart();
   const sizes = sellableTeeSizes();
-  const { pay, error, totalCents, pending } = useCheckoutPay(items);
+  const [draftCode, setDraftCode] = useState("");
+  const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const [promoStatus, setPromoStatus] = useState<
+    null | "ok" | "needsAccount" | "invalid"
+  >(null);
+  const [testingCode, setTestingCode] = useState(false);
+  const quote = useCartQuote(items, appliedCode);
+  const { pay, error, pending } = useCheckoutPay(items, appliedCode);
   const [removeId, setRemoveId] = useState<string | null>(null);
   const pendingRemove = items.find((item) => item.id === removeId);
   const pendingName = pendingRemove
@@ -40,6 +49,43 @@ export function CartPage() {
   useEffect(() => {
     track("view_cart", { items: items.length });
   }, [items.length]);
+
+  async function testPromoCode() {
+    const code = draftCode.trim();
+    if (!code) {
+      setPromoStatus("invalid");
+      setAppliedCode(null);
+      return;
+    }
+    setTestingCode(true);
+    setPromoStatus(null);
+    const response = await fetch(
+      `/api/account/promo?code=${encodeURIComponent(code)}`,
+    );
+    const json: unknown = await response.json().catch(() => null);
+    setTestingCode(false);
+    if (
+      json &&
+      typeof json === "object" &&
+      "ok" in json &&
+      (json as { ok: unknown }).ok
+    ) {
+      const confirmed =
+        "code" in json && typeof (json as { code: unknown }).code === "string"
+          ? (json as { code: string }).code
+          : code;
+      setAppliedCode(confirmed);
+      setPromoStatus("ok");
+      return;
+    }
+    setAppliedCode(null);
+    const needsAccount =
+      json &&
+      typeof json === "object" &&
+      "needsAccount" in json &&
+      Boolean((json as { needsAccount: unknown }).needsAccount);
+    setPromoStatus(needsAccount ? "needsAccount" : "invalid");
+  }
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -79,7 +125,7 @@ export function CartPage() {
                 const brainrot = brainrots.find((b) => b.id === item.brainrotId);
                 const product = products.find((p) => p.id === item.productId);
                 if (!brainrot || !product) return null;
-                const lineCents = item.quantity * teePriceCents;
+                const lineCents = item.quantity * quote.shop.teePriceCents;
                 const teeHref =
                   isTeeSize(item.size) && isTeeColor(item.color)
                     ? teePageHref(brainrot.id, item.size, item.color)
@@ -111,7 +157,7 @@ export function CartPage() {
                       </Link>
                       <p className="text-sm font-bold text-ink/60">
                         {product.name} · {teeColorLabel(item.color)} ·{" "}
-                        {formatEur(teePriceCents)}
+                        {formatEur(quote.shop.teePriceCents)}
                       </p>
                       <div className="mt-2">
                         <ColorSwatches
@@ -191,15 +237,142 @@ export function CartPage() {
               <CartReassurance />
             </div>
 
+            {!quote.me && quote.shop.welcomeLive && quote.shop.welcomeRequiresAccount ? (
+              <div className="mt-4 rounded-2xl border-[3px] border-ink bg-acid-yellow px-4 py-3 shadow-sticker-sm">
+                <p className="font-display text-sm font-bold uppercase text-ink">
+                  {formatWelcomeOffer(quote.shop)} avec le code {quote.shop.welcomeCode}
+                </p>
+                <p className="mt-1 text-sm font-bold text-ink/70">
+                  Crée un compte, puis entre le code au paiement.
+                </p>
+                <Link
+                  href="/compte/inscription?next=/cart"
+                  className="mt-1 inline-block text-sm font-bold text-hot-pink underline"
+                >
+                  Créer un compte →
+                </Link>
+              </div>
+            ) : null}
+
+            {quote.guestCashbackCents > 0 ? (
+              <div className="mt-4 rounded-2xl border-[3px] border-ink bg-white px-4 py-3 shadow-sticker-sm">
+                <p className="font-display text-sm font-bold uppercase text-ink">
+                  + {formatEur(quote.guestCashbackCents)} de crédit si tu es
+                  connecté
+                </p>
+                <Link
+                  href="/compte/inscription?next=/cart"
+                  className="mt-1 inline-block text-sm font-bold text-hot-pink underline"
+                >
+                  Créer un compte →
+                </Link>
+              </div>
+            ) : null}
+
+            {quote.me && quote.me.creditCents > 0 ? (
+              <div className="mt-4">
+                <UnusedCredit cents={quote.me.creditCents} />
+              </div>
+            ) : null}
+
+            <div id="promo" className="mt-4 scroll-mt-28">
+              <p className="text-xs font-bold uppercase tracking-wide text-hot-pink">
+                Code promo
+              </p>
+              <div className="mt-1 flex flex-col gap-2 sm:flex-row">
+                <input
+                  value={draftCode}
+                  onChange={(event) => {
+                    setDraftCode(event.target.value);
+                    setAppliedCode(null);
+                    setPromoStatus(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      void testPromoCode();
+                    }
+                  }}
+                  placeholder="Saisir un code"
+                  autoCapitalize="characters"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="w-full rounded-xl border-[3px] border-ink bg-white px-4 py-3 font-display text-sm font-bold uppercase text-ink placeholder:normal-case placeholder:text-ink/30 shadow-sticker-sm"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="shrink-0 sm:self-stretch sm:px-5"
+                  disabled={testingCode || draftCode.trim().length === 0}
+                  onClick={() => void testPromoCode()}
+                >
+                  {testingCode ? "…" : "Tester"}
+                </Button>
+              </div>
+              {promoStatus === "ok" ? (
+                <p className="mt-2 text-sm font-bold text-ink/70">
+                  Code {quote.welcomeCode} valable · −
+                  {formatEur(quote.welcomeAppliedCents)}
+                </p>
+              ) : null}
+              {promoStatus === "needsAccount" ? (
+                <p className="mt-2 text-sm font-bold text-ink/70">
+                  Ce code demande un compte.{" "}
+                  <Link
+                    href="/compte/inscription?next=/cart"
+                    className="text-hot-pink underline"
+                  >
+                    Créer un compte
+                  </Link>
+                </p>
+              ) : null}
+              {promoStatus === "invalid" ? (
+                <p className="mt-2 text-sm font-bold text-hot-pink">
+                  Code invalide ou déjà utilisé.
+                </p>
+              ) : null}
+            </div>
+
             <div className="mt-4 rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm">
               <div className="flex items-baseline justify-between gap-3">
+                <p className="text-sm font-bold text-ink/60">Sous-total</p>
+                <p className="text-sm font-bold text-ink">
+                  {formatEur(quote.subtotalCents)}
+                </p>
+              </div>
+              {quote.welcomeAppliedCents > 0 ? (
+                <div className="mt-1 flex items-baseline justify-between gap-3">
+                  <p className="text-sm font-bold text-ink/60">
+                    Code {quote.welcomeCode}
+                  </p>
+                  <p className="text-sm font-bold text-ink">
+                    −{formatEur(quote.welcomeAppliedCents)}
+                  </p>
+                </div>
+              ) : null}
+              {quote.creditAppliedCents > 0 ? (
+                <div className="mt-1 flex items-baseline justify-between gap-3">
+                  <p className="text-sm font-bold text-ink/60">Crédit</p>
+                  <p className="text-sm font-bold text-ink">
+                    −{formatEur(quote.creditAppliedCents)}
+                  </p>
+                </div>
+              ) : null}
+              <div className="mt-3 flex items-baseline justify-between gap-3 border-t-[3px] border-ink/10 pt-3">
                 <p className="font-display text-base font-bold uppercase text-ink">
                   Total
                 </p>
                 <p className="font-display text-xl font-bold uppercase text-ink">
-                  {formatEur(totalCents)} TTC
+                  {formatEur(quote.totalCents)} TTC
                 </p>
               </div>
+              {quote.cashbackPreviewCents > 0 ? (
+                <p className="mt-2 text-sm font-bold text-ink/70">
+                  Tu gagnes {formatEur(quote.cashbackPreviewCents)} de crédit
+                  après cette commande.
+                </p>
+              ) : null}
               <p className="mt-1 text-sm font-bold text-ink/55">
                 {shippingNote} · {legal.deliveryEstimate}
               </p>
@@ -207,7 +380,7 @@ export function CartPage() {
 
             <div className="mt-4">
               <CheckoutPayBlock
-                totalCents={totalCents}
+                totalCents={quote.totalCents}
                 pending={pending}
                 error={error}
                 onPay={pay}
@@ -225,7 +398,7 @@ export function CartPage() {
                 Total TTC
               </p>
               <p className="font-display text-lg font-bold uppercase text-ink">
-                {formatEur(totalCents)}
+                {formatEur(quote.totalCents)}
               </p>
             </div>
             <a

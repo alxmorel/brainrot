@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { formatEur } from "@/data/pricing";
 import { listOrdersForExport } from "@/server/ops/orders";
+import { calendarPeriod, parsePeriodDays } from "@/server/ops/period";
 import { listEventsForExport } from "@/server/ops/sessions";
-
-function parseDays(value: string | null) {
-  const days = Number(value ?? "30");
-  if (!Number.isFinite(days) || days < 1) return 30;
-  return Math.min(days, 365);
-}
 
 function csvEscape(value: string | number | null | undefined) {
   const str = String(value ?? "");
@@ -20,8 +15,9 @@ function csvEscape(value: string | number | null | undefined) {
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const type = params.get("type");
-  const days = parseDays(params.get("days"));
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const days = parsePeriodDays(params.get("days"), 30, 365);
+  const period = calendarPeriod(days);
+  const since = period.since;
 
   if (type === "orders") {
     const orders = await listOrdersForExport(since);

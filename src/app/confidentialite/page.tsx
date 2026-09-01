@@ -23,6 +23,14 @@ export default function Page() {
           (compta).
         </p>
       </LegalSection>
+      <LegalSection title="Compte">
+        <p>
+          Email, mot de passe (stocké haché), code welcome, solde de crédit
+          boutique et historique des commandes liées au compte. Base : exécution
+          du contrat et intérêt légitime (retrouver tes commandes). Cookie de
+          session compte (httpOnly).
+        </p>
+      </LegalSection>
       <LegalSection title="Paiement">
         <p>
           Le paiement est traité par {legal.paymentProcessor}. Nous ne stockons
@@ -54,9 +62,10 @@ export default function Page() {
       </LegalSection>
       <LegalSection title="Cookies">
         <p>
-          Cookie de session ops (interne, back-office). Boutique : panier et
-          combo en localStorage (nécessaire). Mesure d’audience seulement après
-          « OK ». Pas de cookie pub.
+          Cookie de session ops (interne, back-office) et cookie de session
+          compte (httpOnly). Boutique : panier et combo en localStorage
+          (nécessaire). Mesure d’audience seulement après « OK ». Pas de cookie
+          pub.
         </p>
       </LegalSection>
     </LegalPage>

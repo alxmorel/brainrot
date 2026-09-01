@@ -7,6 +7,7 @@ import {
 import { markOrderAsShipped } from "@/server/orders/shipOrder";
 import { retryFulfillOrder } from "@/server/fulfillment/tryFulfillOrder";
 import { getOrder } from "@/server/orders-repo";
+import { getSessionUser } from "@/server/get-session-user";
 
 export const runtime = "nodejs";
 
@@ -27,13 +28,7 @@ export async function GET(
   const params = new URL(request.url).searchParams;
   const sessionId = params.get("sessionId");
   const email = params.get("email");
-
-  if (!sessionId && !email) {
-    return NextResponse.json(
-      { ok: false, error: "Session ou email requis." },
-      { status: 400 },
-    );
-  }
+  const user = await getSessionUser();
 
   const order = await getOrder(id);
   if (!order) {
@@ -42,7 +37,8 @@ export async function GET(
 
   const sessionOk = sessionId && order.sessionId === sessionId;
   const emailOk = email && orderEmailMatches(order, email);
-  if (!sessionOk && !emailOk) {
+  const userOk = Boolean(user && order.userId === user.id);
+  if (!sessionOk && !emailOk && !userOk) {
     return NextResponse.json({ ok: false, error: "Accès refusé." }, { status: 403 });
   }
 

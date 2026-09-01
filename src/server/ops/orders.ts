@@ -5,15 +5,22 @@ import type { OpsOrderDetail, OpsOrderLine, OpsOrderSummary } from "@/models";
 import type { Order, OrderStatus } from "@/models";
 import { listOrderEvents } from "@/server/orders/orderEvents";
 import { prisma } from "@/server/db";
+import { parisYmd } from "@/server/ops/period";
 import type { Prisma } from "@prisma/client";
 
 type OrderRow = Prisma.OrderGetPayload<{ include: { items: true } }>;
 
+function rowUnitCents(row: OrderRow) {
+  return row.unitCents > 0 ? row.unitCents : teePriceCents;
+}
+
 function orderTotalCents(row: OrderRow) {
-  return row.items.reduce((sum, item) => sum + item.quantity * teePriceCents, 0);
+  if (row.totalCents > 0) return row.totalCents;
+  return row.items.reduce((sum, item) => sum + item.quantity * rowUnitCents(row), 0);
 }
 
 function toOpsLines(row: OrderRow): OpsOrderLine[] {
+  const unit = rowUnitCents(row);
   return row.items.map((item) => {
     const brainrot = brainrots.find((b) => b.id === item.brainrotId);
     return {
@@ -23,7 +30,7 @@ function toOpsLines(row: OrderRow): OpsOrderLine[] {
       color: item.color,
       colorLabel: teeColorLabel(item.color),
       quantity: item.quantity,
-      lineCents: item.quantity * teePriceCents,
+      lineCents: item.quantity * unit,
       printImage: item.printImage,
     };
   });
@@ -145,20 +152,19 @@ export async function getOrderBySessionId(sessionId: string) {
   return row ? toOpsOrderSummary(row) : null;
 }
 
-const SOLD_STATUSES = [
+const PAID_STATUSES = [
   "paid",
   "validated",
   "fulfillment_queued",
   "fulfillment_sent",
   "fulfillment_failed",
-  "failed",
   "shipped",
 ] as const;
 
-export async function revenueStats(since: Date) {
+export async function revenueStats(since: Date, ymds: string[]) {
   const orders = await prisma.order.findMany({
     where: {
-      status: { in: [...SOLD_STATUSES] },
+      status: { in: [...PAID_STATUSES] },
       createdAt: { gte: since },
     },
     include: { items: true },
@@ -168,15 +174,20 @@ export async function revenueStats(since: Date) {
   const orderCount = orders.length;
   const averageCents = orderCount > 0 ? Math.round(totalCents / orderCount) : 0;
 
-  const byDay: Record<string, { orders: number; cents: number }> = {};
+  const buckets = new Map(ymds.map((day) => [day, { orders: 0, cents: 0 }]));
   for (const row of orders) {
-    const day = row.createdAt.toISOString().slice(0, 10);
-    if (!byDay[day]) byDay[day] = { orders: 0, cents: 0 };
-    byDay[day].orders += 1;
-    byDay[day].cents += orderTotalCents(row);
+    const bucket = buckets.get(parisYmd(row.createdAt));
+    if (!bucket) continue;
+    bucket.orders += 1;
+    bucket.cents += orderTotalCents(row);
   }
 
-  return { totalCents, orderCount, averageCents, byDay };
+  return {
+    totalCents,
+    orderCount,
+    averageCents,
+    byDay: ymds.map((day) => ({ day, ...buckets.get(day)! })),
+  };
 }
 
 export async function listOrdersForExport(since?: Date) {

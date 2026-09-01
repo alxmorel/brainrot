@@ -81,6 +81,11 @@ export function OrderStatusCard({ order }: { order: PublicOrderView }) {
         <span>Total</span>
         <span>{formatEur(order.totalCents)} TTC</span>
       </p>
+      {order.discountCents > 0 ? (
+        <p className="mt-1 text-right text-xs font-bold text-ink/55">
+          dont −{formatEur(order.discountCents)} de réduction
+        </p>
+      ) : null}
 
       <p className="mt-4 text-xs font-bold text-ink/45">
         Une question ?{" "}

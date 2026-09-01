@@ -8,34 +8,90 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model ShopSettings {
+  id                       String    @id @default("default")
+  teePriceCents            Int       @default(1499)
+  teeCompareAtCents        Int       @default(1799)
+  welcomeEnabled           Boolean   @default(true)
+  welcomeCode              String    @default("BAMBINO")
+  welcomeKind              String    @default("percent")
+  welcomePercent           Int       @default(10)
+  welcomeAmountCents       Int       @default(200)
+  welcomeRequiresAccount   Boolean   @default(true)
+  welcomeTtlDays           Int       @default(7)
+  welcomeStartsAt          DateTime?
+  welcomeEndsAt            DateTime?
+  cashbackEnabled          Boolean   @default(true)
+  cashbackPerExtraTeeCents Int       @default(200)
+  cashbackMinQty           Int       @default(2)
+  updatedAt                DateTime  @default(now()) @updatedAt
+}
+
+model User {
+  id                String         @id @default(cuid())
+  email             String         @unique
+  passwordHash      String
+  creditCents       Int            @default(0)
+  welcomeCode       String         @unique
+  welcomeExpiresAt  DateTime
+  welcomeRedeemedAt DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  orders            Order[]
+  creditLedger      CreditLedger[]
+}
+
+model CreditLedger {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId     String?
+  kind        String
+  amountCents Int
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([orderId])
+}
+
 model Order {
-  id                 String      @id
-  sessionId          String
-  status             String
-  name               String
-  email              String
-  line1              String
-  city               String
-  postalCode         String
-  country            String
-  supplierProvider   String      @default("gelato")
-  supplierProductId  String?
-  supplierSku        String?
-  supplierExternalId String?
-  supplierTracking    String?
-  supplierTrackingUrl String?
-  supplierLastError   String?
+  id                      String       @id
+  sessionId               String
+  status                  String
+  name                    String
+  email                   String
+  line1                   String
+  city                    String
+  postalCode              String
+  country                 String
+  supplierProvider        String       @default("gelato")
+  supplierProductId       String?
+  supplierSku             String?
+  supplierExternalId      String?
+  supplierTracking        String?
+  supplierTrackingUrl     String?
+  supplierLastError       String?
   stripeCheckoutId        String?
   confirmationEmailSentAt DateTime?
   shippingEmailSentAt     DateTime?
+  userId                  String?
+  user                    User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  unitCents               Int          @default(1499)
+  discountCents           Int          @default(0)
+  creditAppliedCents      Int          @default(0)
+  welcomeAppliedCents     Int          @default(0)
+  totalCents              Int          @default(0)
+  cashbackGrantedCents    Int          @default(0)
+  welcomeCode             String?
   items                   OrderItem[]
   events                  OrderEvent[]
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
 
   @@index([status])
   @@index([createdAt])
   @@index([email])
+  @@index([userId])
 }
 
 model OrderItem {
@@ -53,7 +109,7 @@ model OrderItem {
 model OrderEvent {
   id        String   @id @default(cuid())
   orderId   String
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   kind      String
   detail    Json?
   createdAt DateTime @default(now())

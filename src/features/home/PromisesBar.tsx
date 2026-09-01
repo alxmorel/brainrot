@@ -3,10 +3,11 @@
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/shared/utils/cn";
 import { legal } from "@/data/legal";
+import { PriceTag } from "@/shared/components/ui";
 
 const promises = [
   {
-    title: legal.priceTtc,
+    title: "Prix d’ouverture",
     subtitle: "Livraison comprise",
     icon: "tag" as const,
   },
@@ -126,7 +127,7 @@ export function PromisesBar({ className }: { className?: string }) {
             <PromiseIcon icon={promise.icon} />
             <div className="min-w-0">
               <p className="font-display text-[0.62rem] font-bold uppercase leading-[1.05] tracking-[-0.03em] text-ink sm:text-[1.05rem] lg:text-xl xl:text-2xl">
-                {promise.title}
+                {promise.icon === "tag" ? <PriceTag /> : promise.title}
               </p>
               <p className="mt-0.5 hidden text-sm font-medium leading-snug text-ink/55 sm:block lg:mt-1 lg:text-base xl:text-lg">
                 {promise.subtitle}

@@ -38,6 +38,7 @@ export interface OrderItem {
 export interface Order {
   id: string;
   sessionId: string;
+  userId: string | null;
   status: OrderStatus;
   items: OrderItem[];
   shipping: ShippingAddress;
@@ -50,6 +51,13 @@ export interface Order {
     trackingUrl: string | null;
     lastError: string | null;
   };
+  unitCents: number;
+  discountCents: number;
+  creditAppliedCents: number;
+  welcomeAppliedCents: number;
+  totalCents: number;
+  cashbackGrantedCents: number;
+  welcomeCode: string | null;
   createdAt: string;
   updatedAt: string;
 }

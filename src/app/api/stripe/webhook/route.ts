@@ -9,6 +9,7 @@ import {
   updateOrderEmail,
   updateOrderShipping,
 } from "@/server/orders-repo";
+import { settleOrderCredits } from "@/server/credits";
 import { getStripe } from "@/server/stripe";
 
 export const runtime = "nodejs";
@@ -84,6 +85,11 @@ export async function POST(request: Request) {
       }
       await markOrderPaid(orderId, session.id);
       await recordOrderEvent(orderId, "paid", { stripeSessionId: session.id });
+      try {
+        await settleOrderCredits(orderId);
+      } catch {
+        // ne pas faire échouer le webhook Stripe
+      }
       try {
         const sent = await trySendOrderConfirmation(orderId);
         if (sent) {

@@ -6,6 +6,7 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
   return {
     id: row.id,
     sessionId: row.sessionId,
+    userId: row.userId,
     status: row.status as OrderStatus,
     items: row.items.map(
       (item): OrderItem => ({
@@ -34,6 +35,13 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
       trackingUrl: row.supplierTrackingUrl,
       lastError: row.supplierLastError,
     },
+    unitCents: row.unitCents,
+    discountCents: row.discountCents,
+    creditAppliedCents: row.creditAppliedCents,
+    welcomeAppliedCents: row.welcomeAppliedCents,
+    totalCents: row.totalCents,
+    cashbackGrantedCents: row.cashbackGrantedCents,
+    welcomeCode: row.welcomeCode,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
@@ -51,6 +59,14 @@ export async function createOrder(order: Order) {
       city: order.shipping.city,
       postalCode: order.shipping.postalCode,
       country: order.shipping.country,
+      userId: order.userId,
+      unitCents: order.unitCents,
+      discountCents: order.discountCents,
+      creditAppliedCents: order.creditAppliedCents,
+      welcomeAppliedCents: order.welcomeAppliedCents,
+      totalCents: order.totalCents,
+      cashbackGrantedCents: order.cashbackGrantedCents,
+      welcomeCode: order.welcomeCode,
       supplierProvider: order.supplier.provider,
       supplierProductId: order.supplier.productId,
       supplierSku: order.supplier.sku,
@@ -67,6 +83,16 @@ export async function createOrder(order: Order) {
       },
     },
   });
+}
+
+export async function listOrdersByUserId(userId: string): Promise<Order[]> {
+  const rows = await prisma.order.findMany({
+    where: { userId },
+    include: { items: true },
+    orderBy: { createdAt: "desc" },
+    take: 40,
+  });
+  return rows.map(toOrder);
 }
 
 export async function listOrders(): Promise<Order[]> {
@@ -242,8 +268,10 @@ export async function listEvents() {
   });
 }
 
-export async function countOrders() {
-  return prisma.order.count();
+export async function countOrders(since?: Date) {
+  return prisma.order.count({
+    where: since ? { createdAt: { gte: since } } : undefined,
+  });
 }
 
 const SOLD_STATUSES = [
@@ -269,9 +297,10 @@ export async function listBestSellingBrainrotIds(limit = 8): Promise<string[]> {
   return groups.map((group) => group.brainrotId);
 }
 
-export async function ordersGroupedByStatus() {
+export async function ordersGroupedByStatus(since?: Date) {
   const groups = await prisma.order.groupBy({
     by: ["status"],
+    where: since ? { createdAt: { gte: since } } : undefined,
     _count: { status: true },
   });
   return Object.fromEntries(groups.map((g) => [g.status, g._count.status]));

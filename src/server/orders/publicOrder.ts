@@ -1,8 +1,8 @@
 import { brainrots } from "@/data/brainrots";
-import { teePriceCents } from "@/data/pricing";
 import { teeColorLabel } from "@/data/teeColors";
 import type { Order, OrderStatus, PublicOrderLine, PublicOrderView } from "@/models";
 import { isHttpUrl } from "@/server/fulfillment/gelatoWebhook";
+import { orderLineCents, orderPaidTotal } from "@/server/order-money";
 
 export const PAID_STATUSES: OrderStatus[] = [
   "paid",
@@ -48,11 +48,11 @@ export function buildPublicOrderView(order: Order): PublicOrderView {
       color: item.color,
       colorLabel: teeColorLabel(item.color),
       quantity: item.quantity,
-      lineCents: item.quantity * teePriceCents,
+      lineCents: orderLineCents(order, item.quantity),
     };
   });
 
-  const totalCents = items.reduce((sum, item) => sum + item.lineCents, 0);
+  const totalCents = orderPaidTotal(order);
   const email =
     order.shipping.email && order.shipping.email !== "-"
       ? order.shipping.email
@@ -70,6 +70,8 @@ export function buildPublicOrderView(order: Order): PublicOrderView {
     email,
     items,
     totalCents,
+    discountCents: order.discountCents,
+    cashbackGrantedCents: order.cashbackGrantedCents,
     tracking: order.supplier.tracking ?? null,
     trackingUrl,
   };

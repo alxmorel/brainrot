@@ -4,9 +4,10 @@ import { useRef } from "react";
 import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { motion, useReducedMotion } from "motion/react";
 import { brand } from "@/data/brand";
-import { customProductNote, shippingNote, teePriceLabel } from "@/data/pricing";
+import { customProductNote, shippingNote } from "@/data/pricing";
 import { defaultProduct } from "@/data/products";
 import { GangTeeCard } from "@/features/home/GangTeeCard";
+import { PriceTag } from "@/shared/components/ui";
 import type { Brainrototo } from "@/models";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
@@ -94,7 +95,7 @@ export function HomeBestsellers({ items }: { items: Brainrototo[] }) {
               }}
               className="mt-2 font-display text-sm font-bold uppercase tracking-tight text-ink/70 sm:text-base lg:text-lg"
             >
-              {defaultProduct.name} · {teePriceLabel}
+              {defaultProduct.name} · <PriceTag />
             </motion.p>
           </div>
           <motion.div

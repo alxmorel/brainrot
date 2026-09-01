@@ -6,11 +6,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
-import {
-  customProductNote,
-  shippingNote,
-  teePriceLabel,
-} from "@/data/pricing";
+import { customProductNote, shippingNote } from "@/data/pricing";
 import { colorsForBrainrot } from "@/data/productAssets";
 import { defaultProduct } from "@/data/products";
 import { type TeeSize } from "@/data/sizes";
@@ -24,7 +20,7 @@ import { TraitChips, traitStickerTone, traitToneMuted, traitToneText } from "@/f
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
 import { teePageHref, useTeeColor, useTeeSize } from "@/features/product/teeSize";
-import { Button } from "@/shared/components/ui";
+import { Button, PriceTag } from "@/shared/components/ui";
 import { cn } from "@/shared/utils/cn";
 import { track } from "@/shared/utils/track";
 import type { Brainrototo, Trait } from "@/models";
@@ -596,7 +592,7 @@ export function GeneratorStudio({
 
             <div className="mt-2 w-full shrink-0 text-center">
               <p className="font-display text-[0.65rem] font-bold uppercase tracking-tight text-ink/70 sm:text-xs lg:text-sm xl:text-base">
-                {defaultProduct.name} · {teePriceLabel}
+                {defaultProduct.name} · <PriceTag />
               </p>
               {selected ? (
                 <div className="mt-0.5 flex flex-wrap items-center justify-center gap-2">

@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { OpsSessionSummary } from "@/models";
+import { formatOpsRange, OpsPeriodToggle } from "@/features/ops/OpsPeriodToggle";
 import { Button } from "@/shared/components/ui";
 
 export function OpsSessionsList() {
   const [sessions, setSessions] = useState<OpsSessionSummary[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [days, setDays] = useState(7);
+  const [from, setFrom] = useState<string | null>(null);
+  const [to, setTo] = useState<string | null>(null);
   const [hasCart, setHasCart] = useState(false);
   const [hasOrder, setHasOrder] = useState(false);
 
@@ -16,7 +20,7 @@ export function OpsSessionsList() {
     const params = new URLSearchParams({
       page: String(page),
       pageSize: "25",
-      days: "30",
+      days: String(days),
     });
     if (hasCart) params.set("hasCart", "1");
     if (hasOrder) params.set("hasOrder", "1");
@@ -31,11 +35,15 @@ export function OpsSessionsList() {
       const data = json as {
         sessions: OpsSessionSummary[];
         totalPages: number;
+        from?: string;
+        to?: string;
       };
       setSessions(data.sessions);
       setTotalPages(data.totalPages);
+      setFrom(data.from ?? null);
+      setTo(data.to ?? null);
     }
-  }, [hasCart, hasOrder, page]);
+  }, [days, hasCart, hasOrder, page]);
 
   useEffect(() => {
     void load();
@@ -43,8 +51,21 @@ export function OpsSessionsList() {
 
   return (
     <div>
-      <h2 className="font-display text-2xl font-bold uppercase">Sessions</h2>
-      <p className="text-sm font-bold text-ink/60">30 derniers jours</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-display text-2xl font-bold uppercase">Sessions</h2>
+          <p className="text-sm font-bold text-ink/60">
+            {from && to ? formatOpsRange(from, to, days) : `${days} derniers jours`}
+          </p>
+        </div>
+        <OpsPeriodToggle
+          days={days}
+          onChange={(value) => {
+            setDays(value);
+            setPage(1);
+          }}
+        />
+      </div>
 
       <div className="mt-4 flex flex-wrap gap-3">
         <label className="flex items-center gap-2 text-sm font-bold">

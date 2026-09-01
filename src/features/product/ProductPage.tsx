@@ -8,9 +8,10 @@ import { gelatoTee, sellableTeeSizes } from "@/data/fulfillment";
 import { legal } from "@/data/legal";
 import {
   customProductLegalNote,
+  formatEur,
   shippingNote,
-  teePriceLabel,
 } from "@/data/pricing";
+import { useShop } from "@/features/shop/ShopProvider";
 import { colorsForBrainrot, galleryFor } from "@/data/productAssets";
 import { defaultProduct } from "@/data/products";
 import type { TeeSize } from "@/data/sizes";
@@ -29,7 +30,7 @@ import {
 import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
-import { Button } from "@/shared/components/ui";
+import { Button, PriceTag } from "@/shared/components/ui";
 import type { Brainrototo } from "@/models";
 
 const specCards = [
@@ -53,6 +54,7 @@ export function ProductPage({
   initialColor?: TeeColorId;
 }) {
   const { addItem } = useCart();
+  const shop = useShop();
   const sizes = sellableTeeSizes();
   const palette = colorsForBrainrot(brainrot);
   const [size, setSize] = useTeeSize(initialSize);
@@ -168,7 +170,7 @@ export function ProductPage({
               {brainrot.rarity ? ` · ${rarityLabel[brainrot.rarity]}` : null}
             </p>
             <p className="mt-2 font-display text-lg font-bold uppercase text-ink">
-              {teePriceLabel}
+              <PriceTag />
             </p>
             <p className="mt-1 text-sm font-bold text-ink/70">
               {shippingNote} · {legal.deliveryEstimate}
@@ -255,7 +257,7 @@ export function ProductPage({
       <div className="fixed inset-x-3 bottom-3 z-30 lg:hidden">
         <div className="rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker">
           <Button className="w-full" onClick={handleAdd}>
-            {justAdded ? "Ajouté ✓" : `Ajouter · ${teePriceLabel}`}
+            {justAdded ? "Ajouté ✓" : `Ajouter · ${formatEur(shop.teePriceCents)} TTC`}
           </Button>
           {justAdded ? (
             <Link

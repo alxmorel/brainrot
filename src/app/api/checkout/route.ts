@@ -7,7 +7,9 @@ import {
   attachStripeCheckout,
   createOrder,
 } from "@/server/orders-repo";
-import { appUrl, getStripe, teeUnitAmountCents } from "@/server/stripe";
+import { quoteCheckout } from "@/server/checkout-quote";
+import { getSessionUser } from "@/server/get-session-user";
+import { appUrl, getStripe } from "@/server/stripe";
 import type { CartItem, Order } from "@/models";
 
 const SHIPPING_COUNTRIES = [
@@ -40,6 +42,8 @@ export async function POST(request: Request) {
   const record = body as Record<string, unknown>;
   const sessionId =
     typeof record.sessionId === "string" ? record.sessionId : "";
+  const typedCode =
+    typeof record.welcomeCode === "string" ? record.welcomeCode : null;
   const itemsRaw = Array.isArray(record.items) ? record.items : [];
   if (!sessionId || itemsRaw.length === 0) {
     return NextResponse.json({ ok: false }, { status: 400 });
@@ -69,6 +73,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
+  const sessionUser = await getSessionUser();
+  const quote = await quoteCheckout({
+    items,
+    sessionUser,
+    typedCode,
+  });
+
   const catalog = catalogForProduct(
     items[0].productId,
     isTeeSize(items[0].size) ? items[0].size : undefined,
@@ -78,6 +89,7 @@ export async function POST(request: Request) {
   const order: Order = {
     id: `BR-${Date.now().toString(36).toUpperCase()}`,
     sessionId,
+    userId: quote.userId,
     status: "pending_payment",
     items,
     shipping: {
@@ -97,17 +109,27 @@ export async function POST(request: Request) {
       trackingUrl: null,
       lastError: null,
     },
+    unitCents: quote.unitCents,
+    discountCents: quote.discountCents,
+    creditAppliedCents: quote.creditAppliedCents,
+    welcomeAppliedCents: quote.welcomeAppliedCents,
+    totalCents: quote.totalCents,
+    cashbackGrantedCents: 0,
+    welcomeCode: quote.welcomeCode,
     createdAt: now,
     updatedAt: now,
   };
 
   await createOrder(order);
 
-  const unit = teeUnitAmountCents();
   const origin = appUrl();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    metadata: { orderId: order.id, sessionId },
+    metadata: {
+      orderId: order.id,
+      sessionId,
+      userId: quote.userId ?? "",
+    },
     success_url: `${origin}/checkout/merci?id=${order.id}`,
     cancel_url: `${origin}/cart`,
     shipping_address_collection: {
@@ -119,13 +141,29 @@ export async function POST(request: Request) {
         quantity: item.quantity,
         price_data: {
           currency: "eur",
-          unit_amount: unit,
+          unit_amount: quote.unitCents,
           product_data: {
             name: `T-shirt ${brainrot?.name ?? item.brainrotId} ${item.size} ${teeColorLabel(item.color)}`,
           },
         },
       };
     }),
+    ...(quote.discountCents > 0
+      ? {
+          discounts: [
+            {
+              coupon: (
+                await stripe.coupons.create({
+                  amount_off: quote.discountCents,
+                  currency: "eur",
+                  duration: "once",
+                  max_redemptions: 1,
+                })
+              ).id,
+            },
+          ],
+        }
+      : {}),
   });
 
   if (!session.url) {

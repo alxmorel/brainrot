@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { brand } from "@/data/brand";
 import { legal } from "@/data/legal";
-import { shippingNote } from "@/data/pricing";
+import { formatEur, shippingNote } from "@/data/pricing";
+import { UnusedCredit } from "@/features/account/UnusedCredit";
+import { useAccount } from "@/features/account/AccountProvider";
 import { useCart } from "@/features/cart/CartProvider";
 import { CheckoutProgress } from "@/features/cart/CheckoutProgress";
 import { OrderStatusCard, OrderStatusLinks } from "@/features/cart/OrderStatusCard";
@@ -40,6 +42,7 @@ async function fetchOrder(id: string): Promise<PublicOrderView | null> {
 
 export function OrderConfirm({ orderId }: { orderId?: string }) {
   const { clearCart } = useCart();
+  const { me, refresh } = useAccount();
   const cleared = useRef(false);
   const [state, setState] = useState<LoadState>(
     orderId ? { kind: "loading" } : { kind: "failed", message: "Commande introuvable." },
@@ -71,6 +74,7 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
           cleared.current = true;
         }
         setState({ kind: "paid", order });
+        void refresh();
         return;
       }
 
@@ -91,7 +95,7 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [orderId, clearCart]);
+  }, [orderId, clearCart, refresh]);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -147,6 +151,16 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
                 Merci,{" "}
                 <span className="text-hot-pink">c’est commandé</span>
               </h1>
+
+              {state.order.cashbackGrantedCents > 0 ? (
+                <p className="mt-4 font-display text-lg font-bold uppercase text-ink">
+                  Tu as gagné {formatEur(state.order.cashbackGrantedCents)} de
+                  crédit
+                </p>
+              ) : null}
+              <div className="mt-2 flex justify-center">
+                <UnusedCredit cents={me?.creditCents ?? 0} />
+              </div>
 
               <p className="mt-4 max-w-md mx-auto text-sm font-bold leading-snug text-ink/70 sm:text-base">
                 {state.order.email

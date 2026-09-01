@@ -1,8 +1,9 @@
-import { brainrots } from "@/data/brainrots";
 import { legal } from "@/data/legal";
-import { customProductLegalNote, formatEur, shippingNote, teePriceCents } from "@/data/pricing";
+import { customProductLegalNote, formatEur, shippingNote } from "@/data/pricing";
 import { teeColorLabel } from "@/data/teeColors";
+import { brainrots } from "@/data/brainrots";
 import type { Order } from "@/models";
+import { orderLineCents, orderPaidTotal } from "@/server/order-money";
 
 function escapeHtml(value: string) {
   return value
@@ -16,15 +17,23 @@ export function buildOrderConfirmationHtml(order: Order) {
   const lines = order.items.map((item) => {
     const brainrot = brainrots.find((b) => b.id === item.brainrotId);
     const name = brainrot?.name ?? item.brainrotId;
-    const lineCents = item.quantity * teePriceCents;
+    const lineCents = orderLineCents(order, item.quantity);
     return {
       name,
       meta: `${item.size} · ${teeColorLabel(item.color)} · ×${item.quantity}`,
       lineCents,
     };
   });
-  const totalCents = lines.reduce((sum, line) => sum + line.lineCents, 0);
+  const totalCents = orderPaidTotal(order);
   const { shipping } = order;
+
+  const discountHtml =
+    order.discountCents > 0
+      ? `<tr>
+                    <td style="padding:10px 0 0;font-size:13px;color:#5c5c5c;">Réduction</td>
+                    <td style="padding:10px 0 0;text-align:right;font-size:13px;color:#5c5c5c;">−${escapeHtml(formatEur(order.discountCents))}</td>
+                  </tr>`
+      : "";
 
   const itemsHtml = lines
     .map(
@@ -67,6 +76,7 @@ export function buildOrderConfirmationHtml(order: Order) {
               <td style="padding:16px 24px 0;">
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                   ${itemsHtml}
+                  ${discountHtml}
                   <tr>
                     <td style="padding:16px 0 0;font-size:16px;font-weight:700;text-transform:uppercase;">Total</td>
                     <td style="padding:16px 0 0;text-align:right;font-size:16px;font-weight:700;">${escapeHtml(formatEur(totalCents))} TTC</td>
@@ -114,13 +124,10 @@ export function buildOrderConfirmationText(order: Order) {
   const lines = order.items.map((item) => {
     const brainrot = brainrots.find((b) => b.id === item.brainrotId);
     const name = brainrot?.name ?? item.brainrotId;
-    const lineCents = item.quantity * teePriceCents;
+    const lineCents = orderLineCents(order, item.quantity);
     return `• ${name} - ${item.size} · ${teeColorLabel(item.color)} · ×${item.quantity} - ${formatEur(lineCents)}`;
   });
-  const totalCents = order.items.reduce(
-    (sum, item) => sum + item.quantity * teePriceCents,
-    0,
-  );
+  const totalCents = orderPaidTotal(order);
   const { shipping } = order;
 
   return [

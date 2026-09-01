@@ -18,6 +18,8 @@ export type PublicOrderView = {
   email: string | null;
   items: PublicOrderLine[];
   totalCents: number;
+  discountCents: number;
+  cashbackGrantedCents: number;
   tracking: string | null;
   trackingUrl: string | null;
 };

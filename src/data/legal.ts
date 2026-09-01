@@ -1,4 +1,13 @@
-import { teePriceLabel } from "@/data/pricing";
+import {
+  cashbackPerExtraTeeCents,
+  formatEur,
+  formatWelcomeOffer,
+  teeCompareAtCents,
+  teePriceLabel,
+  welcomeCampaignCode,
+  welcomeCodeTtlDays,
+} from "@/data/pricing";
+import { DEFAULT_SHOP } from "@/models/shop";
 
 /** Identité légale - à compléter avant de vendre. Affichée telle quelle sur les pages. */
 export const legal = {
@@ -20,6 +29,12 @@ export const legal = {
   },
   paymentProcessor: "Stripe Payments Europe, Ltd.",
   priceTtc: teePriceLabel,
+  priceCompareAt: formatEur(teeCompareAtCents),
+  welcomeDiscount: formatWelcomeOffer(DEFAULT_SHOP),
+  welcomeCode: welcomeCampaignCode,
+  welcomeDays: welcomeCodeTtlDays,
+  cashbackPerExtra: formatEur(cashbackPerExtraTeeCents),
+  cashbackMinQty: DEFAULT_SHOP.cashbackMinQty,
   deliveryShort: "2–7 jours",
   deliveryEstimate:
     "2 à 7 jours ouvrés après paiement (France et UE, délai indicatif)",

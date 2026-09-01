@@ -63,3 +63,47 @@ export type OpsSessionDetail = {
   }[];
   order: OpsOrderSummary | null;
 };
+
+export type OpsFunnelStep =
+  | "page_view"
+  | "view_create"
+  | "add_to_cart"
+  | "begin_checkout"
+  | "order_placed";
+
+export type OpsFunnelCounts = Record<OpsFunnelStep, number>;
+
+export type OpsDayPoint = {
+  day: string;
+  visits: number;
+  compose: number;
+  carts: number;
+  checkouts: number;
+  orders: number;
+  paidOrders: number;
+  cents: number;
+};
+
+export type OpsReportPayload = {
+  periodDays: number;
+  from: string;
+  to: string;
+  revenue: {
+    totalCents: number;
+    orderCount: number;
+    averageCents: number;
+  };
+  analytics: {
+    counts: Record<string, number>;
+    funnel: OpsFunnelCounts;
+    funnelRates: OpsFunnelCounts;
+    conversionRate: number;
+    abandonedCheckout: number;
+    topBrainrots: { brainrotId: string; name: string; count: number }[];
+    totalEvents: number;
+    sessionsWithCart: number;
+  };
+  byDay: OpsDayPoint[];
+  ordersByStatus: Record<string, number>;
+  totals: { orders: number; events: number; sessionsWithCart: number };
+};

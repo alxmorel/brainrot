@@ -4,6 +4,7 @@ import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 
 const primaryLinks = [
   { href: "/cart", label: "Panier" },
+  { href: "/compte", label: "Compte" },
   { href: "/commande", label: "Ma commande" },
   { href: "/guide-tailles", label: "Guide des tailles" },
 ] as const;

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { legal } from "@/data/legal";
+import { formatEur, formatWelcomeOffer } from "@/data/pricing";
+import { getShopSettings } from "@/server/shop-settings";
 import { LegalPage, LegalSection } from "@/shared/components/layout/LegalPage";
 
 export const metadata: Metadata = {
@@ -8,7 +10,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/cgv" },
 };
 
-export default function Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const shop = await getShopSettings();
+  const priceTtc = `${formatEur(shop.teePriceCents)} TTC`;
+  const priceCompare =
+    shop.teeCompareAtCents > shop.teePriceCents
+      ? formatEur(shop.teeCompareAtCents)
+      : null;
+
   return (
     <LegalPage title="Conditions générales de vente">
       <LegalSection title="Objet">
@@ -26,10 +37,10 @@ export default function Page() {
       </LegalSection>
       <LegalSection title="Prix et paiement">
         <p>
-          Prix affiché : {legal.priceTtc} par tee, livraison comprise. Paiement par
-          carte via{" "}
-          {legal.paymentProcessor}. La commande n’est confirmée qu’après
-          paiement effectif.
+          Prix : {priceTtc} par tee, livraison comprise
+          {priceCompare ? ` (prix barré ${priceCompare})` : ""}. Paiement par
+          carte via {legal.paymentProcessor}. La commande n’est confirmée
+          qu’après paiement effectif.
         </p>
       </LegalSection>
       <LegalSection title="Commande">
@@ -56,6 +67,33 @@ export default function Page() {
           En cas de défaut ou d’erreur d’impression de notre fait : contact{" "}
           {legal.email} avec le n° de commande. Échange ou remboursement selon
           le cas.
+        </p>
+      </LegalSection>
+      <LegalSection title="Compte, code welcome et crédit">
+        <p>
+          {shop.welcomeEnabled ? (
+            <>
+              {shop.welcomeRequiresAccount
+                ? "La création d’un compte donne accès au"
+                : "Le"}{" "}
+              code {shop.welcomeCode} ({formatWelcomeOffer(shop)}), valable{" "}
+              {shop.welcomeTtlDays} jours à compter de l’inscription, à saisir
+              au paiement, une fois.
+            </>
+          ) : (
+            <>Le code d’ouverture n’est pas actif actuellement.</>
+          )}{" "}
+          {shop.cashbackEnabled ? (
+            <>
+              Un crédit boutique (en euros, pas en pourcentage) peut être
+              attribué dès le {shop.cashbackMinQty}
+              <sup>e</sup> tee d’une même commande (
+              {formatEur(shop.cashbackPerExtraTeeCents)} par tee supplémentaire),
+              si tu es connecté au paiement. Le crédit s’utilise sur une
+              commande suivante, n’est pas remboursable en espèces, et expire
+              seulement pour le code welcome.
+            </>
+          ) : null}
         </p>
       </LegalSection>
       <LegalSection title="Données">

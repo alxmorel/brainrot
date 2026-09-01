@@ -1,5 +1,7 @@
 import type { OpsSessionDetail, OpsSessionSummary } from "@/models";
+import { brainrots } from "@/data/brainrots";
 import { getOrderBySessionId } from "@/server/ops/orders";
+import { calendarPeriod, parisYmd } from "@/server/ops/period";
 import { prisma } from "@/server/db";
 
 export type ListSessionsParams = {
@@ -43,7 +45,7 @@ function buildSessionAgg(events: { sessionId: string; name: string; createdAt: D
 export async function listOpsSessions(params: ListSessionsParams = {}) {
   const page = Math.max(1, params.page ?? 1);
   const pageSize = Math.min(100, Math.max(1, params.pageSize ?? 25));
-  const since = params.since ?? new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const since = params.since ?? calendarPeriod(7).since;
 
   const events = await prisma.analyticsEvent.findMany({
     where: { createdAt: { gte: since } },
@@ -121,7 +123,7 @@ export async function listEventsForExport(since?: Date) {
   });
 }
 
-export async function analyticsReport(since: Date) {
+export async function analyticsReport(since: Date, ymds: string[]) {
   const events = await prisma.analyticsEvent.findMany({
     where: { createdAt: { gte: since } },
     select: { sessionId: true, name: true, path: true, payload: true, createdAt: true },
@@ -132,25 +134,48 @@ export async function analyticsReport(since: Date) {
   const checkoutSessions = new Set<string>();
   const orderSessions = new Set<string>();
   const brainrotSelects: Record<string, number> = {};
-
-  const funnel = {
-    page_view: 0,
-    view_create: 0,
-    add_to_cart: 0,
-    begin_checkout: 0,
-    order_placed: 0,
+  const funnelSets = {
+    page_view: new Set<string>(),
+    view_create: new Set<string>(),
+    add_to_cart: new Set<string>(),
+    begin_checkout: new Set<string>(),
+    order_placed: new Set<string>(),
   };
+  const emptyDay = () => ({
+    visits: new Set<string>(),
+    compose: new Set<string>(),
+    carts: new Set<string>(),
+    checkouts: new Set<string>(),
+    orders: new Set<string>(),
+  });
+  const daySets = new Map(ymds.map((day) => [day, emptyDay()]));
 
   for (const event of events) {
     counts[event.name] = (counts[event.name] ?? 0) + 1;
-    if (event.name === "add_to_cart") sessionsWithCart.add(event.sessionId);
-    if (event.name === "begin_checkout") checkoutSessions.add(event.sessionId);
-    if (event.name === "order_placed") orderSessions.add(event.sessionId);
-    if (event.name === "page_view") funnel.page_view += 1;
-    if (event.name === "view_create") funnel.view_create += 1;
-    if (event.name === "add_to_cart") funnel.add_to_cart += 1;
-    if (event.name === "begin_checkout") funnel.begin_checkout += 1;
-    if (event.name === "order_placed") funnel.order_placed += 1;
+    const day = daySets.get(parisYmd(event.createdAt));
+    if (event.name === "add_to_cart") {
+      sessionsWithCart.add(event.sessionId);
+      funnelSets.add_to_cart.add(event.sessionId);
+      day?.carts.add(event.sessionId);
+    }
+    if (event.name === "begin_checkout") {
+      checkoutSessions.add(event.sessionId);
+      funnelSets.begin_checkout.add(event.sessionId);
+      day?.checkouts.add(event.sessionId);
+    }
+    if (event.name === "order_placed") {
+      orderSessions.add(event.sessionId);
+      funnelSets.order_placed.add(event.sessionId);
+      day?.orders.add(event.sessionId);
+    }
+    if (event.name === "page_view") {
+      funnelSets.page_view.add(event.sessionId);
+      day?.visits.add(event.sessionId);
+    }
+    if (event.name === "view_create") {
+      funnelSets.view_create.add(event.sessionId);
+      day?.compose.add(event.sessionId);
+    }
     if (event.name === "brainrot_select" && event.payload && typeof event.payload === "object") {
       const brainrotId = (event.payload as { brainrotId?: unknown }).brainrotId;
       if (typeof brainrotId === "string") {
@@ -159,11 +184,36 @@ export async function analyticsReport(since: Date) {
     }
   }
 
-  if (funnel.view_create === 0) {
-    funnel.view_create = events.filter(
-      (e) => e.name === "page_view" && e.path.startsWith("/create"),
-    ).length;
+  if (funnelSets.view_create.size === 0) {
+    for (const event of events) {
+      if (event.name === "page_view" && event.path.startsWith("/create")) {
+        funnelSets.view_create.add(event.sessionId);
+        daySets.get(parisYmd(event.createdAt))?.compose.add(event.sessionId);
+      }
+    }
   }
+
+  const funnel = {
+    page_view: funnelSets.page_view.size,
+    view_create: funnelSets.view_create.size,
+    add_to_cart: funnelSets.add_to_cart.size,
+    begin_checkout: funnelSets.begin_checkout.size,
+    order_placed: funnelSets.order_placed.size,
+  };
+
+  function stepRate(current: number, previous: number) {
+    if (previous <= 0) return 0;
+    return Math.min(100, Math.round((current / previous) * 100));
+  }
+
+  const composeBase = funnel.view_create > 0 ? funnel.view_create : funnel.page_view;
+  const funnelRates = {
+    page_view: funnel.page_view > 0 ? 100 : 0,
+    view_create: stepRate(funnel.view_create, funnel.page_view),
+    add_to_cart: stepRate(funnel.add_to_cart, composeBase),
+    begin_checkout: stepRate(funnel.begin_checkout, funnel.add_to_cart),
+    order_placed: stepRate(funnel.order_placed, funnel.begin_checkout),
+  };
 
   const abandonedCheckout = [...checkoutSessions].filter(
     (sid) => !orderSessions.has(sid),
@@ -174,18 +224,35 @@ export async function analyticsReport(since: Date) {
       ? Math.round((orderSessions.size / checkoutSessions.size) * 100)
       : 0;
 
+  const names = new Map(brainrots.map((item) => [item.id, item.name]));
   const topBrainrots = Object.entries(brainrotSelects)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
-    .map(([brainrotId, count]) => ({ brainrotId, count }));
+    .map(([brainrotId, count]) => ({
+      brainrotId,
+      name: names.get(brainrotId) ?? brainrotId,
+      count,
+    }));
 
   return {
     counts,
     funnel,
+    funnelRates,
     sessionsWithCart: sessionsWithCart.size,
     abandonedCheckout,
     conversionRate,
     topBrainrots,
     totalEvents: events.length,
+    byDay: ymds.map((day) => {
+      const bucket = daySets.get(day)!;
+      return {
+        day,
+        visits: bucket.visits.size,
+        compose: bucket.compose.size,
+        carts: bucket.carts.size,
+        checkouts: bucket.checkouts.size,
+        orders: bucket.orders.size,
+      };
+    }),
   };
 }

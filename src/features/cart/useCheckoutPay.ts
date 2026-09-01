@@ -1,20 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { teePriceCents } from "@/data/pricing";
+import { useState } from "react";
 import { useCart } from "@/features/cart/CartProvider";
 import { getSessionId, track } from "@/shared/utils/track";
 import type { CartItem } from "@/models";
 
-export function useCheckoutPay(items: CartItem[]) {
+export function useCheckoutPay(items: CartItem[], welcomeCode: string | null) {
   const { count } = useCart();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-
-  const totalCents = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity * teePriceCents, 0),
-    [items],
-  );
 
   async function pay(cgvAccepted: boolean) {
     setError(null);
@@ -32,6 +26,7 @@ export function useCheckoutPay(items: CartItem[]) {
       body: JSON.stringify({
         sessionId: getSessionId(),
         items,
+        welcomeCode: welcomeCode || undefined,
       }),
     });
     const json: unknown = await response.json().catch(() => null);
@@ -54,5 +49,5 @@ export function useCheckoutPay(items: CartItem[]) {
     window.location.href = (json as { url: string }).url;
   }
 
-  return { pay, error, setError, pending, totalCents };
+  return { pay, error, setError, pending };
 }
