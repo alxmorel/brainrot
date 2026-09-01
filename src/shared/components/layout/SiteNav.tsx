@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { brand } from "@/data/brand";
 import { BrandWordmark } from "@/shared/components/brand";
 import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { OfferBar } from "@/features/account/OfferBar";
@@ -42,6 +43,17 @@ export function SiteNav() {
           >
             La bande
           </ComposeLink>
+          <Link
+            href="/brainrots"
+            className={cn(
+              "rounded-pill border-[3px] border-ink px-2 py-1 font-display text-[0.65rem] font-bold uppercase tracking-tight shadow-sticker-sm sm:px-3 sm:py-1.5 sm:text-sm",
+              pathname.startsWith("/brainrots") || pathname.startsWith("/blog")
+                ? "bg-hot-pink text-white"
+                : "bg-white text-ink hover:bg-acid-yellow",
+            )}
+          >
+            {brand.archive.nav}
+          </Link>
           <Link
             href={me ? "/compte" : "/compte/inscription"}
             className={cn(

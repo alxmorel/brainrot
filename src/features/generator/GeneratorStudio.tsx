@@ -315,13 +315,14 @@ export function GeneratorStudio({
   return (
     <section
       id="compose"
-      className="scroll-mt-[4.75rem] px-3 py-6 sm:px-6 sm:py-8 lg:flex lg:h-[80dvh] lg:flex-col lg:overflow-hidden lg:px-10 lg:py-4 xl:px-12"
+      className="scroll-mt-[4.75rem] px-3 py-6 sm:px-6 sm:py-8 lg:flex lg:h-[calc(100dvh-4.75rem)] lg:flex-col lg:px-10 lg:py-4 xl:px-12"
     >
-      <div className="mx-auto w-full max-w-[1760px] lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+      <div className="mx-auto flex w-full max-w-[1760px] flex-col lg:min-h-0 lg:flex-1">
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.4 }}
+          className="shrink-0"
           variants={{
             hidden: {},
             show: {
@@ -376,7 +377,7 @@ export function GeneratorStudio({
               duration: reduced ? 0.01 : 0.42,
               ease: spring,
             }}
-            className="flex h-fit flex-col self-start rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker sm:p-4 lg:max-h-full lg:overflow-y-auto lg:rounded-[1.35rem] lg:p-5"
+            className="flex h-fit flex-col self-start rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker sm:p-4 lg:rounded-[1.35rem] lg:p-5"
           >
             <div className="flex gap-2 lg:gap-3">
               {categories.map((category) => {

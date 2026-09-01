@@ -26,9 +26,9 @@ Avoid `any`. No business logic dumped in templates. No overengineering the MVP.
 ## Folder shape (feature-based)
 
 ```
-features/   home | generator | brainrot | products | cart
+features/   home | generator | brainrot | products | cart | archive
 shared/     components | hooks | utils
-data/       brainrots | products | traits | brand
+data/       brainrots | products | traits | brand | archive
 models/     domain types
 ```
 

@@ -15,7 +15,9 @@ V1 is intentionally simple. **No dynamic AI generation.** Illustrations are pre-
 
 **Category:** Collectible toy brand you wear - not a meme merch shop, not Temu/Amazon bootleg, not crypto, not AI slop.
 
-**Positioning:** We own the *grammar* of Italian brainrot (animal × food × italianized name × vibe) as an original creature catalogue. We never reprint viral TikTok characters (Tralalero, Tung Tung, Ballerina Cappuccina, etc.).
+**Positioning:** We own the *grammar* of Italian brainrot (animal × food × italianized name × vibe) as an original creature catalogue. We never reprint viral TikTok characters (Tralalero, Tung Tung, Ballerina Cappuccina, etc.) as merch.
+
+**Archive vs shop:** `/brainrots` and `/blog` may document the phenomenon (TikTok, images IA, noms). That is not a licence to sell those characters. Archive CTAs point only to original Brainrototo creatures (`/tee/[id]`, compose). Never present community lore as official canon.
 
 **Tagline:** Compose. Porte. Collectionne.
 
@@ -25,7 +27,7 @@ V1 is intentionally simple. **No dynamic AI generation.** Illustrations are pre-
 
 **Voice:** Toy-catalogue absurd. Short. Sticker-like. Creature names are the heroes. French first; Italianate play lives in the names only.
 
-Never say: viral, trending, meme shop, AI-generated, skibidi, crypto. Never generic streetwear ("tees that slap", "kiffe ton style").
+Shop copy never says: viral, trending, meme shop, AI-generated, skibidi, crypto. Never generic streetwear ("tees that slap", "kiffe ton style"). Archive copy may use TikTok, images IA, phénomène - documentary only.
 
 Copy source of truth: `src/data/brand.ts`.
 
