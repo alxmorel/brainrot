@@ -13,13 +13,13 @@ import { defaultProduct, products } from "@/data/products";
 import { isTeeSize } from "@/data/sizes";
 import { defaultTeeColor, isTeeColor, teeColorIds, type TeeColorId } from "@/data/teeColors";
 import { UnusedCredit } from "@/features/account/UnusedCredit";
-import { CartReassurance } from "@/features/cart/CartReassurance";
 import { CheckoutPayBlock } from "@/features/cart/CheckoutPayBlock";
 import { CheckoutProgress } from "@/features/cart/CheckoutProgress";
 import { useCart } from "@/features/cart/CartProvider";
 import { useCartQuote } from "@/features/cart/useCartQuote";
 import { useCheckoutPay } from "@/features/cart/useCheckoutPay";
 import { TeeMockup } from "@/features/generator/TeeMockup";
+import { PromisesBar } from "@/features/home/PromisesBar";
 import { MysteryMockup } from "@/features/mystery/MysteryMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
@@ -177,7 +177,7 @@ export function CartPage() {
               </div>
 
               <div className="mt-6">
-                <CartReassurance />
+                <PromisesBar contained />
               </div>
             </section>
 

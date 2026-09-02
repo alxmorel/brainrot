@@ -10,13 +10,13 @@ export const brand = {
     lines: ["Des créatures", "Brainrototo", "qui se portent"] as const,
     kicker: "Animal × Food × vibe.",
     pitch:
-      "Pas un meme volé. Une créature originale, dessinée, imprimée sur un vrai tee.",
+      "Une créature originale, dessinée, imprimée sur un vrai tee.",
     cta: "Composer le mien →",
   },
   manifesto: {
     eyebrow: "La formule",
     title: "Un Brainrototo, c’est un combo.",
-    body: "Le brainrot a une grammaire. On en a fait une bande - pas le requin Nike de TikTok.",
+    body: "Le brainrot a une grammaire. On en a fait une bande.",
     traits: [
       { id: "animal", label: "Animal", hint: "Croc, requin, grenouille…", tone: "green" },
       { id: "Food", label: "Food", hint: "Banane, pizza, fraise…", tone: "yellow" },
@@ -53,7 +53,7 @@ export const brand = {
   },
   collection: {
     title: "Compose ton Brainrototo",
-    lead: "Choisis ce que tu veux - génère quand tu veux.",
+    lead: "Choisis ce que tu veux, génère quand tu veux.",
     filters: "Le combo",
     pick: "Compose ton combo puis génère",
     generate: "Générer",
@@ -65,7 +65,8 @@ export const brand = {
   product: {
     related: "Le reste de la bande",
     wear: "Le porter →",
-    explore: "Explorer d’autres combos →",
+    blurb: "Tee bio unisexe, imprimé à la commande.",
+    explore: "Composer un combo",
   },
   mystery: {
     nav: "Mystery",
@@ -75,13 +76,14 @@ export const brand = {
     pitch: "Un tee tiré au sort. La surprise, à l’ouverture.",
     lead: "Taille et couleur, à toi. Le visuel, dans la boîte.",
     legal: "Tirage définitif. Ni retour, ni échange.",
+    discover: "Mystery Tee",
     cta: "Acheter →",
     add: "Ajouter au panier",
     pay: "Payer →",
     poolLabel: "Dans la collection",
     seoTitle: "Mystery Tee",
     seoDescription:
-      "Mystery Tee Brainrototo : un visuel tiré au sort dans la Série 01, révélé à l’ouverture. Prix collector.",
+      "Mystery Tee Brainrototo : un visuel tiré au sort dans la Série 01, révélé à l’ouverture.",
   },
   footer: {
     line: "Des créatures Brainrototo. Qui se portent.",
@@ -107,9 +109,9 @@ export const brand = {
     homeCta: "L’archive →",
   },
   seo: {
-    title: "Brainrototo | Site officiel - des créatures qui se portent",
+    title: "Brainrototo | Site officiel, des créatures qui se portent",
     description:
-      "Brainrototo est le site officiel de la marque Brainrototo. Compose une créature originale (animal × Food × vibe) et porte-la sur un tee bio. brainrototo.com",
+      "Site officiel Brainrototo. Compose une créature originale (animal × Food × vibe) et porte-la sur un tee bio. brainrototo.com",
     collectionTitle: "Compose ton Brainrototo",
     collectionDescription:
       "Compose un combo (animal × Food × vibe), génère ta créature Brainrototo, on l’imprime sur un tee.",

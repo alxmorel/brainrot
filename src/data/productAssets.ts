@@ -7,8 +7,8 @@ import {
 } from "@/data/teeColors";
 
 const GALLERY = [
-  "person1_front.png",
   "editor_front.png",
+  "person1_front.png",
   "person1_profile-left.png",
   "person1_profile-right.png",
   "person1_back.png",

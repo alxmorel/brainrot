@@ -14,14 +14,16 @@ import {
 import { useShop } from "@/features/shop/ShopProvider";
 import type { TeeSize } from "@/data/sizes";
 import { teeColorIds, type TeeColorId } from "@/data/teeColors";
+import { HomeBestsellers } from "@/features/home/HomeBestsellers";
 import { MysteryMockup } from "@/features/mystery/MysteryMockup";
 import { useMysteryBuy } from "@/features/mystery/useMysteryBuy";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
-import { ComposeLink } from "@/shared/components/layout/ComposeLink";
+import { createPageHref } from "@/features/product/teeSize";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
 import { Button, PriceTag } from "@/shared/components/ui";
+import type { Brainrototo } from "@/models";
 
 const specCards = [
   { label: "Matière", value: gelatoTee.fabric },
@@ -33,9 +35,11 @@ const specCards = [
 ] as const;
 
 export function MysteryPage({
+  gang,
   initialSize,
   initialColor,
 }: {
+  gang: Brainrototo[];
   initialSize?: TeeSize;
   initialColor?: TeeColorId;
 }) {
@@ -50,14 +54,14 @@ export function MysteryPage({
       <SiteNav />
       <main className="mx-auto w-full max-w-[1100px] flex-1 px-4 py-6 pb-28 sm:px-6 sm:pb-6 lg:px-8">
         <p className="text-xs font-bold uppercase tracking-wide text-ink/55">
-          <ComposeLink cta="bande" source="mystery" className="hover:text-hot-pink">
-            La bande
-          </ComposeLink>
+          <a href="#bande" className="hover:text-hot-pink">
+            {brand.gang.title}
+          </a>
           <span aria-hidden> / </span>
           {brand.mystery.name}
         </p>
 
-        <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
+        <div className="mt-5 grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
           <div className="rounded-2xl border-[3px] border-ink bg-sunset p-4 shadow-sticker-sm sm:p-8">
             <MysteryMockup className="max-w-[22rem]" />
           </div>
@@ -195,6 +199,21 @@ export function MysteryPage({
           </ul>
         </section>
       </main>
+
+      <div className="pb-28 sm:pb-0">
+        <HomeBestsellers
+          items={gang}
+          compact
+          extra={
+            <Link
+              href={createPageHref(null, size, color)}
+              className="inline-flex items-center rounded-pill border-[3px] border-ink bg-white px-3 py-1.5 font-display text-xs font-bold uppercase shadow-sticker-sm hover:bg-acid-yellow sm:text-sm"
+            >
+              {brand.product.explore}
+            </Link>
+          }
+        />
+      </div>
 
       <div className="fixed inset-x-3 bottom-3 z-30 lg:hidden">
         <div className="rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker">

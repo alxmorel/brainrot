@@ -55,6 +55,12 @@
     }
   }
 
+  /* Edge / Chromium: button min-content follows the img intrinsic size and overflows mobile. */
+  button {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   body {
     min-height: 100%;
     background-color: var(--br-bg);

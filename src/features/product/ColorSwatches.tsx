@@ -9,11 +9,15 @@ export function ColorSwatches({
   value,
   onChange,
   compact = false,
+  hideLabel = false,
+  alwaysShow = false,
 }: {
   colors: TeeColorId[];
   value: TeeColorId;
   onChange: (id: TeeColorId) => void;
   compact?: boolean;
+  hideLabel?: boolean;
+  alwaysShow?: boolean;
 }) {
   if (compact) {
     return (
@@ -21,17 +25,39 @@ export function ColorSwatches({
     );
   }
 
-  if (colors.length < 2) return null;
+  const ids = colors.length > 0 ? colors : [value];
+  if (ids.length < 2 && !alwaysShow) return null;
+  const locked = ids.length < 2;
 
   return (
     <div>
-      <p className="font-display text-sm font-bold uppercase text-ink">
-        Couleur
-      </p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {colors.map((id) => {
+      {hideLabel ? null : (
+        <p className="font-display text-sm font-bold uppercase text-ink">
+          Couleur
+        </p>
+      )}
+      <div
+        role="group"
+        aria-label="Couleur"
+        className={hideLabel ? "flex flex-wrap gap-2" : "mt-2 flex flex-wrap gap-2"}
+      >
+        {ids.map((id) => {
           const color = teeColors.find((item) => item.id === id);
           if (!color) return null;
+          if (locked) {
+            return (
+              <span key={id} className="inline-flex items-center gap-2">
+                <span
+                  className="h-8 w-8 rounded-full border-[3px] border-ink"
+                  style={{ backgroundColor: color.swatch }}
+                  aria-hidden
+                />
+                <span className="font-display text-sm font-bold uppercase text-ink">
+                  {color.label}
+                </span>
+              </span>
+            );
+          }
           const selected = value === id;
           return (
             <button

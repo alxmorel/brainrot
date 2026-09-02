@@ -3,6 +3,7 @@ import { brand } from "@/data/brand";
 import { isTeeSize } from "@/data/sizes";
 import { isTeeColor } from "@/data/teeColors";
 import { MysteryPage } from "@/features/mystery/MysteryPage";
+import { getBestSellerBrainrots } from "@/server/bestsellers";
 
 export const metadata: Metadata = {
   title: brand.mystery.seoTitle,
@@ -27,5 +28,12 @@ export default async function Page({
   const colorRaw = query.color;
   const colorVal = typeof colorRaw === "string" ? colorRaw : colorRaw?.[0];
   const initialColor = colorVal && isTeeColor(colorVal) ? colorVal : undefined;
-  return <MysteryPage initialSize={initialSize} initialColor={initialColor} />;
+  const gang = await getBestSellerBrainrots();
+  return (
+    <MysteryPage
+      gang={gang}
+      initialSize={initialSize}
+      initialColor={initialColor}
+    />
+  );
 }

@@ -39,8 +39,8 @@ export const archiveArticles: ArchiveArticle[] = [
       {
         heading: "À savoir",
         paragraphs: [
-          "Certains audios d’origine, surtout autour de Tralalero et Bombardiro, sont offensants. On le signale, on ne les recopie pas.",
-          "Ces images IA n’ont pas de droit d’auteur clair. On documente le phénomène, on ne revendique pas les persos.",
+          "Certains audios d’origine, surtout autour de Tralalero et Bombardiro, sont offensants. On le signale, sans recopier les paroles.",
+          "Ces images IA n’ont pas de droit d’auteur clair. Les fiches documentent le phénomène.",
         ],
       },
     ],
@@ -64,7 +64,7 @@ export const archiveArticles: ArchiveArticle[] = [
       "Comment le lore Italian Brainrot s’est construit : clips d’origine, couples, fratries, combats fans, wikis. Ce qui est documenté, ce qui vient de la communauté.",
     kicker: "Article",
     lead:
-      "Au départ, chaque perso était une image, un nom, une voix. Pas un univers. Le lore s’est empilé ensuite : d’abord quelques liens dans les clips, puis des familles, des combats et des arbres inventés par les fans.",
+      "Au départ, chaque perso était une image, un nom, une voix, sans univers. Le lore s’est empilé ensuite : d’abord quelques liens dans les clips, puis des familles, des combats et des arbres inventés par les fans.",
     image: "/assets/archive/ballerina-cappuccina.png",
     imageAlt: "Ballerina Cappuccina",
     sections: [
@@ -78,7 +78,7 @@ export const archiveArticles: ArchiveArticle[] = [
       {
         heading: "Les premiers liens entre personnages",
         paragraphs: [
-          "Les premiers vrais liens arrivent dans les clips, pas dans les wikis. Le 5 mars 2025, @armenjiharhanyan — le même compte que Bombardiro — poste Bombombini Gusini. La voix le présente déjà comme le frère de Bombardiro. Même créateur, même recette (animal + avion), lien dit à l’écran.",
+          "Les premiers vrais liens arrivent dans les clips, avant les wikis. Le 5 mars 2025, @armenjiharhanyan (le même compte que Bombardiro) poste Bombombini Gusini. La voix le présente déjà comme le frère de Bombardiro. Même créateur, même recette (animal + avion), lien dit à l’écran.",
           "Deux semaines plus tard, le 19 mars, @aironic.fun poste Ballerina Cappuccina. La narration la dit déjà femme de Cappuccino Assassino, un ninja-café sorti le 5 mars. Assassino existait tout seul ; c’est Ballerina qui le greffe à son clip.",
           "Ces deux cas comptent : le lore ne commence pas toujours chez les fans. Parfois le créateur pose un lien, et la communauté l’étend.",
         ],
@@ -95,7 +95,7 @@ export const archiveArticles: ArchiveArticle[] = [
         heading: "Les rivalités et les combats",
         paragraphs: [
           "Tralalero et Bombardiro n’ont pas de lien dans leurs clips d’origine. Les fans les ont mis face à face : montages, « vs », classements de force. C’est devenu la rivalité la plus vue de la vague.",
-          "Même logique pour Gusini. Les wikis racontent une guerre crocodiles contre oiseaux : Gusini quitte son frère, Lirili Larila le booste, Tung Tung met Lirili KO, Bombardiro tue Gusini. Version très répétée. Pas une vidéo d’origine. Un récit de fans, recopié et remixé.",
+          "Même logique pour Gusini. Les wikis racontent une guerre crocodiles contre oiseaux : Gusini quitte son frère, Lirili Larila le booste, Tung Tung met Lirili KO, Bombardiro tue Gusini. Version très répétée : un récit de fans, recopié et remixé, hors clip d’origine.",
           "Les combats ont un effet simple : ils obligent des persos nés chacun dans leur coin à partager la même scène.",
         ],
       },
@@ -115,9 +115,9 @@ export const archiveArticles: ArchiveArticle[] = [
         ],
       },
       {
-        heading: "Alors, quel est le vrai lore ?",
+        heading: "Plusieurs couches",
         paragraphs: [
-          "Il n’y en a pas un. Il y a des couches. Le plus utile, c’est de les séparer.",
+          "Le plus utile, c’est de les séparer.",
         ],
       },
       {
@@ -129,14 +129,14 @@ export const archiveArticles: ArchiveArticle[] = [
       {
         heading: "Lore communautaire",
         paragraphs: [
-          "Les histoires reprises par beaucoup de créateurs, sans être dans le clip d’origine. Tralalero vs Bombardiro. Espressona sœur de Ballerina. Le triangle avec Tung Tung. La guerre croco vs oiseaux, le boost de Lirili, la mort de Gusini. Très répandu. Pas « officiel ».",
+          "Les histoires reprises par beaucoup de créateurs, sans être dans le clip d’origine. Tralalero vs Bombardiro. Espressona sœur de Ballerina. Le triangle avec Tung Tung. La guerre croco vs oiseaux, le boost de Lirili, la mort de Gusini. Très répandu. Version fans.",
         ],
       },
       {
         heading: "Lore incertain",
         paragraphs: [
           "Tout ce qui circule sans qu’on sache d’où ça vient, ou qui se contredit d’une vidéo à l’autre. Qui a gagné tel combat. Tel pouvoir. Telle date de mariage. Les clips d’origine disparaissent, les copies bougent : une version virale n’est pas forcément la première.",
-          "Sur nos fiches, on sépare les faits, ce qu’on ne sait pas, et ce que racontent les fans. Le lore Italian Brainrot, c’est surtout ça : un univers assemblé après coup, à partir de créatures qui n’étaient pas faites pour vivre ensemble.",
+          "Sur nos fiches, on sépare les faits, ce qu’on ne sait pas, et ce que racontent les fans. Le lore Italian Brainrot, c’est surtout ça : un univers assemblé après coup, à partir de créatures nées chacune de leur côté.",
         ],
       },
     ],
@@ -227,7 +227,7 @@ export const archiveArticles: ArchiveArticle[] = [
       {
         heading: "Pas tous italiens",
         paragraphs: [
-          "Italian Brainrot désigne un style (image IA, voix robot, nom chanté), pas un pays. Tung Tung vient d’Indonésie. Boneca vient de boneka (« poupée » en indonésien). Ils se retrouvent dans les mêmes listes.",
+          "Italian Brainrot désigne un style : image IA, voix robot, nom chanté. Tung Tung vient d’Indonésie. Boneca vient de boneka (« poupée » en indonésien). Ils se retrouvent dans les mêmes listes.",
         ],
       },
     ],

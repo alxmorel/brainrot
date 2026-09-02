@@ -1,7 +1,6 @@
 import type { ArchiveCharacter, ArchiveRelatedLink } from "@/models";
 
-const noTee = (name: string) =>
-  `On ne vend pas ${name}. Compose une créature originale.`;
+const noTee = (name: string) => `On ne vend pas ${name}.`;
 
 export const archiveCharacters: ArchiveCharacter[] = [
   {
@@ -142,10 +141,10 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Tutu, pointes, posture de danse. À la place de la tête : une tasse de cappuccino.",
     ],
     whyBrainrot: [
-      "Même recette que le requin ou le crocodile-avion, mais plus mignon. Beaucoup de gens sont arrivés au brainrot par elle.",
+      "Même recette que le requin ou le crocodile-avion, version plus mignonne. Beaucoup de gens sont arrivés au brainrot par elle.",
     ],
     documented: [
-      "Clip d’origine : 19 mars 2025, @aironic.fun (Susanu Sava-Tudor, Roumanie — New York Times).",
+      "Clip d’origine : 19 mars 2025, @aironic.fun (Susanu Sava-Tudor, Roumanie, New York Times).",
       "La vidéo la présente déjà comme la femme de Cappuccino Assassino.",
     ],
     uncertain: [
@@ -206,7 +205,7 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Même famille « café » que Ballerina, ton plus action. Beaucoup de gens le découvrent via le duo.",
     ],
     documented: [
-      "Première vidéo connue : 5 mars 2025, @alexey_pigeon — deux semaines avant Ballerina.",
+      "Première vidéo connue : 5 mars 2025, @alexey_pigeon, deux semaines avant Ballerina.",
       "Même créateur que Chimpanzini Bananini.",
     ],
     uncertain: [
@@ -259,17 +258,17 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Tung Tung Tung Sahur : tambour de bois et gourdin. Mème indonésien (sahur), souvent listé avec les brainrots.",
     tagline: "Un tambour de bois, souvent avec un gourdin.",
     summary:
-      "Un kentongan (tambour de bois indonésien) avec un visage et un gourdin. Créé en Indonésie le 28 février 2025, la veille du Ramadan. On le range souvent dans l’Italian Brainrot, mais il n’est pas italien.",
+      "Un kentongan (tambour de bois indonésien) avec un visage et un gourdin. Créé en Indonésie le 28 février 2025, la veille du Ramadan. Les listes Italian Brainrot l’incluent souvent.",
     appearance: [
       "Tambour de bois (kentongan), visage simple, gourdin (pentungan) à la main. Le « tung tung tung » imite le bruit du tambour qui réveille pour le sahur.",
     ],
     whyBrainrot: [
-      "Les compilations 2025 ont tout mis dans le même sac. Beaucoup le découvrent dans une liste brainrot, pas via son contexte indonésien.",
+      "Les compilations 2025 ont tout mis dans le même sac. Beaucoup le découvrent dans une liste brainrot.",
     ],
     documented: [
       "28 février 2025, @noxaasht (Noxa), Indonésie. Image faite avec DALL·E.",
       "Le clip d’origine : une « anomalie » qui vient chez toi si tu n’es pas réveillé pour le sahur.",
-      "Fait partie du trend indonésien « Anomali AI », pas de l’Italian Brainrot à la base.",
+      "Fait partie du trend indonésien « Anomali AI ».",
     ],
     uncertain: [
       "Les copies du clip d’origine : le texte exact varie un peu.",
@@ -329,7 +328,7 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Un classique des quiz « nomme tous les brainrots ». Le nom compte autant que l’image.",
     ],
     documented: [
-      "17 février 2025, @ofuscabreno — aussi créateur de Boneca Ambalabu.",
+      "17 février 2025, @ofuscabreno, aussi créateur de Boneca Ambalabu.",
       "Phrase d’origine : « Brr brr patapim, il mio cappello è pieno di Slim ! »",
     ],
     uncertain: [
@@ -452,7 +451,7 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "L’exemple qu’on prend pour expliquer les noms. Présent dans presque toutes les listes 2025.",
     ],
     documented: [
-      "13 mars 2025, @alexey_pigeon — même créateur que Cappuccino Assassino.",
+      "13 mars 2025, @alexey_pigeon, même créateur que Cappuccino Assassino.",
       "La vidéo d’origine montrait plusieurs singes-fruits (banane, coco, ananas…). C’est la banane qui a collé.",
     ],
     uncertain: [
@@ -513,7 +512,7 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Il complète le thème animal + avion. Le lien de fratrie vient du clip d’origine, pas seulement des fans.",
     ],
     documented: [
-      "5 mars 2025, @armenjiharhanyan — le même que Bombardiro (20 février).",
+      "5 mars 2025, @armenjiharhanyan, le même que Bombardiro (20 février).",
       "Le clip d’origine le présente déjà comme le frère de Bombardiro.",
     ],
     uncertain: [
@@ -567,7 +566,7 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Boneca Ambalabu : grenouille-pneu, mème de la vague internationale Brainrot.",
     tagline: "Une grenouille-pneu, avec des jambes humaines.",
     summary:
-      "Un hybride grenouille + pneu, jambes humaines. Créé en Indonésie. Souvent classé Italian Brainrot, mais le nom vient de boneka (« poupée » en indonésien).",
+      "Un hybride grenouille + pneu, jambes humaines. Créé en Indonésie. Le nom vient de boneka (« poupée » en indonésien).",
     appearance: [
       "Grenouille verte fusionnée avec un pneu, jambes humaines, debout.",
     ],
@@ -575,8 +574,8 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Les compilations 2025 l’ont mis à côté des persos italiens. Le nom se retient, même si l’image change.",
     ],
     documented: [
-      "2 février 2025, @ofuscabreno (Indonésie) — aussi créateur de Brr Brr Patapim.",
-      "L’audio est repris d’une vidéo de 2024, pas inventé pour ce clip.",
+      "2 février 2025, @ofuscabreno (Indonésie), aussi créateur de Brr Brr Patapim.",
+      "L’audio est repris d’une vidéo de 2024.",
     ],
     uncertain: [
       "Le sens exact d’Ambalabu (mélange de mèmes, selon les sources).",

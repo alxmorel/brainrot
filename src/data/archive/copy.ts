@@ -12,8 +12,7 @@ export const archiveCopy = {
   relatedTitle: "Souvent avec",
   brainrototoTitle: "Découvrir les créatures Brainrototo",
   composeCta: "Composer le mien →",
-  articleCtaBody:
-    "On ne vend pas ces persos TikTok. Compose une créature Brainrototo originale.",
+  articleCtaBody: "Compose une créature Brainrototo originale.",
   seeTee: "Voir le tee →",
   allCharacters: "Tous les personnages",
   allArticles: "Le blog",
@@ -43,7 +42,7 @@ export const archiveCopy = {
   emptyFilter: "Aucun personnage pour ce filtre.",
   familyTreeNote: "Certains liens viennent des clips d’origine. D’autres, des fans.",
   imageCredit:
-    "Image : Wikimedia Commons. Documentaire — pas un produit Brainrototo.",
+    "Image : Wikimedia Commons.",
   videoTitle: "Clip",
   videoOpen: "Ouvrir sur TikTok →",
   videoNote: "Extrait TikTok d’un créateur tiers. Le son peut différer.",

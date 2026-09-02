@@ -16,7 +16,44 @@ import { teePageHref } from "@/features/product/teeSize";
 import { Button } from "@/shared/components/ui";
 import type { Brainrototo } from "@/models";
 
-export function GangTeeCard({ brainrot }: { brainrot: Brainrototo }) {
+export function GangTeeCard({
+  brainrot,
+  compact = false,
+}: {
+  brainrot: Brainrototo;
+  compact?: boolean;
+}) {
+  if (compact) return <DiscoveryTeeCard brainrot={brainrot} />;
+  return <ShopTeeCard brainrot={brainrot} />;
+}
+
+function DiscoveryTeeCard({ brainrot }: { brainrot: Brainrototo }) {
+  const palette = colorsForBrainrot(brainrot);
+  const color = palette[0] ?? defaultTeeColor;
+  const href = teePageHref(brainrot.id, "M", color);
+
+  return (
+    <Link
+      href={href}
+      aria-label={brainrot.name}
+      className="flex h-full flex-col rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-0.5 hover:shadow-sticker"
+    >
+      <h3 className="font-display text-lg font-bold uppercase leading-none tracking-[-0.03em] text-ink sm:text-xl">
+        {brainrot.name}
+      </h3>
+      <span className="mt-3 flex flex-1 items-center justify-center">
+        <TeeMockup
+          product={defaultProduct}
+          brainrot={brainrot}
+          color={color}
+          className="max-w-[10rem] sm:max-w-[11rem] lg:max-w-[12rem]"
+        />
+      </span>
+    </Link>
+  );
+}
+
+function ShopTeeCard({ brainrot }: { brainrot: Brainrototo }) {
   const { addItem } = useCart();
   const palette = colorsForBrainrot(brainrot);
   const [size, setSize] = useState<TeeSize>("M");

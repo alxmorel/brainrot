@@ -25,8 +25,16 @@ const promises = [
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
-function PromiseIcon({ icon }: { icon: (typeof promises)[number]["icon"] }) {
-  const size = "h-7 w-7 shrink-0 sm:h-10 sm:w-10 lg:h-12 lg:w-12 xl:h-14 xl:w-14";
+function PromiseIcon({
+  icon,
+  compact = false,
+}: {
+  icon: (typeof promises)[number]["icon"];
+  compact?: boolean;
+}) {
+  const size = compact
+    ? "h-7 w-7 shrink-0 sm:h-8 sm:w-8"
+    : "h-7 w-7 shrink-0 sm:h-10 sm:w-10 lg:h-12 lg:w-12 xl:h-14 xl:w-14";
 
   if (icon === "tag") {
     return (
@@ -79,20 +87,32 @@ function PromiseIcon({ icon }: { icon: (typeof promises)[number]["icon"] }) {
 }
 
 /** Full-bleed divider between hero and the rest - not a floating overlap card. */
-export function PromisesBar({ className }: { className?: string }) {
+export function PromisesBar({
+  className,
+  contained = false,
+}: {
+  className?: string;
+  contained?: boolean;
+}) {
   const reduced = useReducedMotion();
 
   return (
     <motion.section
       aria-label="Engagements"
-      initial={reduced ? false : { opacity: 0, y: 36 }}
+      initial={reduced ? false : { opacity: 0, y: contained ? 12 : 36 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: reduced ? 0.01 : 0.4,
-        delay: reduced ? 0 : 0.35,
+        delay: reduced || contained ? 0 : 0.35,
         ease: easeOut,
       }}
-      className={cn("border-y-[3px] border-ink bg-white", className)}
+      className={cn(
+        "bg-white",
+        contained
+          ? "overflow-hidden rounded-xl border-[3px] border-ink"
+          : "border-y-[3px] border-ink",
+        className,
+      )}
     >
       <motion.ul
         initial="hidden"
@@ -106,7 +126,10 @@ export function PromisesBar({ className }: { className?: string }) {
             },
           },
         }}
-        className="mx-auto grid max-w-[1760px] grid-cols-3"
+        className={cn(
+          "mx-auto grid grid-cols-3",
+          !contained && "max-w-[1760px]",
+        )}
       >
         {promises.map((promise, index) => (
           <motion.li
@@ -120,16 +143,43 @@ export function PromisesBar({ className }: { className?: string }) {
               },
             }}
             className={cn(
-              "flex min-w-0 flex-col items-center gap-1 px-1.5 py-2.5 text-center sm:flex-row sm:gap-3 sm:px-5 sm:py-3.5 sm:text-left lg:gap-4 lg:px-8 lg:py-5 xl:px-12 xl:py-6",
+              "flex min-w-0 items-center text-center",
+              contained
+                ? "flex-col gap-1 px-1.5 py-3 sm:flex-row sm:gap-2.5 sm:px-3 sm:py-3.5 sm:text-left"
+                : "flex-col gap-1 px-1.5 py-2.5 sm:flex-row sm:gap-3 sm:px-5 sm:py-3.5 sm:text-left lg:gap-4 lg:px-8 lg:py-5 xl:px-12 xl:py-6",
               index > 0 && "border-l border-ink/15",
             )}
           >
-            <PromiseIcon icon={promise.icon} />
+            <PromiseIcon icon={promise.icon} compact={contained} />
             <div className="min-w-0">
-              <p className="font-display text-[0.62rem] font-bold uppercase leading-[1.05] tracking-[-0.03em] text-ink sm:text-[1.05rem] lg:text-xl xl:text-2xl">
-                {promise.icon === "tag" ? <PriceTag /> : promise.title}
+              <p
+                className={cn(
+                  "font-display font-bold uppercase leading-[1.05] tracking-[-0.03em] text-ink",
+                  contained
+                    ? "text-[0.7rem] sm:text-sm"
+                    : "text-[0.62rem] sm:text-[1.05rem] lg:text-xl xl:text-2xl",
+                )}
+              >
+                {promise.icon === "tag" ? (
+                  <PriceTag
+                    className={
+                      contained
+                        ? "justify-center gap-x-1 sm:justify-start"
+                        : undefined
+                    }
+                  />
+                ) : (
+                  promise.title
+                )}
               </p>
-              <p className="mt-0.5 hidden text-sm font-medium leading-snug text-ink/55 sm:block lg:mt-1 lg:text-base xl:text-lg">
+              <p
+                className={cn(
+                  "mt-0.5 font-medium leading-snug text-ink/55",
+                  contained
+                    ? "hidden text-[0.65rem] sm:block sm:text-xs"
+                    : "hidden text-sm sm:block lg:mt-1 lg:text-base xl:text-lg",
+                )}
+              >
                 {promise.subtitle}
               </p>
             </div>
