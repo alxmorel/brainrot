@@ -11,6 +11,7 @@ import type { ShopSettings } from "@prisma/client";
 export type ShopSettingsInput = {
   teePriceCents: number;
   teeCompareAtCents: number;
+  mysteryTeePriceCents: number;
   welcomeEnabled: boolean;
   welcomeCode: string;
   welcomeKind: WelcomeKind;
@@ -29,6 +30,7 @@ function toPublic(row: ShopSettings): ShopPublicSettings {
   return withWelcomeLive({
     teePriceCents: row.teePriceCents,
     teeCompareAtCents: row.teeCompareAtCents,
+    mysteryTeePriceCents: row.mysteryTeePriceCents,
     welcomeEnabled: row.welcomeEnabled,
     welcomeCode: row.welcomeCode,
     welcomeKind: row.welcomeKind === "amount" ? "amount" : "percent",
@@ -68,6 +70,7 @@ export function parseShopSettingsInput(
 
   const teePriceCents = int("teePriceCents", 50, 100000);
   const teeCompareAtCents = int("teeCompareAtCents", 0, 100000);
+  const mysteryTeePriceCents = int("mysteryTeePriceCents", 50, 100000);
   const welcomePercent = int("welcomePercent", 1, 100);
   const welcomeAmountCents = int("welcomeAmountCents", 0, 100000);
   const welcomeTtlDays = int("welcomeTtlDays", 1, 365);
@@ -85,6 +88,7 @@ export function parseShopSettingsInput(
   if (
     teePriceCents === null ||
     teeCompareAtCents === null ||
+    mysteryTeePriceCents === null ||
     welcomePercent === null ||
     welcomeAmountCents === null ||
     welcomeTtlDays === null ||
@@ -118,6 +122,7 @@ export function parseShopSettingsInput(
     data: {
       teePriceCents,
       teeCompareAtCents,
+      mysteryTeePriceCents,
       welcomeEnabled: bool("welcomeEnabled"),
       welcomeCode,
       welcomeKind,

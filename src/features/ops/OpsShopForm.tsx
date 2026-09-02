@@ -34,6 +34,7 @@ export function OpsShopForm() {
   const [shop, setShop] = useState<ShopPublicSettings | null>(null);
   const [price, setPrice] = useState("");
   const [compare, setCompare] = useState("");
+  const [mysteryPrice, setMysteryPrice] = useState("");
   const [welcomeEnabled, setWelcomeEnabled] = useState(true);
   const [welcomeCode, setWelcomeCode] = useState("BAMBINO");
   const [welcomeKind, setWelcomeKind] = useState<"percent" | "amount">("percent");
@@ -54,6 +55,7 @@ export function OpsShopForm() {
     setShop(settings);
     setPrice(eurosFromCents(settings.teePriceCents));
     setCompare(eurosFromCents(settings.teeCompareAtCents));
+    setMysteryPrice(eurosFromCents(settings.mysteryTeePriceCents));
     setWelcomeEnabled(settings.welcomeEnabled);
     setWelcomeCode(settings.welcomeCode);
     setWelcomeKind(settings.welcomeKind);
@@ -91,11 +93,13 @@ export function OpsShopForm() {
     setSaved(false);
     const teePriceCents = centsFromEuros(price);
     const teeCompareAtCents = centsFromEuros(compare);
+    const mysteryTeePriceCents = centsFromEuros(mysteryPrice);
     const welcomeAmountCents = centsFromEuros(welcomeAmount);
     const cashbackPerExtraTeeCents = centsFromEuros(cashbackAmount);
     if (
       teePriceCents === null ||
       teeCompareAtCents === null ||
+      mysteryTeePriceCents === null ||
       welcomeAmountCents === null ||
       cashbackPerExtraTeeCents === null
     ) {
@@ -109,6 +113,7 @@ export function OpsShopForm() {
       body: JSON.stringify({
         teePriceCents,
         teeCompareAtCents,
+        mysteryTeePriceCents,
         welcomeEnabled,
         welcomeCode,
         welcomeKind,
@@ -178,6 +183,14 @@ export function OpsShopForm() {
             value={compare}
             onChange={(event) => setCompare(event.target.value)}
             inputMode="decimal"
+          />
+          <Input
+            label="Mystery Tee (€)"
+            hint="Sous le prix classique"
+            value={mysteryPrice}
+            onChange={(event) => setMysteryPrice(event.target.value)}
+            inputMode="decimal"
+            required
           />
         </div>
       </section>

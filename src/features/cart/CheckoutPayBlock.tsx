@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { legal } from "@/data/legal";
-import { customProductLegalNote, formatEur, shippingNote } from "@/data/pricing";
+import { customProductLegalNote, formatEur, mysteryLegalNote, shippingNote } from "@/data/pricing";
 import { Button } from "@/shared/components/ui";
 
 export function CheckoutPayBlock({
   totalCents,
   pending,
   error,
+  hasMystery = false,
   onPay,
 }: {
   totalCents: number;
   pending: boolean;
   error: string | null;
+  hasMystery?: boolean;
   onPay: (cgvAccepted: boolean) => void;
 }) {
   return (
@@ -31,6 +33,7 @@ export function CheckoutPayBlock({
 
       <p className="mt-3 rounded-xl border-[3px] border-ink/15 bg-ink-soft px-3 py-2 text-xs font-bold leading-snug text-ink/75">
         {customProductLegalNote}
+        {hasMystery ? ` ${mysteryLegalNote}` : ""}
       </p>
 
       <label className="mt-4 flex items-start gap-2 text-sm font-bold text-ink/75">

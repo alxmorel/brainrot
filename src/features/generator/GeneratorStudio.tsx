@@ -13,6 +13,7 @@ import { type TeeSize } from "@/data/sizes";
 import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import { animals, ingredients, vibes } from "@/data/traits";
 import { useCart } from "@/features/cart/CartProvider";
+import { flyToCart } from "@/features/cart/flyToCart";
 import { filterBrainrots } from "@/features/generator/filterBrainrots";
 import { PackRevealOverlay } from "@/features/generator/PackRevealOverlay";
 import { TeeMockup } from "@/features/generator/TeeMockup";
@@ -294,9 +295,10 @@ export function GeneratorStudio({
     }
   }
 
-  function handleAdd() {
+  function handleAdd(event: { currentTarget: EventTarget }) {
     if (!selected) return;
     addItem(selected.id, defaultProduct.id, size, resolvedColor);
+    flyToCart(event.currentTarget);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1600);
   }
@@ -315,6 +317,7 @@ export function GeneratorStudio({
   return (
     <section
       id="compose"
+      data-cart-source
       className="scroll-mt-[4.75rem] px-3 py-6 sm:px-6 sm:py-8 lg:flex lg:h-[calc(100dvh-4.75rem)] lg:flex-col lg:px-10 lg:py-4 xl:px-12"
     >
       <div className="mx-auto flex w-full max-w-[1760px] flex-col lg:min-h-0 lg:flex-1">

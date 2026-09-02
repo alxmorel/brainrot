@@ -12,6 +12,7 @@ model ShopSettings {
   id                       String    @id @default("default")
   teePriceCents            Int       @default(1499)
   teeCompareAtCents        Int       @default(1799)
+  mysteryTeePriceCents     Int       @default(1199)
   welcomeEnabled           Boolean   @default(true)
   welcomeCode              String    @default("BAMBINO")
   welcomeKind              String    @default("percent")
@@ -104,6 +105,7 @@ model OrderItem {
   color      String @default("white")
   quantity   Int
   printImage String
+  unitCents  Int    @default(0)
 }
 
 model OrderEvent {

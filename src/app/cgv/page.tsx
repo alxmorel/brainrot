@@ -30,14 +30,26 @@ export default async function Page() {
       </LegalSection>
       <LegalSection title="Produits">
         <p>
-          Tees {legal.brand} personnalisés à partir d’illustrations du catalogue
-          (pas de génération IA). Visuels à titre indicatif ; légers écarts
-          d’impression possibles.
+          Tees {legal.brand} personnalisés à partir d’illustrations du catalogue. <br />
+          Visuels à titre indicatif; légers écarts d’impression possibles.
+        </p>
+      </LegalSection>
+      <LegalSection title="Mystery Tee">
+        <p>
+          Le Mystery Tee est un t-shirt dont le visuel est tiré au sort, au
+          paiement, parmi la collection indiquée. Le modèle est révélé à la
+          réception. Prix : {formatEur(shop.mysteryTeePriceCents)} TTC,
+          livraison comprise.
+        </p>
+        <p>
+          Tirage définitif : ni retour ni échange, hors défaut ou erreur
+          d’impression de notre fait.
         </p>
       </LegalSection>
       <LegalSection title="Prix et paiement">
         <p>
-          Prix : {priceTtc} par tee, livraison comprise
+          Prix : {priceTtc} par tee classique, {formatEur(shop.mysteryTeePriceCents)} TTC
+          pour un Mystery Tee, livraison comprise
           {priceCompare ? ` (prix barré ${priceCompare})` : ""}. Paiement par
           carte via {legal.paymentProcessor}. La commande n’est confirmée
           qu’après paiement effectif.
@@ -45,8 +57,9 @@ export default async function Page() {
       </LegalSection>
       <LegalSection title="Commande">
         <p>
-          Tu choisis un visuel, un produit, renseignes l’adresse et paies sur la
-          page Stripe. Un numéro de commande s’affiche après paiement.
+          Tu choisis un visuel (ou un Mystery Tee), un produit, renseignes
+          l’adresse et paies sur la page Stripe. Un numéro de commande
+          s’affiche après paiement.
         </p>
       </LegalSection>
       <LegalSection title="Livraison">

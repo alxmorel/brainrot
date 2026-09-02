@@ -67,6 +67,22 @@ export const brand = {
     wear: "Le porter →",
     explore: "Explorer d’autres combos →",
   },
+  mystery: {
+    nav: "Mystery",
+    name: "Mystery Tee",
+    eyebrow: "Série 01",
+    title: "Mystery Tee",
+    pitch: "Un tee tiré au sort. La surprise, à l’ouverture.",
+    lead: "Taille et couleur, à toi. Le visuel, dans la boîte.",
+    legal: "Tirage définitif. Ni retour, ni échange.",
+    cta: "Acheter →",
+    add: "Ajouter au panier",
+    pay: "Payer →",
+    poolLabel: "Dans la collection",
+    seoTitle: "Mystery Tee",
+    seoDescription:
+      "Mystery Tee Brainrototo : un visuel tiré au sort dans la Série 01, révélé à l’ouverture. Prix collector.",
+  },
   footer: {
     line: "Des créatures Brainrototo. Qui se portent.",
   },

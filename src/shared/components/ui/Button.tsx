@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { cn } from "@/shared/utils/cn";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "holo" | "danger";
@@ -14,7 +14,7 @@ export interface ButtonProps {
   className?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   "aria-label"?: string;
 }
 

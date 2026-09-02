@@ -1,4 +1,5 @@
 import { isTeeSize, teeSizes, type TeeSize } from "@/data/sizes";
+import { isMysteryProductId } from "@/data/mystery";
 import {
   defaultTeeColor,
   isTeeColor,
@@ -64,7 +65,9 @@ export function catalogForProduct(
   size?: TeeSize,
   color?: string,
 ) {
-  if (productId !== gelatoTee.productId) return undefined;
+  if (productId !== gelatoTee.productId && !isMysteryProductId(productId)) {
+    return undefined;
+  }
   return {
     provider: gelatoTee.provider,
     productUid: size ? gelatoUidForSize(size, color) : null,

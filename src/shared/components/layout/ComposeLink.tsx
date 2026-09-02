@@ -5,14 +5,53 @@ import { usePathname } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 import { track } from "@/shared/utils/track";
 
-function scrollToCompose() {
+export function scrollToHomeHash(hash: string) {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.getElementById("compose")?.scrollIntoView({
+  document.getElementById(hash)?.scrollIntoView({
     behavior: reduced ? "instant" : "smooth",
   });
-  if (window.location.hash !== "#compose") {
-    window.history.replaceState(null, "", "/#compose");
+  const next = `/#${hash}`;
+  if (`${window.location.pathname}${window.location.hash}` !== next) {
+    window.history.replaceState(null, "", next);
   }
+  window.dispatchEvent(new Event("hashchange"));
+}
+
+export function HomeHashLink({
+  hash,
+  children,
+  className,
+  "aria-label": ariaLabel,
+  "aria-current": ariaCurrent,
+  onNavigate,
+}: {
+  hash: string;
+  children: ReactNode;
+  className?: string;
+  "aria-label"?: string;
+  "aria-current"?: "page" | undefined;
+  onNavigate?: () => void;
+}) {
+  const pathname = usePathname();
+
+  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    onNavigate?.();
+    if (pathname !== "/") return;
+    event.preventDefault();
+    scrollToHomeHash(hash);
+  }
+
+  return (
+    <Link
+      href={`/#${hash}`}
+      className={className}
+      aria-label={ariaLabel}
+      aria-current={ariaCurrent}
+      onClick={handleClick}
+    >
+      {children}
+    </Link>
+  );
 }
 
 export function ComposeLink({
@@ -20,28 +59,32 @@ export function ComposeLink({
   className,
   cta,
   source,
+  "aria-label": ariaLabel,
+  "aria-current": ariaCurrent,
 }: {
   children: ReactNode;
   className?: string;
   cta?: "composer" | "bande";
   source?: string;
+  "aria-label"?: string;
+  "aria-current"?: "page" | undefined;
 }) {
-  const pathname = usePathname();
-
-  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    if (cta) {
-      track(cta === "composer" ? "cta_composer" : "cta_bande", {
-        ...(source ? { source } : {}),
-      });
-    }
-    if (pathname !== "/") return;
-    event.preventDefault();
-    scrollToCompose();
-  }
-
   return (
-    <Link href="/#compose" className={className} onClick={handleClick}>
+    <HomeHashLink
+      hash="compose"
+      className={className}
+      aria-label={ariaLabel}
+      aria-current={ariaCurrent}
+      onNavigate={
+        cta
+          ? () =>
+              track(cta === "composer" ? "cta_composer" : "cta_bande", {
+                ...(source ? { source } : {}),
+              })
+          : undefined
+      }
+    >
       {children}
-    </Link>
+    </HomeHashLink>
   );
 }

@@ -18,6 +18,7 @@ import type { TeeSize } from "@/data/sizes";
 import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import { comboLine } from "@/data/traits";
 import { useCart } from "@/features/cart/CartProvider";
+import { flyToCart } from "@/features/cart/flyToCart";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { HomeBestsellers } from "@/features/home/HomeBestsellers";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
@@ -70,14 +71,15 @@ export function ProductPage({
     setShotIndex(0);
   }, [resolvedColor, brainrot.id]);
 
-  function handleAdd() {
+  function handleAdd(event: { currentTarget: EventTarget }) {
     addItem(brainrot.id, defaultProduct.id, size, resolvedColor);
+    flyToCart(event.currentTarget);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1600);
   }
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col" data-cart-source>
       <SiteNav />
       <main className="mx-auto w-full max-w-[1100px] flex-1 px-4 py-6 pb-28 sm:px-6 sm:pb-6 lg:px-8">
         <p className="text-xs font-bold uppercase tracking-wide text-ink/55">
@@ -97,6 +99,7 @@ export function ProductPage({
                   onClick={() => setZoomOpen(true)}
                   className="w-full overflow-hidden rounded-2xl border-[3px] border-ink bg-white shadow-sticker-sm transition-[transform,box-shadow] duration-[var(--duration-card)] hover:-translate-y-0.5 hover:shadow-sticker"
                   aria-label="Agrandir le mockup"
+                  data-cart-fly
                 >
                   <Image
                     key={shot}
@@ -223,6 +226,12 @@ export function ProductPage({
             <p className="mt-3 text-xs font-bold leading-snug text-ink/55">
               {customProductLegalNote}
             </p>
+            <Link
+              href="/mystery"
+              className="mt-4 inline-flex font-display text-sm font-bold uppercase tracking-tight text-ink underline decoration-2 underline-offset-2 hover:text-hot-pink"
+            >
+              {brand.mystery.name} →
+            </Link>
 
             <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
               {specCards.map((spec) => (

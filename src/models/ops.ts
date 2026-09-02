@@ -10,6 +10,7 @@ export type OpsOrderLine = {
   quantity: number;
   lineCents: number;
   printImage: string;
+  mystery: boolean;
 };
 
 export type OpsOrderSummary = {

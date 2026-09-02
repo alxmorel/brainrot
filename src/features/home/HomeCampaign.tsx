@@ -4,6 +4,7 @@ import { HomeBestsellers } from "@/features/home/HomeBestsellers";
 import { HomeArchiveWall } from "@/features/home/HomeArchiveWall";
 import { HomeHowItWorks } from "@/features/home/HomeHowItWorks";
 import { HomeManifesto } from "@/features/home/HomeManifesto";
+import { HomeMysteryTee } from "@/features/mystery/HomeMysteryTee";
 import { PromisesBar } from "@/features/home/PromisesBar";
 import { ScatteredBrainrots } from "@/features/home/ScatteredBrainrots";
 import { GeneratorStudio } from "@/features/generator/GeneratorStudio";
@@ -61,6 +62,7 @@ export function HomeCampaign({
           initialColor={initialColor}
         />
         <HomeBestsellers items={bestsellers} />
+        <HomeMysteryTee />
         <HomeHowItWorks />
         <HomeArchiveWall />
       </main>

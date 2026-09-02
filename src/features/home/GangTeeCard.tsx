@@ -8,6 +8,7 @@ import { defaultProduct } from "@/data/products";
 import { defaultTeeColor, type TeeColorId } from "@/data/teeColors";
 import type { TeeSize } from "@/data/sizes";
 import { useCart } from "@/features/cart/CartProvider";
+import { flyToCart } from "@/features/cart/flyToCart";
 import { TeeMockup } from "@/features/generator/TeeMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
@@ -28,14 +29,18 @@ export function GangTeeCard({ brainrot }: { brainrot: Brainrototo }) {
   const [justAdded, setJustAdded] = useState(false);
   const detailsHref = teePageHref(brainrot.id, size, resolvedColor);
 
-  function handleAdd() {
+  function handleAdd(event: { currentTarget: EventTarget }) {
     addItem(brainrot.id, defaultProduct.id, size, resolvedColor);
+    flyToCart(event.currentTarget);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1600);
   }
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker sm:p-4 lg:p-5">
+    <div
+      className="flex h-full flex-col rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker sm:p-4 lg:p-5"
+      data-cart-source
+    >
       <h3 className="font-display text-lg font-bold uppercase leading-none tracking-[-0.03em] text-ink sm:text-xl lg:text-2xl">
         <Link href={detailsHref} className="hover:text-hot-pink">
           {brainrot.name}

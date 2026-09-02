@@ -33,6 +33,7 @@ export interface OrderItem {
   color: string;
   quantity: number;
   printImage: string;
+  unitCents: number;
 }
 
 export interface Order {

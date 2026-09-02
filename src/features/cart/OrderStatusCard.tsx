@@ -3,6 +3,7 @@ import { legal } from "@/data/legal";
 import { defaultProduct } from "@/data/products";
 import { formatEur } from "@/data/pricing";
 import { TeeMockup } from "@/features/generator/TeeMockup";
+import { MysteryMockup } from "@/features/mystery/MysteryMockup";
 import { brainrots } from "@/data/brainrots";
 import type { PublicOrderView } from "@/models";
 
@@ -47,12 +48,16 @@ export function OrderStatusCard({ order }: { order: PublicOrderView }) {
       ) : null}
 
       <ul className="mt-5 flex flex-col gap-3 border-t-[3px] border-ink/10 pt-4">
-        {order.items.map((item) => {
-          const brainrot = brainrots.find((b) => b.id === item.brainrotId);
+        {order.items.map((item, index) => {
+          const brainrot = item.mystery
+            ? null
+            : brainrots.find((b) => b.id === item.brainrotId);
           return (
-            <li key={`${item.brainrotId}-${item.size}-${item.color}`} className="flex gap-3">
+            <li key={`${item.brainrotId}-${item.size}-${item.color}-${index}`} className="flex gap-3">
               <div className="w-16 shrink-0">
-                {brainrot ? (
+                {item.mystery ? (
+                  <MysteryMockup className="max-w-none" />
+                ) : brainrot ? (
                   <TeeMockup
                     product={defaultProduct}
                     brainrot={brainrot}

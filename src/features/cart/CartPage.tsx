@@ -6,11 +6,12 @@ import { brand } from "@/data/brand";
 import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
 import { legal } from "@/data/legal";
-import { formatEur, formatWelcomeOffer, shippingNote } from "@/data/pricing";
+import { isMysteryCartItem } from "@/data/mystery";
+import { cartLineUnitCents, formatEur, formatWelcomeOffer, shippingNote } from "@/data/pricing";
 import { colorsForBrainrot } from "@/data/productAssets";
 import { defaultProduct, products } from "@/data/products";
 import { isTeeSize } from "@/data/sizes";
-import { isTeeColor, teeColorLabel } from "@/data/teeColors";
+import { defaultTeeColor, isTeeColor, teeColorIds, teeColorLabel } from "@/data/teeColors";
 import { UnusedCredit } from "@/features/account/UnusedCredit";
 import { CartReassurance } from "@/features/cart/CartReassurance";
 import { CheckoutPayBlock } from "@/features/cart/CheckoutPayBlock";
@@ -19,6 +20,7 @@ import { useCart } from "@/features/cart/CartProvider";
 import { useCartQuote } from "@/features/cart/useCartQuote";
 import { useCheckoutPay } from "@/features/cart/useCheckoutPay";
 import { TeeMockup } from "@/features/generator/TeeMockup";
+import { MysteryMockup } from "@/features/mystery/MysteryMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
 import { teePageHref } from "@/features/product/teeSize";
@@ -42,8 +44,10 @@ export function CartPage() {
   const [removeId, setRemoveId] = useState<string | null>(null);
   const pendingRemove = items.find((item) => item.id === removeId);
   const pendingName = pendingRemove
-    ? (brainrots.find((item) => item.id === pendingRemove.brainrotId)?.name ??
-      "cet article")
+    ? isMysteryCartItem(pendingRemove)
+      ? brand.mystery.name
+      : (brainrots.find((item) => item.id === pendingRemove.brainrotId)?.name ??
+        "cet article")
     : "";
 
   useEffect(() => {
@@ -116,22 +120,36 @@ export function CartPage() {
               >
                 {brand.hero.cta}
               </ComposeLink>
+              <Link
+                href="/mystery"
+                className="inline-flex items-center justify-center rounded-pill border-[3px] border-ink bg-acid-yellow px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
+              >
+                {brand.mystery.cta}
+              </Link>
             </div>
           </div>
         ) : (
           <>
             <ul className="mt-6 flex flex-col gap-3">
               {items.map((item) => {
-                const brainrot = brainrots.find((b) => b.id === item.brainrotId);
+                const mystery = isMysteryCartItem(item);
+                const brainrot = mystery
+                  ? null
+                  : brainrots.find((b) => b.id === item.brainrotId);
                 const product = products.find((p) => p.id === item.productId);
-                if (!brainrot || !product) return null;
-                const lineCents = item.quantity * quote.shop.teePriceCents;
-                const teeHref =
-                  isTeeSize(item.size) && isTeeColor(item.color)
-                    ? teePageHref(brainrot.id, item.size, item.color)
+                if ((!mystery && !brainrot) || !product) return null;
+                const unitCents = cartLineUnitCents(item, quote.shop);
+                const lineCents = item.quantity * unitCents;
+                const teeHref = mystery
+                  ? "/mystery"
+                  : isTeeSize(item.size) && isTeeColor(item.color)
+                    ? teePageHref(brainrot!.id, item.size, item.color)
                     : isTeeSize(item.size)
-                      ? teePageHref(brainrot.id, item.size)
-                      : `/tee/${brainrot.id}`;
+                      ? teePageHref(brainrot!.id, item.size)
+                      : `/tee/${brainrot!.id}`;
+                const palette = mystery
+                  ? [...teeColorIds]
+                  : colorsForBrainrot(brainrot!);
                 return (
                   <li
                     key={item.id}
@@ -141,29 +159,38 @@ export function CartPage() {
                       href={teeHref}
                       className="relative mx-auto w-24 shrink-0 sm:mx-0 sm:w-28"
                     >
-                      <TeeMockup
-                        product={defaultProduct}
-                        brainrot={brainrot}
-                        color={item.color}
-                        className="max-w-none"
-                      />
+                      {mystery ? (
+                        <MysteryMockup className="max-w-none" />
+                      ) : (
+                        <TeeMockup
+                          product={defaultProduct}
+                          brainrot={brainrot ?? null}
+                          color={item.color}
+                          className="max-w-none"
+                        />
+                      )}
                     </Link>
                     <div className="min-w-0 flex-1">
                       <Link
                         href={teeHref}
                         className="font-display text-lg font-bold leading-tight text-ink hover:text-hot-pink"
                       >
-                        {brainrot.name}
+                        {mystery ? brand.mystery.name : brainrot!.name}
                       </Link>
                       <p className="text-sm font-bold text-ink/60">
                         {product.name} · {teeColorLabel(item.color)} ·{" "}
-                        {formatEur(quote.shop.teePriceCents)}
+                        {formatEur(unitCents)}
                       </p>
+                      {mystery ? (
+                        <p className="mt-1 text-xs font-bold text-ink/55">
+                          {brand.mystery.legal}
+                        </p>
+                      ) : null}
                       <div className="mt-2">
                         <ColorSwatches
-                          colors={colorsForBrainrot(brainrot)}
+                          colors={palette}
                           value={
-                            isTeeColor(item.color) ? item.color : "white"
+                            isTeeColor(item.color) ? item.color : defaultTeeColor
                           }
                           onChange={(id) => setColor(item.id, id)}
                         />
@@ -383,6 +410,7 @@ export function CartPage() {
                 totalCents={quote.totalCents}
                 pending={pending}
                 error={error}
+                hasMystery={items.some(isMysteryCartItem)}
                 onPay={pay}
               />
             </div>

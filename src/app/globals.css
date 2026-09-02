@@ -267,6 +267,10 @@
     animation: tee-reveal 360ms var(--ease-out) both;
   }
 
+  .animate-cart-bump {
+    animation: cart-bump 280ms var(--ease-spring);
+  }
+
   .pack-open-stage {
     animation: pack-stage 1000ms var(--ease-out) both;
   }

@@ -3,6 +3,7 @@ export type WelcomeKind = "percent" | "amount";
 export type ShopPublicSettings = {
   teePriceCents: number;
   teeCompareAtCents: number;
+  mysteryTeePriceCents: number;
   welcomeEnabled: boolean;
   welcomeCode: string;
   welcomeKind: WelcomeKind;
@@ -21,6 +22,7 @@ export type ShopPublicSettings = {
 export const DEFAULT_SHOP: ShopPublicSettings = {
   teePriceCents: 1499,
   teeCompareAtCents: 1799,
+  mysteryTeePriceCents: 1199,
   welcomeEnabled: true,
   welcomeCode: "BAMBINO",
   welcomeKind: "percent",

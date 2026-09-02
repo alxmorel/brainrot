@@ -20,8 +20,8 @@ export function useCartQuote(items: CartItem[], appliedCode: string | null) {
   const { me } = useAccount();
   const shop = useShop();
   const subtotalCents = useMemo(
-    () => cartSubtotalCents(items, shop.teePriceCents),
-    [items, shop.teePriceCents],
+    () => cartSubtotalCents(items, shop),
+    [items, shop],
   );
   const qty = useMemo(() => cartQty(items), [items]);
   const typed = normalizeCode(appliedCode ?? "");

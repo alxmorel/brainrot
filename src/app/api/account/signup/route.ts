@@ -6,7 +6,7 @@ import {
 } from "@/server/auth-session";
 import { trySendWelcomeEmail } from "@/server/email/trySendWelcome";
 import { getShopSettings } from "@/server/shop-settings";
-import { accountMeOf, createUser, getUserByEmail } from "@/server/users-repo";
+import { accountMeOf, authenticateUser, createUser, getUserByEmail } from "@/server/users-repo";
 
 export const runtime = "nodejs";
 
@@ -35,10 +35,17 @@ export async function POST(request: Request) {
 
   const existing = await getUserByEmail(parsed.email);
   if (existing) {
-    return NextResponse.json(
-      { ok: false, error: "Un compte existe déjà avec cet email." },
-      { status: 409 },
-    );
+    const user = await authenticateUser(parsed.email, parsed.password);
+    if (!user) {
+      return NextResponse.json(
+        { ok: false, error: "Email ou mot de passe incorrect." },
+        { status: 401 },
+      );
+    }
+    const response = NextResponse.json({ ok: true, user: await accountMeOf(user) });
+    const token = await createUserToken(user.id);
+    response.cookies.set(userCookieName(), token, userCookieOptions());
+    return response;
   }
 
   const user = await createUser(parsed.email, parsed.password);

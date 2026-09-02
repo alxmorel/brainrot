@@ -1,4 +1,8 @@
-import { brainrots } from "@/data/brainrots";
+import {
+  customerLineName,
+  isMysteryProductId,
+  MYSTERY_CART_ID,
+} from "@/data/mystery";
 import { teeColorLabel } from "@/data/teeColors";
 import type { Order, OrderStatus, PublicOrderLine, PublicOrderView } from "@/models";
 import { isHttpUrl } from "@/server/fulfillment/gelatoWebhook";
@@ -38,19 +42,38 @@ export function orderEmailMatches(order: Order, email: string) {
   return stored === email.trim().toLowerCase();
 }
 
-export function buildPublicOrderView(order: Order): PublicOrderView {
-  const items = order.items.map((item) => {
-    const brainrot = brainrots.find((b) => b.id === item.brainrotId);
-    return {
-      brainrotId: item.brainrotId,
-      name: brainrot?.name ?? item.brainrotId,
+export function customerOrderLines(order: Order): PublicOrderLine[] {
+  const items: PublicOrderLine[] = [];
+  for (const item of order.items) {
+    const mystery = isMysteryProductId(item.productId);
+    const line: PublicOrderLine = {
+      brainrotId: mystery ? MYSTERY_CART_ID : item.brainrotId,
+      name: customerLineName(item),
       size: item.size,
       color: item.color,
       colorLabel: teeColorLabel(item.color),
       quantity: item.quantity,
-      lineCents: orderLineCents(order, item.quantity),
+      lineCents: orderLineCents(order, item),
+      mystery,
     };
-  });
+    if (mystery) {
+      const existing = items.find(
+        (row) =>
+          row.mystery && row.size === line.size && row.color === line.color,
+      );
+      if (existing) {
+        existing.quantity += line.quantity;
+        existing.lineCents += line.lineCents;
+        continue;
+      }
+    }
+    items.push(line);
+  }
+  return items;
+}
+
+export function buildPublicOrderView(order: Order): PublicOrderView {
+  const items = customerOrderLines(order);
 
   const totalCents = orderPaidTotal(order);
   const email =

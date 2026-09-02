@@ -1,9 +1,8 @@
 import { legal } from "@/data/legal";
 import { customProductLegalNote, formatEur, shippingNote } from "@/data/pricing";
-import { teeColorLabel } from "@/data/teeColors";
-import { brainrots } from "@/data/brainrots";
 import type { Order } from "@/models";
-import { orderLineCents, orderPaidTotal } from "@/server/order-money";
+import { orderPaidTotal } from "@/server/order-money";
+import { customerOrderLines } from "@/server/orders/publicOrder";
 
 function escapeHtml(value: string) {
   return value
@@ -14,16 +13,11 @@ function escapeHtml(value: string) {
 }
 
 export function buildOrderConfirmationHtml(order: Order) {
-  const lines = order.items.map((item) => {
-    const brainrot = brainrots.find((b) => b.id === item.brainrotId);
-    const name = brainrot?.name ?? item.brainrotId;
-    const lineCents = orderLineCents(order, item.quantity);
-    return {
-      name,
-      meta: `${item.size} · ${teeColorLabel(item.color)} · ×${item.quantity}`,
-      lineCents,
-    };
-  });
+  const lines = customerOrderLines(order).map((item) => ({
+    name: item.name,
+    meta: `${item.size} · ${item.colorLabel} · ×${item.quantity}`,
+    lineCents: item.lineCents,
+  }));
   const totalCents = orderPaidTotal(order);
   const { shipping } = order;
 
@@ -121,12 +115,10 @@ export function buildOrderConfirmationHtml(order: Order) {
 }
 
 export function buildOrderConfirmationText(order: Order) {
-  const lines = order.items.map((item) => {
-    const brainrot = brainrots.find((b) => b.id === item.brainrotId);
-    const name = brainrot?.name ?? item.brainrotId;
-    const lineCents = orderLineCents(order, item.quantity);
-    return `• ${name} - ${item.size} · ${teeColorLabel(item.color)} · ×${item.quantity} - ${formatEur(lineCents)}`;
-  });
+  const lines = customerOrderLines(order).map(
+    (item) =>
+      `• ${item.name} - ${item.size} · ${item.colorLabel} · ×${item.quantity} - ${formatEur(item.lineCents)}`,
+  );
   const totalCents = orderPaidTotal(order);
   const { shipping } = order;
 

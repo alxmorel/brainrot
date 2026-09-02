@@ -25,7 +25,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
           (json as { ok: unknown }).ok &&
           "settings" in json
         ) {
-          setShop((json as { settings: ShopPublicSettings }).settings);
+          setShop({
+            ...DEFAULT_SHOP,
+            ...(json as { settings: ShopPublicSettings }).settings,
+          });
         }
       })
       .catch(() => undefined);

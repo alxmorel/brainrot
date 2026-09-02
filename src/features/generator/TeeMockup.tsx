@@ -26,6 +26,7 @@ export function TeeMockup({
           "relative mx-auto flex h-full min-h-0 w-full items-center justify-center",
           className,
         )}
+        data-cart-fly
       >
         <Image
           src={mockup}
@@ -46,6 +47,7 @@ export function TeeMockup({
         "relative mx-auto aspect-[5/6] h-full min-h-0 w-full",
         className,
       )}
+      data-cart-fly
     >
       <Image
         src={product.baseImage}

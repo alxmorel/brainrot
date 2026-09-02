@@ -24,13 +24,13 @@ export type CheckoutQuote = {
 };
 
 export async function quoteCheckout(opts: {
-  items: { quantity: number }[];
+  items: { quantity: number; productId?: string }[];
   sessionUser: User | null;
   typedCode: string | null;
 }): Promise<CheckoutQuote> {
   const shop = await getShopSettings();
   const qty = cartQty(opts.items);
-  const subtotalCents = cartSubtotalCents(opts.items, shop.teePriceCents);
+  const subtotalCents = cartSubtotalCents(opts.items, shop);
   const sessionUser = opts.sessionUser;
   let welcomeCents = 0;
   let welcomeCode: string | null = null;

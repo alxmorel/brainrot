@@ -8,6 +8,7 @@ export type PublicOrderLine = {
   colorLabel: string;
   quantity: number;
   lineCents: number;
+  mystery: boolean;
 };
 
 export type PublicOrderView = {

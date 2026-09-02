@@ -7,6 +7,14 @@ const tshirt: Product = {
   baseImage: "/assets/products/tshirt-base.svg",
 };
 
-export const products: Product[] = [tshirt];
+const mysteryTee: Product = {
+  id: "tee-mystery",
+  type: "tshirt",
+  name: "Mystery Tee",
+  baseImage: "/assets/products/tshirt-base.svg",
+};
+
+export const products: Product[] = [tshirt, mysteryTee];
 
 export const defaultProduct = tshirt;
+export const mysteryProduct = mysteryTee;

@@ -1,4 +1,4 @@
-import { brainrots } from "@/data/brainrots";
+import { isMysteryProductId, opsLineName } from "@/data/mystery";
 import { teePriceCents } from "@/data/pricing";
 import { teeColorLabel } from "@/data/teeColors";
 import type { OpsOrderDetail, OpsOrderLine, OpsOrderSummary } from "@/models";
@@ -16,22 +16,27 @@ function rowUnitCents(row: OrderRow) {
 
 function orderTotalCents(row: OrderRow) {
   if (row.totalCents > 0) return row.totalCents;
-  return row.items.reduce((sum, item) => sum + item.quantity * rowUnitCents(row), 0);
+  const unit = rowUnitCents(row);
+  return row.items.reduce((sum, item) => {
+    const itemUnit = item.unitCents > 0 ? item.unitCents : unit;
+    return sum + item.quantity * itemUnit;
+  }, 0);
 }
 
 function toOpsLines(row: OrderRow): OpsOrderLine[] {
   const unit = rowUnitCents(row);
   return row.items.map((item) => {
-    const brainrot = brainrots.find((b) => b.id === item.brainrotId);
+    const itemUnit = item.unitCents > 0 ? item.unitCents : unit;
     return {
       brainrotId: item.brainrotId,
-      name: brainrot?.name ?? item.brainrotId,
+      name: opsLineName(item),
       size: item.size,
       color: item.color,
       colorLabel: teeColorLabel(item.color),
       quantity: item.quantity,
-      lineCents: item.quantity * unit,
+      lineCents: item.quantity * itemUnit,
       printImage: item.printImage,
+      mystery: isMysteryProductId(item.productId),
     };
   });
 }

@@ -94,8 +94,8 @@
   /* Shadows - sticker / comic, not soft neon glow */
   --shadow-soft: 0 8px 24px rgb(10 10 10 / 0.08);
   --shadow-lift: 0 14px 28px rgb(10 10 10 / 0.12);
-  --shadow-sticker: 4px 4px 0 #0a0a0a;
-  --shadow-sticker-sm: 3px 3px 0 #0a0a0a;
+  --shadow-sticker: 4px 4px 0 #0a0a0a00;
+  --shadow-sticker-sm: 3px 3px 0 #a87dff75;
   --glow-pink: 4px 4px 0 #0a0a0a;
   --glow-cyan: 4px 4px 0 #0a0a0a;
   --glow-green: 4px 4px 0 #0a0a0a;
@@ -260,6 +260,19 @@
   }
 }
 
+@keyframes cart-bump {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.16) rotate(-8deg);
+  }
+  65% {
+    transform: scale(0.96) rotate(4deg);
+  }
+}
+
 @keyframes pack-slash {
   0% {
     opacity: 0;
@@ -289,6 +302,7 @@
   .animate-pulse-glow,
   .animate-gloss,
   .animate-tee-reveal,
+  .animate-cart-bump,
   .pack-open-stage,
   .pack-open-card,
   .pack-open-inner,
