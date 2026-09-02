@@ -32,7 +32,7 @@ export const archiveCopy = {
     indonesian: "Indonesian",
     international: "International",
     animal: "Animaux",
-    food: "Bouffe",
+    food: "Food",
     machine: "Machines",
   } satisfies Record<"all" | ArchiveWave | ArchiveTag, string>,
   waveLabel: {

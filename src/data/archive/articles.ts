@@ -18,7 +18,7 @@ export const archiveArticles: ArchiveArticle[] = [
       {
         heading: "La recette",
         paragraphs: [
-          "Trois choses : une image absurde (animal + objet, bouffe ou machine), un nom facile à scander, une voix robot qui le répète.",
+          "Trois choses : une image absurde (animal + objet, Food ou machine), un nom facile à scander, une voix robot qui le répète.",
           "« Italian » vient surtout du son des noms. Beaucoup de persos n’ont aucun lien avec l’Italie.",
         ],
       },

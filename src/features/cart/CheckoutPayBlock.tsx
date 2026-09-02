@@ -19,28 +19,25 @@ export function CheckoutPayBlock({
   onPay: (cgvAccepted: boolean) => void;
 }) {
   return (
-    <div
-      id="paiement"
-      className="scroll-mt-24 rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm"
-    >
+    <div id="paiement" className="scroll-mt-28">
       <h2 className="font-display text-lg font-bold uppercase text-ink">
         Paiement
       </h2>
-      <p className="mt-1 text-sm font-bold text-ink/70">
-        Adresse et carte sur la page sécurisée Stripe - {shippingNote},{" "}
+      <p className="mt-1 text-sm font-bold leading-snug text-ink/70">
+        Adresse et carte sur la page sécurisée Stripe — {shippingNote},{" "}
         {legal.deliveryEstimate.toLowerCase()}.
       </p>
 
-      <p className="mt-3 rounded-xl border-[3px] border-ink/15 bg-ink-soft px-3 py-2 text-xs font-bold leading-snug text-ink/75">
+      <p className="mt-3 text-sm font-bold leading-snug text-ink/55">
         {customProductLegalNote}
         {hasMystery ? ` ${mysteryLegalNote}` : ""}
       </p>
 
-      <label className="mt-4 flex items-start gap-2 text-sm font-bold text-ink/75">
+      <label className="mt-4 flex items-start gap-3 text-sm font-bold leading-snug text-ink/75">
         <input
           id="checkout-cgv"
           type="checkbox"
-          className="mt-1 size-4 accent-hot-pink"
+          className="mt-0.5 size-5 shrink-0 accent-hot-pink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
         />
         <span>
           J’accepte les{" "}
@@ -64,6 +61,7 @@ export function CheckoutPayBlock({
 
       <Button
         type="button"
+        size="lg"
         className="mt-4 w-full"
         disabled={pending}
         onClick={() => {

@@ -8,7 +8,7 @@ export const brand = {
   series: "Série 01",
   hero: {
     lines: ["Des créatures", "Brainrototo", "qui se portent"] as const,
-    kicker: "Animal × bouffe × vibe.",
+    kicker: "Animal × Food × vibe.",
     pitch:
       "Pas un meme volé. Une créature originale, dessinée, imprimée sur un vrai tee.",
     cta: "Composer le mien →",
@@ -19,7 +19,7 @@ export const brand = {
     body: "Le brainrot a une grammaire. On en a fait une bande - pas le requin Nike de TikTok.",
     traits: [
       { id: "animal", label: "Animal", hint: "Croc, requin, grenouille…", tone: "green" },
-      { id: "bouffe", label: "Bouffe", hint: "Banane, pizza, fraise…", tone: "yellow" },
+      { id: "Food", label: "Food", hint: "Banane, pizza, fraise…", tone: "yellow" },
       { id: "vibe", label: "Vibe", hint: "Italian, cursed, luxe…", tone: "violet" },
     ],
     result: "Une créature. Un tee.",
@@ -36,7 +36,7 @@ export const brand = {
       {
         n: "01",
         title: "Compose un combo",
-        text: "Animal, bouffe, vibe. Le Brainrototo apparaît.",
+        text: "Animal, Food, vibe. Le Brainrototo apparaît.",
       },
       {
         n: "02",
@@ -86,6 +86,12 @@ export const brand = {
   footer: {
     line: "Des créatures Brainrototo. Qui se portent.",
   },
+  notFound: {
+    code: "404",
+    lines: ["T’es", "perdu."] as const,
+    lead: "Ce combo n’existe pas.",
+    cta: "Composer le mien →",
+  },
   archive: {
     nav: "Archive",
     eyebrow: "The Brainrot Archive",
@@ -103,10 +109,10 @@ export const brand = {
   seo: {
     title: "Brainrototo | Site officiel - des créatures qui se portent",
     description:
-      "Brainrototo est le site officiel de la marque Brainrototo. Compose une créature originale (animal × bouffe × vibe) et porte-la sur un tee bio. brainrototo.com",
+      "Brainrototo est le site officiel de la marque Brainrototo. Compose une créature originale (animal × Food × vibe) et porte-la sur un tee bio. brainrototo.com",
     collectionTitle: "Compose ton Brainrototo",
     collectionDescription:
-      "Compose un combo (animal × bouffe × vibe), génère ta créature Brainrototo, on l’imprime sur un tee.",
+      "Compose un combo (animal × Food × vibe), génère ta créature Brainrototo, on l’imprime sur un tee.",
   },
 } as const;
 

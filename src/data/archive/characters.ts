@@ -444,7 +444,7 @@ export const archiveCharacters: ArchiveCharacter[] = [
       "Chimpanzini Bananini : singe-banane, mème Italian Brainrot. TikTok 2025.",
     tagline: "Un chimpanzé dont le corps est une banane.",
     summary:
-      "Un chimpanzé fusionné avec une banane. Le nom le plus clair de la formule animal + bouffe + suffixe italien.",
+      "Un chimpanzé fusionné avec une banane. Le nom le plus clair de la formule animal + Food + suffixe italien.",
     appearance: [
       "Tête de chimpanzé, corps-banane. On comprend le combo avant d’entendre le nom.",
     ],

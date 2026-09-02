@@ -14,7 +14,7 @@ export function CheckoutProgress({ step }: { step: CheckoutStep }) {
   return (
     <nav
       aria-label="Étapes de commande"
-      className="flex flex-wrap items-center gap-2 text-[0.65rem] font-bold uppercase tracking-wide sm:text-xs"
+      className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wide sm:text-sm"
     >
       {steps.map((item, index) => {
         const done = index < activeIndex;

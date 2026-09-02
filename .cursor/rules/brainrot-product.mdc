@@ -34,7 +34,7 @@ Copy source of truth: `src/data/brand.ts`.
 ## User journey
 
 1. Land → instantly get the concept (creatures you compose and wear)
-2. Select traits (Animal, Bouffe/Food, Vibe)
+2. Select traits (Animal, Food, Vibe)
 3. See matching brainrots → pick one illustration
 4. Apply to product mockup (T-shirt / Hoodie / Cap)
 5. Add to cart
@@ -42,7 +42,7 @@ Copy source of truth: `src/data/brand.ts`.
 ## Generator categories (V1)
 
 - **Animal**: crocodile, chat, grenouille, requin, singe, canard…
-- **Bouffe**: banane, fraise, pastèque, ananas, pomme, pizza…
+- **Food**: banane, fraise, pastèque, ananas, pomme, pizza…
 - **Vibe**: italian, cute, cursed, chaotic, luxury…
 - Name is derived from the combo (e.g. Banacrocodilo Bambino)
 

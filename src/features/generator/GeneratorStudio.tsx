@@ -36,7 +36,7 @@ type Category = "animal" | "ingredient" | "vibe";
 
 const categories: { id: Category; label: string }[] = [
   { id: "animal", label: "Animal" },
-  { id: "ingredient", label: "Bouffe" },
+  { id: "ingredient", label: "Food" },
   { id: "vibe", label: "Vibe" },
 ];
 
@@ -229,7 +229,7 @@ export function GeneratorStudio({
     activeCategory === "animal"
       ? "Animal"
       : activeCategory === "ingredient"
-        ? "Bouffe"
+        ? "Food"
         : activeCategory === "vibe"
           ? "Vibe"
           : "";
@@ -433,7 +433,7 @@ export function GeneratorStudio({
                 />
               ) : (
                 <p className="rounded-xl border-[3px] border-dashed border-ink/25 bg-ink-soft px-4 py-4 text-center text-xs font-bold text-ink/55 sm:text-sm lg:text-base">
-                  Choisis Animal, Bouffe ou Vibe
+                  Choisis Animal, Food ou Vibe
                 </p>
               )}
             </div>

@@ -7,11 +7,11 @@ import { brainrots } from "@/data/brainrots";
 import { sellableTeeSizes } from "@/data/fulfillment";
 import { legal } from "@/data/legal";
 import { isMysteryCartItem } from "@/data/mystery";
-import { cartLineUnitCents, formatEur, formatWelcomeOffer, shippingNote } from "@/data/pricing";
+import { cartLineUnitCents, formatEur, shippingNote } from "@/data/pricing";
 import { colorsForBrainrot } from "@/data/productAssets";
 import { defaultProduct, products } from "@/data/products";
 import { isTeeSize } from "@/data/sizes";
-import { defaultTeeColor, isTeeColor, teeColorIds, teeColorLabel } from "@/data/teeColors";
+import { defaultTeeColor, isTeeColor, teeColorIds, type TeeColorId } from "@/data/teeColors";
 import { UnusedCredit } from "@/features/account/UnusedCredit";
 import { CartReassurance } from "@/features/cart/CartReassurance";
 import { CheckoutPayBlock } from "@/features/cart/CheckoutPayBlock";
@@ -23,7 +23,9 @@ import { TeeMockup } from "@/features/generator/TeeMockup";
 import { MysteryMockup } from "@/features/mystery/MysteryMockup";
 import { ColorSwatches } from "@/features/product/ColorSwatches";
 import { SizeGuideDialog } from "@/features/product/SizeGuide";
+import { SizePicker } from "@/features/product/SizePicker";
 import { teePageHref } from "@/features/product/teeSize";
+import type { CartItem } from "@/models";
 import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
@@ -94,18 +96,18 @@ export function CartPage() {
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteNav />
-      <main className="mx-auto w-full max-w-3xl px-4 py-6 pb-28 sm:px-6 sm:pb-6">
+      <main className="mx-auto w-full max-w-[1200px] px-4 py-6 pb-28 sm:px-6 lg:px-8 lg:pb-10">
         <CheckoutProgress step="cart" />
 
-        <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
-          <h1 className="font-display text-[clamp(1.8rem,5vw,3rem)] font-bold uppercase leading-none text-ink">
+        <div className="mt-4 flex flex-wrap items-end gap-x-4 gap-y-2">
+          <h1 className="font-display text-[clamp(1.85rem,5vw,3rem)] font-bold uppercase leading-none tracking-[-0.03em] text-ink">
             Panier
           </h1>
           <SizeGuideDialog />
         </div>
 
         {items.length === 0 ? (
-          <div className="mt-6 rounded-2xl border-[3px] border-ink bg-white px-4 py-10 text-center shadow-sticker-sm">
+          <div className="mx-auto mt-8 max-w-lg rounded-2xl border-[3px] border-ink bg-white px-4 py-10 text-center shadow-sticker-sm">
             <p className="font-display text-lg font-bold uppercase text-ink">
               Panier vide
             </p>
@@ -129,292 +131,202 @@ export function CartPage() {
             </div>
           </div>
         ) : (
-          <>
-            <ul className="mt-6 flex flex-col gap-3">
-              {items.map((item) => {
-                const mystery = isMysteryCartItem(item);
-                const brainrot = mystery
-                  ? null
-                  : brainrots.find((b) => b.id === item.brainrotId);
-                const product = products.find((p) => p.id === item.productId);
-                if ((!mystery && !brainrot) || !product) return null;
-                const unitCents = cartLineUnitCents(item, quote.shop);
-                const lineCents = item.quantity * unitCents;
-                const teeHref = mystery
-                  ? "/mystery"
-                  : isTeeSize(item.size) && isTeeColor(item.color)
-                    ? teePageHref(brainrot!.id, item.size, item.color)
-                    : isTeeSize(item.size)
-                      ? teePageHref(brainrot!.id, item.size)
-                      : `/tee/${brainrot!.id}`;
-                const palette = mystery
-                  ? [...teeColorIds]
-                  : colorsForBrainrot(brainrot!);
-                return (
-                  <li
-                    key={item.id}
-                    className="flex flex-col gap-3 rounded-2xl border-[3px] border-ink bg-white p-3 shadow-sticker-sm sm:flex-row sm:items-center"
-                  >
-                    <Link
-                      href={teeHref}
-                      className="relative mx-auto w-24 shrink-0 sm:mx-0 sm:w-28"
-                    >
-                      {mystery ? (
-                        <MysteryMockup className="max-w-none" />
-                      ) : (
-                        <TeeMockup
-                          product={defaultProduct}
-                          brainrot={brainrot ?? null}
-                          color={item.color}
-                          className="max-w-none"
-                        />
-                      )}
-                    </Link>
-                    <div className="min-w-0 flex-1">
-                      <Link
-                        href={teeHref}
-                        className="font-display text-lg font-bold leading-tight text-ink hover:text-hot-pink"
-                      >
-                        {mystery ? brand.mystery.name : brainrot!.name}
-                      </Link>
-                      <p className="text-sm font-bold text-ink/60">
-                        {product.name} · {teeColorLabel(item.color)} ·{" "}
-                        {formatEur(unitCents)}
-                      </p>
-                      {mystery ? (
-                        <p className="mt-1 text-xs font-bold text-ink/55">
-                          {brand.mystery.legal}
-                        </p>
-                      ) : null}
-                      <div className="mt-2">
-                        <ColorSwatches
-                          colors={palette}
-                          value={
-                            isTeeColor(item.color) ? item.color : defaultTeeColor
-                          }
-                          onChange={(id) => setColor(item.id, id)}
-                        />
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {sizes.map((value) => (
-                          <button
-                            key={value}
-                            type="button"
-                            onClick={() => setSize(item.id, value)}
-                            className={
-                              item.size === value
-                                ? "rounded-pill border-[3px] border-ink bg-acid-yellow px-2 py-0.5 font-display text-[0.65rem] font-bold uppercase shadow-sticker-sm"
-                                : "rounded-pill border-[3px] border-ink bg-white px-2 py-0.5 font-display text-[0.65rem] font-bold uppercase text-ink/70"
-                            }
-                          >
-                            {value}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <button
-                          type="button"
-                          aria-label={
-                            item.quantity <= 1 ? "Retirer l’article" : "Moins"
-                          }
-                          onClick={() => {
-                            if (item.quantity <= 1) {
-                              setRemoveId(item.id);
-                              return;
-                            }
-                            setQuantity(item.id, item.quantity - 1);
-                          }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-pill border-[3px] border-ink bg-white font-display text-sm font-bold"
-                        >
-                          −
-                        </button>
-                        <span className="min-w-[1.5rem] text-center font-display text-sm font-bold">
-                          {item.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          aria-label="Plus"
-                          onClick={() =>
-                            setQuantity(item.id, item.quantity + 1)
-                          }
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-pill border-[3px] border-ink bg-white font-display text-sm font-bold"
-                        >
-                          +
-                        </button>
-                        <span className="ml-auto font-display text-sm font-bold text-ink">
-                          {formatEur(lineCents)}
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_21rem] xl:grid-cols-[minmax(0,1fr)_23rem]">
+            <section aria-label="Articles du panier">
+              <ul className="divide-y divide-ink/15 border-y border-ink/15">
+                {items.map((item) => {
+                  const mystery = isMysteryCartItem(item);
+                  const brainrot = mystery
+                    ? null
+                    : brainrots.find((b) => b.id === item.brainrotId);
+                  const product = products.find((p) => p.id === item.productId);
+                  if ((!mystery && !brainrot) || !product) return null;
+                  const unitCents = cartLineUnitCents(item, quote.shop);
+                  const palette = mystery
+                    ? [...teeColorIds]
+                    : colorsForBrainrot(brainrot!);
+                  return (
+                    <CartLine
+                      key={item.id}
+                      item={item}
+                      name={mystery ? brand.mystery.name : brainrot!.name}
+                      productName={product.name}
+                      mystery={mystery}
+                      mysteryLegal={mystery ? brand.mystery.legal : null}
+                      teeHref={lineHref(item, mystery, brainrot?.id)}
+                      unitCents={unitCents}
+                      sizes={sizes}
+                      palette={palette}
+                      brainrot={brainrot}
+                      onSetSize={setSize}
+                      onSetColor={setColor}
+                      onSetQuantity={setQuantity}
+                      onRemove={() => setRemoveId(item.id)}
+                    />
+                  );
+                })}
+              </ul>
 
-            <div className="mt-4">
-              <Link
-                href="/#compose"
-                className="font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2"
+              <div className="mt-5">
+                <Link
+                  href="/#compose"
+                  className="inline-flex min-h-10 items-center font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-4"
+                >
+                  Continuer mes achats →
+                </Link>
+              </div>
+
+              <div className="mt-6">
+                <CartReassurance />
+              </div>
+            </section>
+
+            <aside className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
+              <section
+                aria-labelledby="cart-recap-title"
+                className="rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm sm:p-5"
               >
-                Continuer mes achats →
-              </Link>
-            </div>
-
-            <div className="mt-6">
-              <CartReassurance />
-            </div>
-
-            {!quote.me && quote.shop.welcomeLive && quote.shop.welcomeRequiresAccount ? (
-              <div className="mt-4 rounded-2xl border-[3px] border-ink bg-acid-yellow px-4 py-3 shadow-sticker-sm">
-                <p className="font-display text-sm font-bold uppercase text-ink">
-                  {formatWelcomeOffer(quote.shop)} avec le code {quote.shop.welcomeCode}
-                </p>
-                <p className="mt-1 text-sm font-bold text-ink/70">
-                  Crée un compte, puis entre le code au paiement.
-                </p>
-                <Link
-                  href="/compte/inscription?next=/cart"
-                  className="mt-1 inline-block text-sm font-bold text-hot-pink underline"
+                <h2
+                  id="cart-recap-title"
+                  className="font-display text-lg font-bold uppercase text-ink"
                 >
-                  Créer un compte →
-                </Link>
-              </div>
-            ) : null}
-
-            {quote.guestCashbackCents > 0 ? (
-              <div className="mt-4 rounded-2xl border-[3px] border-ink bg-white px-4 py-3 shadow-sticker-sm">
-                <p className="font-display text-sm font-bold uppercase text-ink">
-                  + {formatEur(quote.guestCashbackCents)} de crédit si tu es
-                  connecté
+                  Récapitulatif
+                </h2>
+                <dl className="mt-3 space-y-2">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-sm font-bold text-ink/60">Sous-total</dt>
+                    <dd className="text-sm font-bold text-ink">
+                      {formatEur(quote.subtotalCents)}
+                    </dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-sm font-bold text-ink/60">Livraison</dt>
+                    <dd className="text-sm font-bold text-ink">{shippingNote}</dd>
+                  </div>
+                  {quote.welcomeAppliedCents > 0 ? (
+                    <div className="flex items-baseline justify-between gap-3">
+                      <dt className="text-sm font-bold text-ink/60">
+                        Code {quote.welcomeCode}
+                      </dt>
+                      <dd className="text-sm font-bold text-ink">
+                        −{formatEur(quote.welcomeAppliedCents)}
+                      </dd>
+                    </div>
+                  ) : null}
+                  {quote.creditAppliedCents > 0 ? (
+                    <div className="flex items-baseline justify-between gap-3">
+                      <dt className="text-sm font-bold text-ink/60">Crédit</dt>
+                      <dd className="text-sm font-bold text-ink">
+                        −{formatEur(quote.creditAppliedCents)}
+                      </dd>
+                    </div>
+                  ) : null}
+                </dl>
+                <div className="mt-4 flex items-baseline justify-between gap-3 border-t-[3px] border-ink pt-3">
+                  <p className="font-display text-lg font-bold uppercase text-ink">
+                    Total
+                  </p>
+                  <p className="font-display text-2xl font-bold uppercase leading-none text-ink">
+                    {formatEur(quote.totalCents)}{" "}
+                    <span className="text-base">TTC</span>
+                  </p>
+                </div>
+                {quote.cashbackPreviewCents > 0 ? (
+                  <p className="mt-2 text-sm font-bold text-ink/70">
+                    Tu gagnes {formatEur(quote.cashbackPreviewCents)} de crédit
+                    après cette commande.
+                  </p>
+                ) : null}
+                <p className="mt-2 text-sm font-bold leading-snug text-ink/55">
+                  {legal.deliveryEstimate}
                 </p>
-                <Link
-                  href="/compte/inscription?next=/cart"
-                  className="mt-1 inline-block text-sm font-bold text-hot-pink underline"
-                >
-                  Créer un compte →
-                </Link>
-              </div>
-            ) : null}
+              </section>
 
-            {quote.me && quote.me.creditCents > 0 ? (
-              <div className="mt-4">
-                <UnusedCredit cents={quote.me.creditCents} />
-              </div>
-            ) : null}
-
-            <div id="promo" className="mt-4 scroll-mt-28">
-              <p className="text-xs font-bold uppercase tracking-wide text-hot-pink">
-                Code promo
-              </p>
-              <div className="mt-1 flex flex-col gap-2 sm:flex-row">
-                <input
-                  value={draftCode}
-                  onChange={(event) => {
-                    setDraftCode(event.target.value);
-                    setAppliedCode(null);
-                    setPromoStatus(null);
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      void testPromoCode();
-                    }
-                  }}
-                  placeholder="Saisir un code"
-                  autoCapitalize="characters"
-                  autoComplete="off"
-                  spellCheck={false}
-                  className="w-full rounded-xl border-[3px] border-ink bg-white px-4 py-3 font-display text-sm font-bold uppercase text-ink placeholder:normal-case placeholder:text-ink/30 shadow-sticker-sm"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="shrink-0 sm:self-stretch sm:px-5"
-                  disabled={testingCode || draftCode.trim().length === 0}
-                  onClick={() => void testPromoCode()}
+              <section
+                aria-labelledby="cart-promo-title"
+                id="promo"
+                className="scroll-mt-28"
+              >
+                <h2
+                  id="cart-promo-title"
+                  className="font-display text-base font-bold uppercase text-ink"
                 >
-                  {testingCode ? "…" : "Tester"}
-                </Button>
-              </div>
-              {promoStatus === "ok" ? (
-                <p className="mt-2 text-sm font-bold text-ink/70">
-                  Code {quote.welcomeCode} valable · −
-                  {formatEur(quote.welcomeAppliedCents)}
-                </p>
-              ) : null}
-              {promoStatus === "needsAccount" ? (
-                <p className="mt-2 text-sm font-bold text-ink/70">
-                  Ce code demande un compte.{" "}
-                  <Link
-                    href="/compte/inscription?next=/cart"
-                    className="text-hot-pink underline"
+                  Réductions
+                </h2>
+
+                {quote.me && quote.me.creditCents > 0 ? (
+                  <div className="mt-2">
+                    <UnusedCredit cents={quote.me.creditCents} />
+                  </div>
+                ) : null}
+
+                <label
+                  htmlFor="cart-promo-code"
+                  className="mt-2 block text-xs font-bold uppercase tracking-wide text-ink/55"
+                >
+                  Code promo
+                </label>
+                <div className="mt-1 flex gap-2">
+                  <input
+                    id="cart-promo-code"
+                    value={draftCode}
+                    onChange={(event) => {
+                      setDraftCode(event.target.value);
+                      setAppliedCode(null);
+                      setPromoStatus(null);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void testPromoCode();
+                      }
+                    }}
+                    placeholder="Saisir un code"
+                    autoCapitalize="characters"
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="min-w-0 flex-1 rounded-xl border-[3px] border-ink bg-white px-3 py-2 font-display text-sm font-bold uppercase text-ink placeholder:normal-case placeholder:text-ink/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-10 shrink-0 px-4"
+                    disabled={testingCode || draftCode.trim().length === 0}
+                    onClick={() => void testPromoCode()}
                   >
-                    Créer un compte
-                  </Link>
-                </p>
-              ) : null}
-              {promoStatus === "invalid" ? (
-                <p className="mt-2 text-sm font-bold text-hot-pink">
-                  Code invalide ou déjà utilisé.
-                </p>
-              ) : null}
-            </div>
-
-            <div className="mt-4 rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm">
-              <div className="flex items-baseline justify-between gap-3">
-                <p className="text-sm font-bold text-ink/60">Sous-total</p>
-                <p className="text-sm font-bold text-ink">
-                  {formatEur(quote.subtotalCents)}
-                </p>
-              </div>
-              {quote.welcomeAppliedCents > 0 ? (
-                <div className="mt-1 flex items-baseline justify-between gap-3">
-                  <p className="text-sm font-bold text-ink/60">
-                    Code {quote.welcomeCode}
-                  </p>
-                  <p className="text-sm font-bold text-ink">
-                    −{formatEur(quote.welcomeAppliedCents)}
-                  </p>
+                    {testingCode ? "…" : "Tester"}
+                  </Button>
                 </div>
-              ) : null}
-              {quote.creditAppliedCents > 0 ? (
-                <div className="mt-1 flex items-baseline justify-between gap-3">
-                  <p className="text-sm font-bold text-ink/60">Crédit</p>
-                  <p className="text-sm font-bold text-ink">
-                    −{formatEur(quote.creditAppliedCents)}
+                {promoStatus === "ok" ? (
+                  <p className="mt-1.5 text-sm font-bold text-ink/70">
+                    Code {quote.welcomeCode} valable · −
+                    {formatEur(quote.welcomeAppliedCents)}
                   </p>
-                </div>
-              ) : null}
-              <div className="mt-3 flex items-baseline justify-between gap-3 border-t-[3px] border-ink/10 pt-3">
-                <p className="font-display text-base font-bold uppercase text-ink">
-                  Total
-                </p>
-                <p className="font-display text-xl font-bold uppercase text-ink">
-                  {formatEur(quote.totalCents)} TTC
-                </p>
-              </div>
-              {quote.cashbackPreviewCents > 0 ? (
-                <p className="mt-2 text-sm font-bold text-ink/70">
-                  Tu gagnes {formatEur(quote.cashbackPreviewCents)} de crédit
-                  après cette commande.
-                </p>
-              ) : null}
-              <p className="mt-1 text-sm font-bold text-ink/55">
-                {shippingNote} · {legal.deliveryEstimate}
-              </p>
-            </div>
+                ) : null}
+                {promoStatus === "needsAccount" ? (
+                  <p className="mt-1.5 text-sm font-bold text-ink/70">
+                    Ce code demande un compte.
+                  </p>
+                ) : null}
+                {promoStatus === "invalid" ? (
+                  <p className="mt-1.5 text-sm font-bold text-hot-pink">
+                    Code invalide ou déjà utilisé.
+                  </p>
+                ) : null}
+              </section>
 
-            <div className="mt-4">
-              <CheckoutPayBlock
-                totalCents={quote.totalCents}
-                pending={pending}
-                error={error}
-                hasMystery={items.some(isMysteryCartItem)}
-                onPay={pay}
-              />
-            </div>
-          </>
+              <div className="rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker-sm sm:p-5">
+                <CheckoutPayBlock
+                  totalCents={quote.totalCents}
+                  pending={pending}
+                  error={error}
+                  hasMystery={items.some(isMysteryCartItem)}
+                  onPay={pay}
+                />
+              </div>
+            </aside>
+          </div>
         )}
       </main>
 
@@ -431,7 +343,7 @@ export function CartPage() {
             </div>
             <a
               href="#paiement"
-              className="inline-flex shrink-0 items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker-sm"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
             >
               Payer →
             </a>
@@ -450,6 +362,166 @@ export function CartPage() {
           }}
         />
       ) : null}
+    </div>
+  );
+}
+
+function lineHref(
+  item: CartItem,
+  mystery: boolean,
+  brainrotId: string | undefined,
+) {
+  if (mystery) return "/mystery";
+  if (!brainrotId) return "/";
+  if (isTeeSize(item.size) && isTeeColor(item.color)) {
+    return teePageHref(brainrotId, item.size, item.color);
+  }
+  if (isTeeSize(item.size)) return teePageHref(brainrotId, item.size);
+  return `/tee/${brainrotId}`;
+}
+
+function CartLine({
+  item,
+  name,
+  productName,
+  mystery,
+  mysteryLegal,
+  teeHref,
+  unitCents,
+  sizes,
+  palette,
+  brainrot,
+  onSetSize,
+  onSetColor,
+  onSetQuantity,
+  onRemove,
+}: {
+  item: CartItem;
+  name: string;
+  productName: string;
+  mystery: boolean;
+  mysteryLegal: string | null;
+  teeHref: string;
+  unitCents: number;
+  sizes: string[];
+  palette: TeeColorId[];
+  brainrot: (typeof brainrots)[number] | null;
+  onSetSize: (id: string, size: string) => void;
+  onSetColor: (id: string, color: string) => void;
+  onSetQuantity: (id: string, quantity: number) => void;
+  onRemove: () => void;
+}) {
+  const lineCents = item.quantity * unitCents;
+
+  return (
+    <li className="grid grid-cols-[5.75rem_minmax(0,1fr)_auto] items-start gap-x-3 py-4 sm:grid-cols-[6.75rem_minmax(0,1fr)_auto] sm:gap-x-4 sm:py-5">
+      <Link href={teeHref} className="relative w-full shrink-0">
+        {mystery ? (
+          <MysteryMockup className="max-w-none" />
+        ) : (
+          <TeeMockup
+            product={defaultProduct}
+            brainrot={brainrot}
+            color={item.color}
+            className="max-w-none"
+          />
+        )}
+      </Link>
+      <div className="min-w-0">
+        <Link
+          href={teeHref}
+          className="font-display text-lg font-bold leading-tight break-words text-ink hover:text-hot-pink sm:text-xl"
+        >
+          {name}
+        </Link>
+        <p className="mt-0.5 text-sm font-bold text-ink/60">{productName}</p>
+        {mysteryLegal ? (
+          <p className="mt-1 text-sm font-bold leading-snug text-ink/55">
+            {mysteryLegal}
+          </p>
+        ) : null}
+
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="text-sm font-bold text-ink/65">Taille</span>
+            <SizePicker
+              sizes={sizes}
+              value={item.size}
+              name={name}
+              onChange={(size) => onSetSize(item.id, size)}
+            />
+          </span>
+          <ColorSwatches
+            compact
+            colors={palette}
+            value={isTeeColor(item.color) ? item.color : defaultTeeColor}
+            onChange={(id) => onSetColor(item.id, id)}
+          />
+          <span className="inline-flex items-center gap-1.5">
+            <span className="text-sm font-bold text-ink/65">Qté</span>
+            <QuantityStepper
+              quantity={item.quantity}
+              name={name}
+              onDecrease={() => {
+                if (item.quantity <= 1) {
+                  onRemove();
+                  return;
+                }
+                onSetQuantity(item.id, item.quantity - 1);
+              }}
+              onIncrease={() => onSetQuantity(item.id, item.quantity + 1)}
+            />
+          </span>
+        </div>
+      </div>
+      <p className="w-[5.5rem] shrink-0 text-right font-display text-base font-bold tabular-nums leading-tight text-ink sm:w-[6.25rem] sm:text-lg">
+        {formatEur(lineCents)}
+      </p>
+    </li>
+  );
+}
+
+function QuantityStepper({
+  quantity,
+  name,
+  onDecrease,
+  onIncrease,
+}: {
+  quantity: number;
+  name: string;
+  onDecrease: () => void;
+  onIncrease: () => void;
+}) {
+  return (
+    <div
+      className="inline-flex items-center rounded-pill border-[3px] border-ink bg-white"
+      role="group"
+      aria-label={`Quantité de ${name}`}
+    >
+      <button
+        type="button"
+        aria-label={
+          quantity <= 1 ? `Retirer ${name}` : `Diminuer la quantité de ${name}`
+        }
+        onClick={onDecrease}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-l-pill font-display text-lg font-bold text-ink transition-colors hover:bg-acid-yellow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
+      >
+        −
+      </button>
+      <span
+        className="min-w-[1.35rem] text-center font-display text-sm font-bold tabular-nums"
+        aria-live="polite"
+      >
+        {quantity}
+      </span>
+      <button
+        type="button"
+        aria-label={`Augmenter la quantité de ${name}`}
+        onClick={onIncrease}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-r-pill font-display text-lg font-bold text-ink transition-colors hover:bg-acid-yellow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
+      >
+        +
+      </button>
     </div>
   );
 }

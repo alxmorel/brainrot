@@ -128,16 +128,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const color = patch.color ?? current.color;
     if (size === current.size && color === current.color) return prev;
     const nextId = lineId(current.brainrotId, current.productId, size, color);
-    const rest = prev.filter((item) => item.id !== id);
-    const existing = rest.find((item) => item.id === nextId);
-    if (existing) {
-      return rest.map((item) =>
-        item.id === nextId
-          ? { ...item, quantity: item.quantity + current.quantity }
+    const existing = prev.find((item) => item.id === nextId && item.id !== id);
+    const mergedQty = current.quantity + (existing?.quantity ?? 0);
+    return prev
+      .filter((item) => item.id !== existing?.id)
+      .map((item) =>
+        item.id === id
+          ? { ...current, id: nextId, size, color, quantity: mergedQty }
           : item,
       );
-    }
-    return [...rest, { ...current, id: nextId, size, color }];
   }
 
   const setSize = useCallback((id: string, size: string) => {
