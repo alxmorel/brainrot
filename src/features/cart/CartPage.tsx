@@ -138,7 +138,7 @@ export function CartPage() {
                   const mystery = isMysteryCartItem(item);
                   const brainrot = mystery
                     ? null
-                    : brainrots.find((b) => b.id === item.brainrotId);
+                    : (brainrots.find((b) => b.id === item.brainrotId) ?? null);
                   const product = products.find((p) => p.id === item.productId);
                   if ((!mystery && !brainrot) || !product) return null;
                   const unitCents = cartLineUnitCents(item, quote.shop);
