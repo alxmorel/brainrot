@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import type { AnalyticsEventName } from "@/models";
+import {
+  geoFromHeaders,
+  parseUserAgent,
+  sanitizePayload,
+} from "@/server/analytics-context";
 import { createEvent } from "@/server/orders-repo";
 
 const names: AnalyticsEventName[] = [
   "page_view",
+  "page_leave",
   "view_create",
   "add_to_cart",
   "remove_from_cart",
@@ -31,9 +37,28 @@ export async function POST(request: Request) {
   const sessionId =
     typeof record.sessionId === "string" ? record.sessionId : "";
   const name = record.name;
-  const path = typeof record.path === "string" ? record.path : "/";
+  const path = typeof record.path === "string" ? record.path.slice(0, 300) : "/";
   if (!sessionId || typeof name !== "string" || !names.includes(name as AnalyticsEventName)) {
     return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
+  const client = sanitizePayload(record.payload) ?? {};
+  let payload = client;
+  if (name !== "consent_choice") {
+    const ua = parseUserAgent(request.headers.get("user-agent") ?? "");
+    const device =
+      ua.device === "desktop" &&
+      typeof client.viewportW === "number" &&
+      client.viewportW < 768
+        ? "mobile"
+        : ua.device;
+    payload = {
+      ...client,
+      ...geoFromHeaders(request.headers),
+      device,
+      browser: ua.browser,
+      os: ua.os,
+    };
   }
 
   const event = {
@@ -41,10 +66,7 @@ export async function POST(request: Request) {
     sessionId,
     name: name as AnalyticsEventName,
     path,
-    payload:
-      typeof record.payload === "object" && record.payload !== null
-        ? (record.payload as Record<string, string | number | boolean | null>)
-        : undefined,
+    payload,
     createdAt: new Date().toISOString(),
   };
 

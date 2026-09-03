@@ -6,6 +6,7 @@ export type OrderStatus =
   | "fulfillment_sent"
   | "fulfillment_failed"
   | "shipped"
+  | "delivered"
   | "cancelled"
   | "failed";
 
@@ -50,6 +51,7 @@ export interface Order {
     externalId: string | null;
     tracking: string | null;
     trackingUrl: string | null;
+    carrier: string | null;
     lastError: string | null;
   };
   unitCents: number;

@@ -2,6 +2,7 @@ import { legal } from "@/data/legal";
 import { customProductLegalNote, formatEur, shippingNote } from "@/data/pricing";
 import type { Order } from "@/models";
 import { orderPaidTotal } from "@/server/order-money";
+import { createOrderAccessToken } from "@/server/orders/orderAccessToken";
 import { customerOrderLines } from "@/server/orders/publicOrder";
 
 function escapeHtml(value: string) {
@@ -12,6 +13,11 @@ function escapeHtml(value: string) {
     .replaceAll('"', "&quot;");
 }
 
+function orderFollowUrl(orderId: string) {
+  const token = createOrderAccessToken(orderId);
+  return `${legal.siteUrl}/commande?token=${encodeURIComponent(token)}`;
+}
+
 export function buildOrderConfirmationHtml(order: Order) {
   const lines = customerOrderLines(order).map((item) => ({
     name: item.name,
@@ -20,6 +26,7 @@ export function buildOrderConfirmationHtml(order: Order) {
   }));
   const totalCents = orderPaidTotal(order);
   const { shipping } = order;
+  const followUrl = orderFollowUrl(order.id);
 
   const discountHtml =
     order.discountCents > 0
@@ -93,8 +100,10 @@ export function buildOrderConfirmationHtml(order: Order) {
                 <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
                   ${escapeHtml(legal.trackingFollowUp)}
                 </p>
-                <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
-                  Suivi en ligne : <a href="${escapeHtml(legal.siteUrl)}/commande" style="color:#0a0a0a;">${escapeHtml(legal.siteUrl)}/commande</a>
+                <p style="margin:16px 0 0;">
+                  <a href="${escapeHtml(followUrl)}" style="display:inline-block;background:#ff2fb3;color:#ffffff;font-weight:700;text-transform:uppercase;text-decoration:none;padding:12px 22px;border:3px solid #0a0a0a;border-radius:999px;">
+                    Suivre ma commande →
+                  </a>
                 </p>
               </td>
             </tr>
@@ -121,6 +130,7 @@ export function buildOrderConfirmationText(order: Order) {
   );
   const totalCents = orderPaidTotal(order);
   const { shipping } = order;
+  const followUrl = orderFollowUrl(order.id);
 
   return [
     "Brainrototo - C’est commandé",
@@ -141,7 +151,7 @@ export function buildOrderConfirmationText(order: Order) {
     "",
     `${shippingNote} · ${legal.deliveryEstimate}`,
     legal.trackingFollowUp,
-    `Suivi : ${legal.siteUrl}/commande`,
+    `Suivi : ${followUrl}`,
     "",
     customProductLegalNote,
     `Contact : ${legal.email}`,

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PublicOrderView } from "@/models";
+import { useAccount } from "@/features/account/AccountProvider";
 import { OrderStatusCard, OrderStatusLinks } from "@/features/cart/OrderStatusCard";
 import { SiteFooter } from "@/shared/components/layout/SiteFooter";
 import { SiteNav } from "@/shared/components/layout/SiteNav";
@@ -13,10 +14,118 @@ type ViewState =
   | { kind: "found"; order: PublicOrderView }
   | { kind: "error"; message: string };
 
+function peekOrderIdFromToken(token: string): string | null {
+  const parts = token.trim().split(".");
+  if (parts.length !== 3) return null;
+  return parts[0]?.trim() || null;
+}
+
+function parseOrderResponse(response: Response, json: unknown): PublicOrderView | null {
+  if (
+    response.ok &&
+    json &&
+    typeof json === "object" &&
+    "ok" in json &&
+    (json as { ok: unknown }).ok &&
+    "order" in json
+  ) {
+    return (json as { order: PublicOrderView }).order;
+  }
+  return null;
+}
+
+function errorMessage(json: unknown, fallback: string) {
+  if (
+    json &&
+    typeof json === "object" &&
+    "error" in json &&
+    typeof (json as { error: unknown }).error === "string"
+  ) {
+    return (json as { error: string }).error;
+  }
+  return fallback;
+}
+
 export function OrderLookup() {
+  const { me, loaded } = useAccount();
   const [orderId, setOrderId] = useState("");
   const [email, setEmail] = useState("");
   const [state, setState] = useState<ViewState>({ kind: "form" });
+  const autoTried = useRef(false);
+
+  async function fetchById(id: string, query: Record<string, string>) {
+    const params = new URLSearchParams(query);
+    const response = await fetch(
+      `/api/orders/${encodeURIComponent(id)}${params.size ? `?${params}` : ""}`,
+    );
+    const json: unknown = await response.json().catch(() => null);
+    return { response, json, order: parseOrderResponse(response, json) };
+  }
+
+  async function lookup(id: string, mail: string) {
+    const response = await fetch("/api/orders/lookup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: id, email: mail }),
+    });
+    const json: unknown = await response.json().catch(() => null);
+    return { response, json, order: parseOrderResponse(response, json) };
+  }
+
+  useEffect(() => {
+    if (!loaded || autoTried.current) return;
+    autoTried.current = true;
+
+    const params = new URLSearchParams(window.location.search);
+    const idParam = params.get("id")?.trim() ?? "";
+    const tokenParam = params.get("token")?.trim() ?? "";
+
+    if (me?.email) setEmail(me.email);
+    if (idParam) setOrderId(idParam);
+
+    async function run() {
+      if (tokenParam) {
+        const idFromToken = peekOrderIdFromToken(tokenParam);
+        if (!idFromToken) {
+          setState({ kind: "error", message: "Lien de suivi invalide." });
+          return;
+        }
+        setOrderId(idFromToken);
+        setState({ kind: "loading" });
+        const result = await fetchById(idFromToken, { token: tokenParam });
+        if (result.order) {
+          setState({ kind: "found", order: result.order });
+          return;
+        }
+        setState({
+          kind: "error",
+          message: errorMessage(result.json, "Lien de suivi invalide ou expiré."),
+        });
+        return;
+      }
+
+      if (!idParam) return;
+
+      setState({ kind: "loading" });
+      const byAuth = await fetchById(idParam, {});
+      if (byAuth.order) {
+        setState({ kind: "found", order: byAuth.order });
+        return;
+      }
+
+      if (me?.email) {
+        const byEmail = await lookup(idParam, me.email);
+        if (byEmail.order) {
+          setState({ kind: "found", order: byEmail.order });
+          return;
+        }
+      }
+
+      setState({ kind: "form" });
+    }
+
+    void run();
+  }, [loaded, me]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -28,33 +137,15 @@ export function OrderLookup() {
     }
 
     setState({ kind: "loading" });
-    const response = await fetch("/api/orders/lookup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId: id, email: mail }),
-    });
-    const json: unknown = await response.json().catch(() => null);
-
-    if (
-      response.ok &&
-      json &&
-      typeof json === "object" &&
-      "ok" in json &&
-      (json as { ok: unknown }).ok &&
-      "order" in json
-    ) {
-      setState({ kind: "found", order: (json as { order: PublicOrderView }).order });
+    const result = await lookup(id, mail);
+    if (result.order) {
+      setState({ kind: "found", order: result.order });
       return;
     }
-
-    const message =
-      json &&
-      typeof json === "object" &&
-      "error" in json &&
-      typeof (json as { error: unknown }).error === "string"
-        ? (json as { error: string }).error
-        : "Impossible de retrouver la commande.";
-    setState({ kind: "error", message });
+    setState({
+      kind: "error",
+      message: errorMessage(result.json, "Impossible de retrouver la commande."),
+    });
   }
 
   return (

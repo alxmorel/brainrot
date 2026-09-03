@@ -14,6 +14,7 @@ const STATUSES = [
   "fulfillment_sent",
   "fulfillment_failed",
   "shipped",
+  "delivered",
   "cancelled",
 ] as const;
 
@@ -24,6 +25,7 @@ const STATUS_LABELS: Record<string, string> = {
   fulfillment_sent: "Chez Gelato",
   fulfillment_failed: "Erreur Gelato",
   shipped: "Expédiée",
+  delivered: "Livrée",
   cancelled: "Annulée",
 };
 

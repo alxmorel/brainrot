@@ -1,5 +1,6 @@
 export type AnalyticsEventName =
   | "page_view"
+  | "page_leave"
   | "view_create"
   | "add_to_cart"
   | "remove_from_cart"

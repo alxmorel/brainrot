@@ -28,9 +28,11 @@ export async function PATCH(
   const allowed = [
     "fulfill",
     "ship",
+    "deliver",
     "cancel",
     "resend_confirmation",
     "resend_shipped",
+    "resend_delivered",
   ];
   if (!allowed.includes(action)) {
     return NextResponse.json({ ok: false, error: "Action invalide." }, { status: 400 });

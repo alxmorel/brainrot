@@ -11,6 +11,19 @@ export type PublicOrderLine = {
   mystery: boolean;
 };
 
+export type PublicOrderTimelineStepId =
+  | "confirmed"
+  | "production"
+  | "shipped"
+  | "delivered";
+
+export type PublicOrderTimelineStep = {
+  id: PublicOrderTimelineStepId;
+  label: string;
+  done: boolean;
+  current: boolean;
+};
+
 export type PublicOrderView = {
   id: string;
   status: OrderStatus;
@@ -23,4 +36,7 @@ export type PublicOrderView = {
   cashbackGrantedCents: number;
   tracking: string | null;
   trackingUrl: string | null;
+  carrier: string | null;
+  etaLabel: string | null;
+  timeline: PublicOrderTimelineStep[];
 };

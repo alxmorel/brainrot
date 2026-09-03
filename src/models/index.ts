@@ -24,15 +24,28 @@ export type { Order, OrderItem, OrderStatus, ShippingAddress } from "./order";
 export { needsGelatoRetry, isFulfillmentFailed } from "./order";
 export type { OrderEventKind, OrderEventRecord } from "./orderEvent";
 export type {
+  OpsAudience,
+  OpsBrainrotPerf,
   OpsDayPoint,
   OpsFunnelCounts,
+  OpsFunnelInsight,
+  OpsFunnelSlice,
   OpsFunnelStep,
+  OpsFunnelStepId,
+  OpsFunnelStepStat,
+  OpsLandingStat,
   OpsOrderDetail,
   OpsOrderLine,
   OpsOrderSummary,
+  OpsPageStat,
+  OpsRankedCount,
   OpsReportPayload,
   OpsSessionDetail,
   OpsSessionSummary,
 } from "./ops";
-export type { PublicOrderLine, PublicOrderView } from "./publicOrder";
+export type {
+  PublicOrderLine,
+  PublicOrderTimelineStep,
+  PublicOrderView,
+} from "./publicOrder";
 export type { AnalyticsEvent, AnalyticsEventName } from "./analytics";

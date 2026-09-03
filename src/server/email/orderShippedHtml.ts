@@ -1,6 +1,8 @@
 import { legal } from "@/data/legal";
 import type { Order } from "@/models";
 import { isHttpUrl } from "@/server/fulfillment/gelatoWebhook";
+import { createOrderAccessToken } from "@/server/orders/orderAccessToken";
+import { orderEtaLabel } from "@/server/orders/eta";
 
 function escapeHtml(value: string) {
   return value
@@ -10,13 +12,28 @@ function escapeHtml(value: string) {
     .replaceAll('"', "&quot;");
 }
 
+function orderFollowUrl(orderId: string) {
+  const token = createOrderAccessToken(orderId);
+  return `${legal.siteUrl}/commande?token=${encodeURIComponent(token)}`;
+}
+
 function trackingBlock(order: Order) {
   const trackingUrl =
     order.supplier.trackingUrl && isHttpUrl(order.supplier.trackingUrl)
       ? order.supplier.trackingUrl
       : null;
   const trackingCode = order.supplier.tracking;
-  const commandeUrl = `${legal.siteUrl}/commande`;
+  const carrier = order.supplier.carrier;
+  const commandeUrl = orderFollowUrl(order.id);
+
+  const carrierHtml = carrier
+    ? `<tr>
+              <td style="padding:16px 24px 0;">
+                <p style="margin:0;font-size:12px;font-weight:700;text-transform:uppercase;color:#7a7a7a;">Transporteur</p>
+                <p style="margin:4px 0 0;font-size:16px;font-weight:700;">${escapeHtml(carrier)}</p>
+              </td>
+            </tr>`
+    : "";
 
   const codeHtml = trackingCode
     ? `<tr>
@@ -36,21 +53,25 @@ function trackingBlock(order: Order) {
                 <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;word-break:break-all;">
                   ${escapeHtml(trackingUrl)}
                 </p>
+                <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:#5c5c5c;">
+                  Ou sur Brainrototo : <a href="${escapeHtml(commandeUrl)}" style="color:#0a0a0a;">voir ma commande</a>
+                </p>
               </td>
             </tr>`
     : `<tr>
               <td style="padding:20px 24px 0;">
-                <p style="margin:0;font-size:13px;line-height:1.5;color:#5c5c5c;">
-                  Retrouve le suivi sur <a href="${escapeHtml(commandeUrl)}" style="color:#0a0a0a;">${escapeHtml(commandeUrl)}</a> avec ton n° de commande et ton email.
-                </p>
+                <a href="${escapeHtml(commandeUrl)}" style="display:inline-block;background:#ff2fb3;color:#ffffff;font-weight:700;text-transform:uppercase;text-decoration:none;padding:12px 22px;border:3px solid #0a0a0a;border-radius:999px;">
+                  Voir ma commande →
+                </a>
               </td>
             </tr>`;
 
-  return codeHtml + linkHtml;
+  return carrierHtml + codeHtml + linkHtml;
 }
 
 export function buildOrderShippedHtml(order: Order) {
   const { shipping } = order;
+  const eta = orderEtaLabel("shipped");
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -66,6 +87,11 @@ export function buildOrderShippedHtml(order: Order) {
                 <p style="margin:12px 0 0;font-size:15px;line-height:1.5;color:#3d3d3d;">
                   ${escapeHtml(shipping.name)}, le transporteur a pris en charge ta commande.
                 </p>
+                ${
+                  eta
+                    ? `<p style="margin:12px 0 0;font-size:14px;line-height:1.5;font-weight:700;color:#0a0a0a;">${escapeHtml(eta)}</p>`
+                    : ""
+                }
               </td>
             </tr>
             <tr>
@@ -96,19 +122,20 @@ export function buildOrderShippedText(order: Order) {
       ? order.supplier.trackingUrl
       : null;
   const trackingCode = order.supplier.tracking;
+  const carrier = order.supplier.carrier;
+  const followUrl = orderFollowUrl(order.id);
+  const eta = orderEtaLabel("shipped");
   const lines = [
     "Brainrototo - Ton tee est parti",
     "",
     `${order.shipping.name}, le transporteur a pris en charge ta commande.`,
-    "",
-    `Commande ${order.id}`,
   ];
+  if (eta) lines.push(eta);
+  lines.push("", `Commande ${order.id}`);
+  if (carrier) lines.push(`Transporteur : ${carrier}`);
   if (trackingCode) lines.push(`N° de suivi : ${trackingCode}`);
-  if (trackingUrl) {
-    lines.push(`Suivi : ${trackingUrl}`);
-  } else {
-    lines.push(`Suivi en ligne : ${legal.siteUrl}/commande`);
-  }
+  if (trackingUrl) lines.push(`Suivi colis : ${trackingUrl}`);
+  lines.push(`Suivi Brainrototo : ${followUrl}`);
   lines.push("", `Contact : ${legal.email}`);
   return lines.join("\n");
 }

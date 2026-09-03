@@ -3,9 +3,11 @@ export type OrderEventKind =
   | "fulfillment_sent"
   | "fulfillment_failed"
   | "shipped"
+  | "delivered"
   | "cancelled"
   | "email_confirmation"
   | "email_shipped"
+  | "email_delivered"
   | "ops_action";
 
 export interface OrderEventRecord {

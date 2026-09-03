@@ -14,6 +14,7 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
   const [note, setNote] = useState<string | null>(null);
   const [tracking, setTracking] = useState("");
   const [trackingUrl, setTrackingUrl] = useState("");
+  const [carrier, setCarrier] = useState("");
 
   const load = useCallback(async () => {
     const response = await fetch(`/api/ops/orders/${encodeURIComponent(orderId)}`);
@@ -31,6 +32,7 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
       setOrder(data);
       setTracking(data.supplier.tracking ?? "");
       setTrackingUrl(data.supplier.trackingUrl ?? "");
+      setCarrier(data.supplier.carrier ?? "");
       setError(null);
     }
   }, [orderId]);
@@ -118,6 +120,7 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
             <p className="text-ink/50">Pas de Stripe ID</p>
           )}
           <p>Gelato : {order.supplier.externalId ?? "-"}</p>
+          <p>Transporteur : {order.supplier.carrier ?? "-"}</p>
           <p>Suivi : {order.supplier.tracking ?? "-"}</p>
           {order.supplier.trackingUrl ? (
             <p>
@@ -139,6 +142,12 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
             Email expéd. :{" "}
             {order.shippingEmailSentAt
               ? new Date(order.shippingEmailSentAt).toLocaleString("fr-FR")
+              : "non envoyé"}
+          </p>
+          <p className="text-xs text-ink/50">
+            Email livré :{" "}
+            {order.deliveredEmailSentAt
+              ? new Date(order.deliveredEmailSentAt).toLocaleString("fr-FR")
               : "non envoyé"}
           </p>
         </Panel>
@@ -182,7 +191,17 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
           <Button size="sm" variant="ghost" onClick={() => void act("resend_shipped")}>
             Renvoyer expédition
           </Button>
-          {order.status !== "cancelled" && order.status !== "shipped" ? (
+          <Button size="sm" variant="ghost" onClick={() => void act("resend_delivered")}>
+            Renvoyer livré
+          </Button>
+          {order.status === "shipped" ? (
+            <Button size="sm" variant="secondary" onClick={() => void act("deliver")}>
+              Marquer livrée
+            </Button>
+          ) : null}
+          {order.status !== "cancelled" &&
+          order.status !== "shipped" &&
+          order.status !== "delivered" ? (
             <Button
               size="sm"
               variant="danger"
@@ -201,6 +220,7 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
             void act("ship", {
               tracking: tracking.trim() || null,
               trackingUrl: trackingUrl.trim() || null,
+              carrier: carrier.trim() || null,
             });
           }}
         >
@@ -213,6 +233,11 @@ export function OpsOrderDetail({ orderId }: { orderId: string }) {
             label="URL de suivi"
             value={trackingUrl}
             onChange={(event) => setTrackingUrl(event.target.value)}
+          />
+          <Input
+            label="Transporteur"
+            value={carrier}
+            onChange={(event) => setCarrier(event.target.value)}
           />
           <div className="sm:col-span-2">
             <Button type="submit" size="sm">

@@ -41,9 +41,11 @@ export default function Page() {
       <LegalSection title="Mesure d’audience">
         <p>
           Uniquement si tu cliques « OK » sur la bannière. Identifiant
-          technique (localStorage) + événements (pages, panier, checkout). Pas
-          de pub tierce. « Refuser » : pas d’envoi vers nos serveurs. Tu peux
-          vider le stockage local du navigateur pour réinitialiser.
+          technique (localStorage), pages vues, durée de consultation, langue,
+          source d’arrivée, type d’appareil, et pays/ville approximatifs via
+          l’hébergeur. Pas d’adresse IP stockée. Pas de pub tierce. « Refuser » :
+          pas d’envoi vers nos serveurs. Tu peux vider le stockage local du
+          navigateur pour réinitialiser.
         </p>
       </LegalSection>
       <LegalSection title="Hébergement">

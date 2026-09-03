@@ -1,6 +1,9 @@
 import type { OpsSessionDetail, OpsSessionSummary } from "@/models";
 import { brainrots } from "@/data/brainrots";
-import { getOrderBySessionId } from "@/server/ops/orders";
+import { isMysteryCartItem, MYSTERY_CART_ID } from "@/data/mystery";
+import { buildAudience } from "@/server/ops/audience";
+import { buildFunnel, buildFunnelBreakdown } from "@/server/ops/funnel";
+import { getOrderBySessionId, paidLineTotals } from "@/server/ops/orders";
 import { calendarPeriod, parisYmd } from "@/server/ops/period";
 import { prisma } from "@/server/db";
 
@@ -123,17 +126,47 @@ export async function listEventsForExport(since?: Date) {
   });
 }
 
+async function returningVisitorIds(since: Date, visitorIds: string[]) {
+  const returning = new Set<string>();
+  const chunkSize = 500;
+  for (let i = 0; i < visitorIds.length; i += chunkSize) {
+    const chunk = visitorIds.slice(i, i + chunkSize);
+    const rows = await prisma.analyticsEvent.findMany({
+      where: { sessionId: { in: chunk }, createdAt: { lt: since } },
+      distinct: ["sessionId"],
+      select: { sessionId: true },
+    });
+    for (const row of rows) returning.add(row.sessionId);
+  }
+  return returning;
+}
+
 export async function analyticsReport(since: Date, ymds: string[]) {
   const events = await prisma.analyticsEvent.findMany({
     where: { createdAt: { gte: since } },
     select: { sessionId: true, name: true, path: true, payload: true, createdAt: true },
   });
 
+  const visitorIds = [...new Set(events.map((event) => event.sessionId))];
+  const returningIds =
+    visitorIds.length === 0
+      ? new Set<string>()
+      : await returningVisitorIds(since, visitorIds);
+
+  const firstDay = new Map<string, string>();
+  for (const event of events) {
+    const day = parisYmd(event.createdAt);
+    const prev = firstDay.get(event.sessionId);
+    if (!prev || day < prev) firstDay.set(event.sessionId, day);
+  }
+
   const counts: Record<string, number> = {};
   const sessionsWithCart = new Set<string>();
   const checkoutSessions = new Set<string>();
   const orderSessions = new Set<string>();
   const brainrotSelects: Record<string, number> = {};
+  const brainrotCarts: Record<string, number> = {};
+  let mysteryCarts = 0;
   const funnelSets = {
     page_view: new Set<string>(),
     view_create: new Set<string>(),
@@ -143,20 +176,34 @@ export async function analyticsReport(since: Date, ymds: string[]) {
   };
   const emptyDay = () => ({
     visits: new Set<string>(),
+    newVisitors: new Set<string>(),
+    returningVisitors: new Set<string>(),
     compose: new Set<string>(),
     carts: new Set<string>(),
     checkouts: new Set<string>(),
     orders: new Set<string>(),
+    pageViews: 0,
   });
   const daySets = new Map(ymds.map((day) => [day, emptyDay()]));
 
   for (const event of events) {
     counts[event.name] = (counts[event.name] ?? 0) + 1;
-    const day = daySets.get(parisYmd(event.createdAt));
+    const ymd = parisYmd(event.createdAt);
+    const day = daySets.get(ymd);
     if (event.name === "add_to_cart") {
       sessionsWithCart.add(event.sessionId);
       funnelSets.add_to_cart.add(event.sessionId);
       day?.carts.add(event.sessionId);
+      if (event.payload && typeof event.payload === "object") {
+        const payload = event.payload as { brainrotId?: unknown; productId?: unknown };
+        const brainrotId = typeof payload.brainrotId === "string" ? payload.brainrotId : "";
+        const productId = typeof payload.productId === "string" ? payload.productId : "";
+        if (isMysteryCartItem({ brainrotId, productId })) {
+          mysteryCarts += 1;
+        } else if (brainrotId) {
+          brainrotCarts[brainrotId] = (brainrotCarts[brainrotId] ?? 0) + 1;
+        }
+      }
     }
     if (event.name === "begin_checkout") {
       checkoutSessions.add(event.sessionId);
@@ -171,6 +218,12 @@ export async function analyticsReport(since: Date, ymds: string[]) {
     if (event.name === "page_view") {
       funnelSets.page_view.add(event.sessionId);
       day?.visits.add(event.sessionId);
+      if (day) day.pageViews += 1;
+      const isReturning =
+        returningIds.has(event.sessionId) ||
+        (firstDay.get(event.sessionId) ?? ymd) < ymd;
+      if (isReturning) day?.returningVisitors.add(event.sessionId);
+      else day?.newVisitors.add(event.sessionId);
     }
     if (event.name === "view_create") {
       funnelSets.view_create.add(event.sessionId);
@@ -193,38 +246,39 @@ export async function analyticsReport(since: Date, ymds: string[]) {
     }
   }
 
-  const funnel = {
-    page_view: funnelSets.page_view.size,
-    view_create: funnelSets.view_create.size,
-    add_to_cart: funnelSets.add_to_cart.size,
-    begin_checkout: funnelSets.begin_checkout.size,
-    order_placed: funnelSets.order_placed.size,
-  };
+  const names = new Map(brainrots.map((item) => [item.id, item.name]));
+  const sold = await paidLineTotals(since);
+  const brainrotIds = new Set([
+    ...Object.keys(brainrotSelects),
+    ...Object.keys(brainrotCarts),
+    ...sold.byBrainrot.keys(),
+  ]);
+  const brainrotPerf = [...brainrotIds]
+    .map((brainrotId) => {
+      const soldRow = sold.byBrainrot.get(brainrotId);
+      return {
+        brainrotId,
+        name: names.get(brainrotId) ?? brainrotId,
+        selects: brainrotSelects[brainrotId] ?? 0,
+        carts: brainrotCarts[brainrotId] ?? 0,
+        sold: soldRow?.qty ?? 0,
+        cents: soldRow?.cents ?? 0,
+      };
+    })
+    .sort((a, b) => b.sold - a.sold || b.selects - a.selects)
+    .slice(0, 12);
 
-  function stepRate(current: number, previous: number) {
-    if (previous <= 0) return 0;
-    return Math.min(100, Math.round((current / previous) * 100));
+  if (sold.mysteryQty > 0 || mysteryCarts > 0) {
+    brainrotPerf.unshift({
+      brainrotId: MYSTERY_CART_ID,
+      name: "Mystery Tee",
+      selects: 0,
+      carts: mysteryCarts,
+      sold: sold.mysteryQty,
+      cents: sold.mysteryCents,
+    });
   }
 
-  const composeBase = funnel.view_create > 0 ? funnel.view_create : funnel.page_view;
-  const funnelRates = {
-    page_view: funnel.page_view > 0 ? 100 : 0,
-    view_create: stepRate(funnel.view_create, funnel.page_view),
-    add_to_cart: stepRate(funnel.add_to_cart, composeBase),
-    begin_checkout: stepRate(funnel.begin_checkout, funnel.add_to_cart),
-    order_placed: stepRate(funnel.order_placed, funnel.begin_checkout),
-  };
-
-  const abandonedCheckout = [...checkoutSessions].filter(
-    (sid) => !orderSessions.has(sid),
-  ).length;
-
-  const conversionRate =
-    checkoutSessions.size > 0
-      ? Math.round((orderSessions.size / checkoutSessions.size) * 100)
-      : 0;
-
-  const names = new Map(brainrots.map((item) => [item.id, item.name]));
   const topBrainrots = Object.entries(brainrotSelects)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
@@ -234,20 +288,49 @@ export async function analyticsReport(since: Date, ymds: string[]) {
       count,
     }));
 
+  const { steps: funnelSteps, insight: funnelInsight } = buildFunnel(events);
+  const breakdown = buildFunnelBreakdown(events);
+
+  const funnel = {
+    page_view: funnelSteps[0]?.count ?? 0,
+    view_create: funnelSteps[1]?.count ?? 0,
+    add_to_cart: funnelSteps[3]?.count ?? 0,
+    begin_checkout: funnelSteps[4]?.count ?? 0,
+    order_placed: funnelSteps[5]?.count ?? 0,
+  };
+
+  const funnelRates = {
+    page_view: funnelSteps[0]?.ofPrevious ?? 0,
+    view_create: funnelSteps[1]?.ofPrevious ?? 0,
+    add_to_cart: funnelSteps[3]?.ofPrevious ?? 0,
+    begin_checkout: funnelSteps[4]?.ofPrevious ?? 0,
+    order_placed: funnelSteps[5]?.ofPrevious ?? 0,
+  };
+
   return {
     counts,
     funnel,
     funnelRates,
+    funnelSteps,
+    funnelInsight,
+    funnelDevices: breakdown.devices,
+    funnelSources: breakdown.sources,
+    funnelPaths: breakdown.paths,
     sessionsWithCart: sessionsWithCart.size,
-    abandonedCheckout,
-    conversionRate,
+    abandonedCheckout: funnelInsight.abandonedCheckout,
+    conversionRate: funnelInsight.checkoutToOrder,
     topBrainrots,
+    brainrots: brainrotPerf,
     totalEvents: events.length,
+    audience: buildAudience(events, returningIds, ymds),
     byDay: ymds.map((day) => {
       const bucket = daySets.get(day)!;
       return {
         day,
         visits: bucket.visits.size,
+        pageViews: bucket.pageViews,
+        newVisitors: bucket.newVisitors.size,
+        returningVisitors: bucket.returningVisitors.size,
         compose: bucket.compose.size,
         carts: bucket.carts.size,
         checkouts: bucket.checkouts.size,

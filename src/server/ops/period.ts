@@ -84,3 +84,15 @@ export function calendarPeriod(dayCount: number, now = new Date()) {
     days: enumerateYmd(from, today),
   };
 }
+
+export function previousCalendarPeriod(dayCount: number, now = new Date()) {
+  const current = calendarPeriod(dayCount, now);
+  const to = addYmd(current.from, -1);
+  const from = addYmd(to, -(dayCount - 1));
+  return {
+    since: parisDayStartUtc(from),
+    from,
+    to,
+    days: enumerateYmd(from, to),
+  };
+}

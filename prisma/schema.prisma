@@ -71,10 +71,12 @@ model Order {
   supplierExternalId      String?
   supplierTracking        String?
   supplierTrackingUrl     String?
+  supplierCarrier         String?
   supplierLastError       String?
   stripeCheckoutId        String?
   confirmationEmailSentAt DateTime?
   shippingEmailSentAt     DateTime?
+  deliveredEmailSentAt    DateTime?
   userId                  String?
   user                    User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   unitCents               Int          @default(1499)

@@ -49,6 +49,7 @@ function toOrderSupplier(row: OrderRow): Order["supplier"] {
     externalId: row.supplierExternalId,
     tracking: row.supplierTracking,
     trackingUrl: row.supplierTrackingUrl,
+    carrier: row.supplierCarrier,
     lastError: row.supplierLastError,
   };
 }
@@ -87,6 +88,9 @@ export async function buildOpsOrderDetail(row: OrderRow): Promise<OpsOrderDetail
     stripeCheckoutId: row.stripeCheckoutId,
     confirmationEmailSentAt: row.confirmationEmailSentAt?.toISOString() ?? null,
     shippingEmailSentAt: row.shippingEmailSentAt?.toISOString() ?? null,
+    deliveredEmailSentAt:
+      (row as OrderRow & { deliveredEmailSentAt?: Date | null }).deliveredEmailSentAt?.toISOString() ??
+      null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     events,
@@ -164,6 +168,7 @@ const PAID_STATUSES = [
   "fulfillment_sent",
   "fulfillment_failed",
   "shipped",
+  "delivered",
 ] as const;
 
 export async function revenueStats(since: Date, ymds: string[]) {
@@ -193,6 +198,39 @@ export async function revenueStats(since: Date, ymds: string[]) {
     averageCents,
     byDay: ymds.map((day) => ({ day, ...buckets.get(day)! })),
   };
+}
+
+export async function paidLineTotals(since: Date) {
+  const orders = await prisma.order.findMany({
+    where: {
+      status: { in: [...PAID_STATUSES] },
+      createdAt: { gte: since },
+    },
+    include: { items: true },
+  });
+
+  const byBrainrot = new Map<string, { qty: number; cents: number }>();
+  let mysteryQty = 0;
+  let mysteryCents = 0;
+
+  for (const row of orders) {
+    const unit = rowUnitCents(row);
+    for (const item of row.items) {
+      const itemUnit = item.unitCents > 0 ? item.unitCents : unit;
+      const line = item.quantity * itemUnit;
+      if (isMysteryProductId(item.productId)) {
+        mysteryQty += item.quantity;
+        mysteryCents += line;
+        continue;
+      }
+      const current = byBrainrot.get(item.brainrotId) ?? { qty: 0, cents: 0 };
+      current.qty += item.quantity;
+      current.cents += line;
+      byBrainrot.set(item.brainrotId, current);
+    }
+  }
+
+  return { byBrainrot, mysteryQty, mysteryCents };
 }
 
 export async function listOrdersForExport(since?: Date) {

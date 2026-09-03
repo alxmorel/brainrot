@@ -1,9 +1,11 @@
-import { clearConfirmationEmailSend, clearShippingEmailSend } from "@/server/orders-repo";
+import { clearConfirmationEmailSend, clearShippingEmailSend, clearDeliveredEmailSend } from "@/server/orders-repo";
 import { cancelOrder } from "@/server/orders/cancelOrder";
+import { markOrderAsDelivered } from "@/server/orders/deliverOrder";
 import { recordOrderEvent } from "@/server/orders/orderEvents";
 import { markOrderAsShipped } from "@/server/orders/shipOrder";
 import { retryFulfillOrder } from "@/server/fulfillment/tryFulfillOrder";
 import { trySendOrderConfirmation } from "@/server/email/trySendOrderConfirmation";
+import { trySendOrderDelivered } from "@/server/email/trySendOrderDelivered";
 import { trySendOrderShipped } from "@/server/email/trySendOrderShipped";
 
 export type OpsOrderActionResult = {
@@ -36,13 +38,32 @@ export async function handleOpsOrderAction(
   if (action === "ship") {
     const tracking = typeof body.tracking === "string" ? body.tracking : null;
     const trackingUrl = typeof body.trackingUrl === "string" ? body.trackingUrl : null;
-    const result = await markOrderAsShipped(orderId, { tracking, trackingUrl });
+    const carrier = typeof body.carrier === "string" ? body.carrier : null;
+    const result = await markOrderAsShipped(orderId, {
+      tracking,
+      trackingUrl,
+      carrier,
+    });
     if (!result.ok) return { ok: false, error: result.error };
     await recordOrderEvent(orderId, "shipped", {
       tracking,
       trackingUrl,
+      carrier,
       emailSent: result.emailSent,
     });
+    return { ok: true, emailSent: result.emailSent };
+  }
+
+  if (action === "deliver") {
+    const result = await markOrderAsDelivered(orderId);
+    if (!result.ok) return { ok: false, error: result.error };
+    await recordOrderEvent(orderId, "delivered", {
+      source: "ops",
+      emailSent: result.emailSent,
+    });
+    if (result.emailSent) {
+      await recordOrderEvent(orderId, "email_delivered", { sent: true });
+    }
     return { ok: true, emailSent: result.emailSent };
   }
 
@@ -63,6 +84,13 @@ export async function handleOpsOrderAction(
     await clearShippingEmailSend(orderId);
     const sent = await trySendOrderShipped(orderId);
     await recordOrderEvent(orderId, "email_shipped", { resent: true, sent });
+    return { ok: true, emailSent: sent };
+  }
+
+  if (action === "resend_delivered") {
+    await clearDeliveredEmailSend(orderId);
+    const sent = await trySendOrderDelivered(orderId);
+    await recordOrderEvent(orderId, "email_delivered", { resent: true, sent });
     return { ok: true, emailSent: sent };
   }
 

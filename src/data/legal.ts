@@ -38,6 +38,8 @@ export const legal = {
   deliveryShort: "2–7 jours",
   deliveryEstimate:
     "2 à 7 jours ouvrés après paiement (France et UE, délai indicatif)",
+  etaBeforeShip: "Livraison estimée : 2–7 jours ouvrés",
+  etaAfterShip: "Livraison estimée : 2–5 jours ouvrés",
   trackingFollowUp:
     "Tu recevras un second email dès que le transporteur aura un lien de suivi.",
 };

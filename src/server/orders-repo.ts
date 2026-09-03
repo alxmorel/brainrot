@@ -34,6 +34,7 @@ function toOrder(row: Prisma.OrderGetPayload<{ include: { items: true } }>): Ord
       externalId: row.supplierExternalId,
       tracking: row.supplierTracking,
       trackingUrl: row.supplierTrackingUrl,
+      carrier: row.supplierCarrier,
       lastError: row.supplierLastError,
     },
     unitCents: row.unitCents,
@@ -202,20 +203,52 @@ export async function getOrderStripeCheckoutId(id: string) {
 
 export async function applyGelatoTracking(
   id: string,
-  tracking: { code: string | null; url: string | null },
+  tracking: {
+    code: string | null;
+    url: string | null;
+    carrier?: string | null;
+  },
 ) {
-  const data: Prisma.OrderUpdateManyMutationInput = {
-    status: "shipped",
-  };
+  const row = await prisma.order.findUnique({
+    where: { id },
+    select: { status: true },
+  });
+  if (!row) return false;
+  if (row.status === "cancelled" || row.status === "pending_payment") {
+    return false;
+  }
+
+  const data: Prisma.OrderUpdateInput = {};
   if (tracking.code) data.supplierTracking = tracking.code;
   if (tracking.url) data.supplierTrackingUrl = tracking.url;
+  if (tracking.carrier) data.supplierCarrier = tracking.carrier;
+  if (row.status !== "delivered" && row.status !== "shipped") {
+    data.status = "shipped";
+  }
 
+  if (Object.keys(data).length === 0) return true;
+
+  await prisma.order.update({ where: { id }, data });
+  return true;
+}
+
+export async function markOrderDelivered(id: string) {
   const result = await prisma.order.updateMany({
     where: {
       id,
-      status: { notIn: ["cancelled", "pending_payment"] },
+      status: {
+        in: [
+          "shipped",
+          "fulfillment_sent",
+          "fulfillment_queued",
+          "paid",
+          "validated",
+          "fulfillment_failed",
+          "failed",
+        ],
+      },
     },
-    data,
+    data: { status: "delivered" },
   });
   return result.count > 0;
 }
@@ -235,6 +268,23 @@ export async function clearShippingEmailSend(id: string) {
   });
 }
 
+export async function claimDeliveredEmailSend(id: string) {
+  const result = await prisma.$executeRaw`
+    UPDATE "Order"
+    SET "deliveredEmailSentAt" = CURRENT_TIMESTAMP
+    WHERE id = ${id} AND "deliveredEmailSentAt" IS NULL
+  `;
+  return Number(result) > 0;
+}
+
+export async function clearDeliveredEmailSend(id: string) {
+  await prisma.$executeRaw`
+    UPDATE "Order"
+    SET "deliveredEmailSentAt" = NULL
+    WHERE id = ${id}
+  `;
+}
+
 export async function saveOrder(order: Order) {
   await prisma.order.update({
     where: { id: order.id },
@@ -245,6 +295,7 @@ export async function saveOrder(order: Order) {
       supplierExternalId: order.supplier.externalId,
       supplierTracking: order.supplier.tracking,
       supplierTrackingUrl: order.supplier.trackingUrl,
+      supplierCarrier: order.supplier.carrier,
       supplierLastError: order.supplier.lastError,
     },
   });
@@ -284,6 +335,7 @@ const SOLD_STATUSES = [
   "fulfillment_failed",
   "failed",
   "shipped",
+  "delivered",
 ] as const;
 
 export async function listBestSellingBrainrotIds(limit = 8): Promise<string[]> {

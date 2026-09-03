@@ -174,6 +174,7 @@ export async function POST(request: Request) {
       externalId: null,
       tracking: null,
       trackingUrl: null,
+      carrier: null,
       lastError: null,
     },
     unitCents: quote.unitCents,

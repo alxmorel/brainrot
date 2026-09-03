@@ -4,9 +4,16 @@ import {
   MYSTERY_CART_ID,
 } from "@/data/mystery";
 import { teeColorLabel } from "@/data/teeColors";
-import type { Order, OrderStatus, PublicOrderLine, PublicOrderView } from "@/models";
+import type {
+  Order,
+  OrderStatus,
+  PublicOrderLine,
+  PublicOrderTimelineStep,
+  PublicOrderView,
+} from "@/models";
 import { isHttpUrl } from "@/server/fulfillment/gelatoWebhook";
 import { orderLineCents, orderPaidTotal } from "@/server/order-money";
+import { orderEtaLabel } from "@/server/orders/eta";
 
 export const PAID_STATUSES: OrderStatus[] = [
   "paid",
@@ -16,6 +23,7 @@ export const PAID_STATUSES: OrderStatus[] = [
   "fulfillment_failed",
   "failed",
   "shipped",
+  "delivered",
 ];
 
 export type { PublicOrderLine, PublicOrderView } from "@/models/publicOrder";
@@ -28,12 +36,41 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
   fulfillment_sent: "En production",
   fulfillment_failed: "Confirmée - on prépare ton tee",
   shipped: "Expédiée",
+  delivered: "Livrée",
   cancelled: "Annulée",
   failed: "Confirmée - on prépare ton tee",
 };
 
 export function orderStatusLabel(status: OrderStatus) {
   return STATUS_LABELS[status];
+}
+
+export function buildOrderTimeline(status: OrderStatus): PublicOrderTimelineStep[] {
+  if (status === "pending_payment" || status === "cancelled") {
+    return [];
+  }
+
+  const currentIndex =
+    status === "delivered"
+      ? 3
+      : status === "shipped"
+        ? 2
+        : status === "fulfillment_sent" || status === "fulfillment_queued"
+          ? 1
+          : 0;
+
+  const labels: { id: PublicOrderTimelineStep["id"]; label: string }[] = [
+    { id: "confirmed", label: "Confirmée" },
+    { id: "production", label: "En production" },
+    { id: "shipped", label: "Expédiée" },
+    { id: "delivered", label: "Livrée" },
+  ];
+
+  return labels.map((step, index) => ({
+    ...step,
+    done: index <= currentIndex,
+    current: index === currentIndex && status !== "delivered",
+  }));
 }
 
 export function orderEmailMatches(order: Order, email: string) {
@@ -97,5 +134,8 @@ export function buildPublicOrderView(order: Order): PublicOrderView {
     cashbackGrantedCents: order.cashbackGrantedCents,
     tracking: order.supplier.tracking ?? null,
     trackingUrl,
+    carrier: order.supplier.carrier ?? null,
+    etaLabel: orderEtaLabel(order.status),
+    timeline: buildOrderTimeline(order.status),
   };
 }

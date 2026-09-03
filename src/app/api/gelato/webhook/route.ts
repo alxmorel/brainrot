@@ -1,8 +1,9 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { trySendOrderShipped } from "@/server/email/trySendOrderShipped";
+import { timingSafeEqual } from "node:crypto";
 import { parseGelatoTrackingEvent } from "@/server/fulfillment/gelatoWebhook";
 import { recordOrderEvent } from "@/server/orders/orderEvents";
+import { markOrderAsDelivered } from "@/server/orders/deliverOrder";
+import { markOrderAsShipped } from "@/server/orders/shipOrder";
 import {
   applyGelatoTracking,
   getOrder,
@@ -59,27 +60,67 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
 
-  const applied = await applyGelatoTracking(order.id, {
-    code: payload.trackingCode,
-    url: payload.trackingUrl,
+  const hasTracking = Boolean(payload.trackingCode || payload.trackingUrl);
+  const isDelivered = payload.fulfillmentStatus === "delivered";
+
+  if (isDelivered) {
+    if (hasTracking || payload.carrier) {
+      await applyGelatoTracking(order.id, {
+        code: payload.trackingCode,
+        url: payload.trackingUrl,
+        carrier: payload.carrier,
+      });
+    }
+    const delivered = await markOrderAsDelivered(order.id);
+    if (delivered.ok) {
+      await recordOrderEvent(order.id, "delivered", {
+        source: "gelato_webhook",
+        fulfillmentStatus: payload.fulfillmentStatus,
+        emailSent: delivered.emailSent,
+      });
+      if (delivered.emailSent) {
+        await recordOrderEvent(order.id, "email_delivered", { sent: true });
+      }
+    }
+    return NextResponse.json({ received: true });
+  }
+
+  if (!hasTracking && !payload.carrier) {
+    return NextResponse.json({ received: true });
+  }
+
+  if (order.status === "delivered") {
+    await applyGelatoTracking(order.id, {
+      code: payload.trackingCode,
+      url: payload.trackingUrl,
+      carrier: payload.carrier,
+    });
+    return NextResponse.json({ received: true });
+  }
+
+  const result = await markOrderAsShipped(order.id, {
+    tracking: payload.trackingCode,
+    trackingUrl: payload.trackingUrl,
+    carrier: payload.carrier,
   });
-  if (!applied) {
+  if (!result.ok) {
+    await applyGelatoTracking(order.id, {
+      code: payload.trackingCode,
+      url: payload.trackingUrl,
+      carrier: payload.carrier,
+    });
     return NextResponse.json({ received: true });
   }
 
   await recordOrderEvent(order.id, "shipped", {
     trackingCode: payload.trackingCode,
     trackingUrl: payload.trackingUrl,
+    carrier: payload.carrier,
     source: "gelato_webhook",
   });
 
-  try {
-    const sent = await trySendOrderShipped(order.id);
-    if (sent) {
-      await recordOrderEvent(order.id, "email_shipped", { sent: true });
-    }
-  } catch {
-    // ne pas faire échouer le webhook Gelato
+  if (result.emailSent) {
+    await recordOrderEvent(order.id, "email_shipped", { sent: true });
   }
 
   return NextResponse.json({ received: true });

@@ -4,6 +4,7 @@ import {
   buildPublicOrderView,
   orderEmailMatches,
 } from "@/server/orders/publicOrder";
+import { verifyOrderAccessToken } from "@/server/orders/orderAccessToken";
 import { markOrderAsShipped } from "@/server/orders/shipOrder";
 import { retryFulfillOrder } from "@/server/fulfillment/tryFulfillOrder";
 import { getOrder } from "@/server/orders-repo";
@@ -17,6 +18,7 @@ function parseShipInput(body: unknown) {
   return {
     tracking: typeof record.tracking === "string" ? record.tracking : null,
     trackingUrl: typeof record.trackingUrl === "string" ? record.trackingUrl : null,
+    carrier: typeof record.carrier === "string" ? record.carrier : null,
   };
 }
 
@@ -28,6 +30,7 @@ export async function GET(
   const params = new URL(request.url).searchParams;
   const sessionId = params.get("sessionId");
   const email = params.get("email");
+  const token = params.get("token");
   const user = await getSessionUser();
 
   const order = await getOrder(id);
@@ -35,10 +38,12 @@ export async function GET(
     return NextResponse.json({ ok: false, error: "Commande introuvable." }, { status: 404 });
   }
 
+  const tokenOk = Boolean(token && verifyOrderAccessToken(token) === id);
   const sessionOk = sessionId && order.sessionId === sessionId;
   const emailOk = email && orderEmailMatches(order, email);
   const userOk = Boolean(user && order.userId === user.id);
-  if (!sessionOk && !emailOk && !userOk) {
+  const userEmailOk = Boolean(user && orderEmailMatches(order, user.email));
+  if (!tokenOk && !sessionOk && !emailOk && !userOk && !userEmailOk) {
     return NextResponse.json({ ok: false, error: "Accès refusé." }, { status: 403 });
   }
 
