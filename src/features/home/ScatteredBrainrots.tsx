@@ -7,11 +7,11 @@ import { cn } from "@/shared/utils/cn";
 
 const stickers = [
   {
-    id: "banacrocodilo",
-    name: "Banacrocodilo Bambino",
-    src: "/assets/brainrots/banana-croc.png",
+    id: "assassinpollo",
+    name: "Pollo Ananasassasini",
+    src: "/assets/brainrots/ananas-poulet-assassin.png",
     className:
-      "bottom-[12%] left-[-4%] w-[38vw] max-w-[120px] sm:bottom-[0%] sm:left-0 sm:max-w-[250px] lg:bottom-1 lg:left-[35%] lg:max-w-[200px] xl:bottom-2 xl:left-[25%] xl:max-w-[250px]",
+      "bottom-[-2%] left-[-4%] w-[38vw] max-w-[120px] sm:left-0 sm:max-w-[250px] lg:left-[22%] xl:left-[25%] xl:max-w-[250px]",
     rotate: -12,
     delay: 0.38,
   },

@@ -58,6 +58,22 @@ const icons: Record<string, ReactNode> = {
       <circle cx="12" cy="14" r="1.2" fill="#0a0a0a" />
     </Svg>
   ),
+  poulet: (
+    <Svg>
+      <circle cx="16" cy="18" r="8" fill="#DFFF00" stroke="#0a0a0a" strokeWidth="2.5" />
+      <path d="M12 10 16 4l4 6" fill="#FF1E3C" stroke="#0a0a0a" strokeWidth="2.2" strokeLinejoin="round" />
+      <circle cx="13" cy="16" r="1.2" fill="#0a0a0a" />
+      <path d="M20 17h5l-2 3h-3z" fill="#FF5A1F" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+    </Svg>
+  ),
+  herisson: (
+    <Svg>
+      <circle cx="16" cy="18" r="7" fill="#ffb38a" stroke="#0a0a0a" strokeWidth="2.5" />
+      <path d="M10 12 8 6l4 4M16 10 16 4l2 6M22 12 24 6l-4 4" fill="#7CFF00" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx="13" cy="17" r="1.1" fill="#0a0a0a" />
+      <circle cx="19" cy="17" r="1.1" fill="#0a0a0a" />
+    </Svg>
+  ),
   banane: (
     <Svg>
       <path d="M8 10c8-4 16 2 16 12-8 2-14-2-16-12z" fill="#DFFF00" stroke="#0a0a0a" strokeWidth="2.5" strokeLinejoin="round" />
@@ -95,6 +111,13 @@ const icons: Record<string, ReactNode> = {
       <circle cx="13" cy="20" r="1.4" fill="#FF1E3C" />
     </Svg>
   ),
+  citrouille: (
+    <Svg>
+      <path d="M8 14c0-6 4-8 8-8s8 2 8 8c0 8-4 12-8 12s-8-4-8-12z" fill="#FF5A1F" stroke="#0a0a0a" strokeWidth="2.5" />
+      <path d="M16 6c0-3 2-4 3-4" fill="none" stroke="#7CFF00" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M12 16 14 20 16 16 18 20 20 16" fill="none" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+    </Svg>
+  ),
   italian: (
     <Svg>
       <rect x="6" y="8" width="20" height="16" rx="2" fill="#fff" stroke="#0a0a0a" strokeWidth="2.5" />
@@ -125,6 +148,20 @@ const icons: Record<string, ReactNode> = {
       <path d="M6 12 11 6h10l5 6" fill="none" stroke="#0a0a0a" strokeWidth="2.5" strokeLinejoin="round" />
     </Svg>
   ),
+  assassin: (
+    <Svg>
+      <path d="M10 6 22 18M22 6 10 18" stroke="#0a0a0a" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M14 8 8 14l2 2 6-6z" fill="#8b3dff" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M18 8 24 14l-2 2-6-6z" fill="#8b3dff" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+    </Svg>
+  ),
+  chill: (
+    <Svg>
+      <circle cx="16" cy="16" r="10" fill="#00e5ff" stroke="#0a0a0a" strokeWidth="2.5" />
+      <path d="M9 14h5M18 14h5" stroke="#0a0a0a" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M11 20c2 2 8 2 10 0" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" />
+    </Svg>
+  ),
   any: (
     <Svg>
       <circle cx="16" cy="16" r="10" fill="#fff" stroke="#0a0a0a" strokeWidth="2.5" />
@@ -140,17 +177,22 @@ export const traitStickerTone: Record<string, string> = {
   requin: "bg-blue",
   singe: "bg-fluoro-orange",
   canard: "bg-acid-yellow",
+  poulet: "bg-fluoro-orange",
+  herisson: "bg-hot-pink",
   banane: "bg-acid-yellow",
   fraise: "bg-hot-pink",
   pasteque: "bg-acid-green",
   ananas: "bg-acid-yellow",
   pomme: "bg-red",
   pizza: "bg-fluoro-orange",
+  citrouille: "bg-fluoro-orange",
   italian: "bg-white",
   cute: "bg-hot-pink",
   cursed: "bg-ultraviolet",
   chaotic: "bg-acid-yellow",
   luxury: "bg-blue",
+  assassin: "bg-ultraviolet",
+  chill: "bg-electric-cyan",
   any: "bg-white",
 };
 
