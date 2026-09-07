@@ -22,7 +22,7 @@ export function CookieBanner() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-[80] p-3 sm:p-4">
       <div className="mx-auto flex max-w-lg flex-col gap-3 rounded-2xl border-[3px] border-ink bg-white p-4 shadow-sticker">
-        <p className="text-sm font-bold leading-snug text-ink/80">
+        <p className="text-sm font-semibold leading-snug text-ink/80">
           On compte les visites pour soigner Brainrototo. Zéro pub. Tu peux refuser, le shop marche pareil.{" "}
           <Link href="/confidentialite" className="underline hover:text-hot-pink">
             Confidentialité
@@ -31,7 +31,7 @@ export function CookieBanner() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className="rounded-pill border-[3px] border-ink bg-hot-pink px-4 py-2 font-display text-xs font-bold uppercase text-white shadow-sticker-sm"
+            className="inline-flex min-h-11 items-center rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase text-white shadow-sticker-sm"
             onClick={() => {
               setConsent("all");
               track("consent_choice", { choice: "all" });
@@ -42,7 +42,7 @@ export function CookieBanner() {
           </button>
           <button
             type="button"
-            className="rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-xs font-bold uppercase text-ink shadow-sticker-sm"
+            className="inline-flex min-h-11 items-center rounded-pill border-[3px] border-ink bg-white px-5 py-2.5 font-display text-sm font-bold uppercase text-ink shadow-sticker-sm"
             onClick={() => {
               setConsent("necessary");
               track("consent_choice", { choice: "necessary" });

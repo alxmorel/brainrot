@@ -31,22 +31,22 @@ export function SiteFooter() {
         {brand.footer.line}
       </p>
       <nav
-        className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink/55 sm:gap-x-4 sm:text-xs"
+        className="mx-auto mt-3 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-semibold uppercase tracking-wide text-ink/55 sm:gap-x-4 sm:text-sm"
       >
-        <ComposeLink cta="bande" source="footer" className="hover:text-hot-pink">
+        <ComposeLink cta="bande" source="footer" className="inline-flex min-h-11 items-center hover:text-hot-pink">
           La bande
         </ComposeLink>
         {primaryLinks.map((link) => (
-          <Link key={link.href} href={link.href} className="hover:text-hot-pink">
+          <Link key={link.href} href={link.href} className="inline-flex min-h-11 items-center hover:text-hot-pink">
             {link.label}
           </Link>
         ))}
       </nav>
       <nav
-        className="mx-auto mt-2 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.58rem] font-bold uppercase tracking-wide text-ink/35 sm:text-[0.65rem]"
+        className="mx-auto mt-1 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[0.65rem] font-semibold uppercase tracking-wide text-ink/35 sm:text-xs"
       >
         {legalLinks.map((link) => (
-          <Link key={link.href} href={link.href} className="hover:text-hot-pink">
+          <Link key={link.href} href={link.href} className="inline-flex min-h-11 items-center hover:text-hot-pink">
             {link.label}
           </Link>
         ))}

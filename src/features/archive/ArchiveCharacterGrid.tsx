@@ -35,7 +35,7 @@ export function ArchiveCharacterGrid({
             type="button"
             onClick={() => setFilter(id)}
             className={cn(
-              "rounded-pill border-[3px] border-ink px-3 py-1 font-display text-xs font-bold uppercase tracking-tight shadow-sticker-sm",
+              "inline-flex min-h-11 items-center rounded-pill border-[3px] border-ink px-4 py-2 font-display text-sm font-bold uppercase tracking-tight shadow-sticker-sm",
               filter === id
                 ? "bg-hot-pink text-white"
                 : "bg-white text-ink hover:bg-acid-yellow",

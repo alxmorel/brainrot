@@ -68,7 +68,7 @@ export function HomeArchiveWall() {
           </motion.h2>
           <motion.p
             variants={fadeUp}
-            className="mt-3 max-w-xl font-sans text-sm font-bold leading-snug text-ink/75 sm:text-base lg:mt-4 lg:max-w-2xl lg:text-lg xl:text-xl"
+            className="mt-3 max-w-xl font-sans text-sm font-semibold leading-snug text-ink/75 sm:text-base lg:mt-4 lg:max-w-2xl lg:text-lg xl:text-xl"
           >
             {brand.archive.homeLead}
           </motion.p>
@@ -145,7 +145,7 @@ export function HomeArchiveWall() {
         >
           <Link
             href="/brainrots"
-            className="inline-flex w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker sm:w-auto lg:px-10 lg:py-4 lg:text-lg"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-white shadow-sticker sm:min-h-14 sm:w-auto lg:px-10 lg:py-4 lg:text-lg"
           >
             {brand.archive.homeCta}
           </Link>

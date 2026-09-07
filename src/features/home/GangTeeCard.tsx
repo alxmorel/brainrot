@@ -118,8 +118,8 @@ function ShopTeeCard({ brainrot }: { brainrot: Brainrototo }) {
               onClick={() => setSize(value)}
               className={
                 size === value
-                  ? "rounded-pill border-[3px] border-ink bg-acid-yellow px-2.5 py-1 font-display text-xs font-bold uppercase shadow-sticker-sm"
-                  : "rounded-pill border-[3px] border-ink bg-white px-2.5 py-1 font-display text-xs font-bold uppercase text-ink/70"
+                  ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-pill border-[3px] border-ink bg-acid-yellow px-3 font-display text-sm font-bold uppercase shadow-sticker-sm"
+                  : "inline-flex min-h-11 min-w-11 items-center justify-center rounded-pill border-[3px] border-ink bg-white px-3 font-display text-sm font-bold uppercase text-ink/70"
               }
             >
               {value}

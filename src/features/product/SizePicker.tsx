@@ -45,7 +45,7 @@ export function SizePicker({
         aria-controls={listId}
         title={`Taille ${value}`}
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border-[3px] border-ink bg-white px-2 font-display text-sm font-bold uppercase text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
+        className="inline-flex h-11 min-w-11 items-center justify-center rounded-full border-[3px] border-ink bg-white px-2 font-display text-sm font-bold uppercase text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
       >
         {value}
       </button>
@@ -67,7 +67,7 @@ export function SizePicker({
                     setOpen(false);
                   }}
                   className={cn(
-                    "flex w-full items-center rounded-lg px-3 py-1.5 text-left font-display text-sm font-bold uppercase text-ink hover:bg-acid-yellow focus-visible:outline-none focus-visible:bg-acid-yellow",
+                    "flex w-full items-center rounded-lg px-3 py-2.5 text-left font-display text-sm font-bold uppercase text-ink hover:bg-acid-yellow focus-visible:outline-none focus-visible:bg-acid-yellow",
                     selected && "bg-ink-soft",
                   )}
                 >

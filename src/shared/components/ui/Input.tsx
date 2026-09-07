@@ -27,7 +27,7 @@ export function Input({
         id={inputId}
         disabled={disabled}
         className={cn(
-          "w-full rounded-xl border-[3px] border-ink bg-white px-4 py-3",
+          "w-full rounded-xl border-[3px] border-ink bg-white px-4 py-3 text-base",
           "text-ink placeholder:text-muted shadow-sticker-sm",
           "transition-[transform,box-shadow] duration-[var(--duration-micro)]",
           "hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-none focus:outline-none",

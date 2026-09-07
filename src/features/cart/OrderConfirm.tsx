@@ -125,14 +125,14 @@ export function OrderConfirm({ orderId }: { orderId?: string }) {
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link
                 href="/cart"
-                className="inline-flex rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker"
+                className="inline-flex min-h-12 items-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-white shadow-sticker"
               >
                 Retour au panier
               </Link>
               <ComposeLink
                 cta="composer"
                 source="confirm"
-                className="inline-flex rounded-pill border-[3px] border-ink bg-white px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
+                className="inline-flex min-h-12 items-center rounded-pill border-[3px] border-ink bg-white px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
               >
                 {brand.hero.cta}
               </ComposeLink>

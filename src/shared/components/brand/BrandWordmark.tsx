@@ -11,14 +11,7 @@ export function BrandWordmark({
 }) {
   return (
     <div className={cn("inline-flex flex-col items-start", className)}>
-      <span
-        className="font-display text-[clamp(2.5rem,8vw,4.5rem)] font-bold uppercase leading-[0.85] tracking-[-0.04em] text-white"
-        style={{
-          WebkitTextStroke: "4px #0a0a0a",
-          paintOrder: "stroke fill",
-          textShadow: "5px 5px 0 #0a0a0a",
-        }}
-      >
+      <span className="text-sticker-stroke font-display text-[clamp(2.5rem,8vw,4.5rem)] font-bold uppercase leading-[0.85] tracking-[-0.04em] text-white">
         Brainrototo
       </span>
       {subtitle ? (

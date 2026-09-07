@@ -48,7 +48,7 @@ export function ColorSwatches({
             return (
               <span key={id} className="inline-flex items-center gap-2">
                 <span
-                  className="h-8 w-8 rounded-full border-[3px] border-ink"
+                  className="h-11 w-11 rounded-full border-[3px] border-ink"
                   style={{ backgroundColor: color.swatch }}
                   aria-hidden
                 />
@@ -68,7 +68,7 @@ export function ColorSwatches({
               title={color.label}
               onClick={() => onChange(id)}
               className={cn(
-                "h-8 w-8 rounded-full border-[3px] border-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2",
+                "h-11 w-11 rounded-full border-[3px] border-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2",
                 selected ? "shadow-sticker-sm scale-110" : "opacity-80",
               )}
               style={{ backgroundColor: color.swatch }}
@@ -121,7 +121,7 @@ function CompactColorPicker({
         aria-controls={canChange ? listId : undefined}
         title={current?.label}
         onClick={canChange ? () => setOpen((prev) => !prev) : undefined}
-        className="inline-flex h-10 items-center gap-2 rounded-pill border-[3px] border-ink bg-white pl-1.5 pr-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
+        className="inline-flex h-11 items-center gap-2 rounded-pill border-[3px] border-ink bg-white pl-1.5 pr-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2"
       >
         <span
           className="h-6 w-6 shrink-0 rounded-full border-[3px] border-ink"
@@ -151,7 +151,7 @@ function CompactColorPicker({
                     setOpen(false);
                   }}
                   className={cn(
-                    "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left font-display text-sm font-bold uppercase text-ink hover:bg-acid-yellow focus-visible:outline-none focus-visible:bg-acid-yellow",
+                    "flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-left font-display text-sm font-bold uppercase text-ink hover:bg-acid-yellow focus-visible:outline-none focus-visible:bg-acid-yellow",
                     selected && "bg-ink-soft",
                   )}
                 >

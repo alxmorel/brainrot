@@ -134,7 +134,7 @@ export function WelcomeOverlay() {
           <button
             type="button"
             onClick={() => void copyCode()}
-            className="shrink-0 rounded-pill border-[3px] border-ink bg-white px-3 py-1.5 font-display text-xs font-bold uppercase shadow-sticker-sm"
+            className="shrink-0 inline-flex min-h-11 items-center rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-sm font-bold uppercase shadow-sticker-sm"
           >
             {copied ? "Copié" : "Copier"}
           </button>

@@ -74,6 +74,13 @@ const icons: Record<string, ReactNode> = {
       <circle cx="19" cy="17" r="1.1" fill="#0a0a0a" />
     </Svg>
   ),
+  dragon: (
+    <Svg>
+      <path d="M6 20c4-10 16-10 20 0l-4 4H10z" fill="#FF2FB3" stroke="#0a0a0a" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M10 14 6 8l5 4M22 14l4-6-5 4" fill="#7CFF00" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx="12" cy="18" r="1.2" fill="#0a0a0a" />
+    </Svg>
+  ),
   banane: (
     <Svg>
       <path d="M8 10c8-4 16 2 16 12-8 2-14-2-16-12z" fill="#DFFF00" stroke="#0a0a0a" strokeWidth="2.5" strokeLinejoin="round" />
@@ -116,6 +123,12 @@ const icons: Record<string, ReactNode> = {
       <path d="M8 14c0-6 4-8 8-8s8 2 8 8c0 8-4 12-8 12s-8-4-8-12z" fill="#FF5A1F" stroke="#0a0a0a" strokeWidth="2.5" />
       <path d="M16 6c0-3 2-4 3-4" fill="none" stroke="#7CFF00" strokeWidth="2.2" strokeLinecap="round" />
       <path d="M12 16 14 20 16 16 18 20 20 16" fill="none" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+    </Svg>
+  ),
+  "fruit-dragon": (
+    <Svg>
+      <ellipse cx="16" cy="18" rx="8" ry="9" fill="#FF2FB3" stroke="#0a0a0a" strokeWidth="2.5" />
+      <path d="M10 12 8 6l4 4M16 10 16 4l2 6M22 12 24 6l-4 4" fill="#7CFF00" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
     </Svg>
   ),
   italian: (
@@ -162,6 +175,18 @@ const icons: Record<string, ReactNode> = {
       <path d="M11 20c2 2 8 2 10 0" fill="none" stroke="#0a0a0a" strokeWidth="2.2" strokeLinecap="round" />
     </Svg>
   ),
+  rocker: (
+    <Svg>
+      <path d="M8 22 16 6l8 16H8z" fill="#0a0a0a" stroke="#0a0a0a" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M12 18h8M14 14h4" stroke="#DFFF00" strokeWidth="2.2" strokeLinecap="round" />
+    </Svg>
+  ),
+  furieux: (
+    <Svg>
+      <circle cx="16" cy="16" r="10" fill="#FF1E3C" stroke="#0a0a0a" strokeWidth="2.5" />
+      <path d="M10 12 14 14M22 12 18 14M11 21c2-3 8-3 10 0" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
+    </Svg>
+  ),
   any: (
     <Svg>
       <circle cx="16" cy="16" r="10" fill="#fff" stroke="#0a0a0a" strokeWidth="2.5" />
@@ -179,6 +204,7 @@ export const traitStickerTone: Record<string, string> = {
   canard: "bg-acid-yellow",
   poulet: "bg-fluoro-orange",
   herisson: "bg-hot-pink",
+  dragon: "bg-hot-pink",
   banane: "bg-acid-yellow",
   fraise: "bg-hot-pink",
   pasteque: "bg-acid-green",
@@ -186,6 +212,7 @@ export const traitStickerTone: Record<string, string> = {
   pomme: "bg-red",
   pizza: "bg-fluoro-orange",
   citrouille: "bg-fluoro-orange",
+  "fruit-dragon": "bg-hot-pink",
   italian: "bg-white",
   cute: "bg-hot-pink",
   cursed: "bg-ultraviolet",
@@ -193,6 +220,8 @@ export const traitStickerTone: Record<string, string> = {
   luxury: "bg-blue",
   assassin: "bg-ultraviolet",
   chill: "bg-electric-cyan",
+  rocker: "bg-ink",
+  furieux: "bg-red",
   any: "bg-white",
 };
 
@@ -354,7 +383,7 @@ export function PickedTraits({
           type="button"
           onClick={() => onEdit(step)}
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-pill border-[3px] border-ink px-2 py-1 font-display text-[0.65rem] font-bold uppercase tracking-tight shadow-sticker-sm sm:text-xs",
+            "inline-flex min-h-11 items-center gap-1.5 rounded-pill border-[3px] border-ink px-3 py-2 font-display text-sm font-bold uppercase tracking-tight shadow-sticker-sm",
             traitStickerTone[trait.id] ?? "bg-white",
           )}
         >

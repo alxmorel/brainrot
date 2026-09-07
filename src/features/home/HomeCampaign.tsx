@@ -1,4 +1,4 @@
-import { HeroCopy, heroH } from "@/features/home/HeroCopy";
+import { HeroCopy, HeroCta, heroH } from "@/features/home/HeroCopy";
 import { HeroModels } from "@/features/home/HeroModels";
 import { HomeBestsellers } from "@/features/home/HomeBestsellers";
 import { HomeArchiveWall } from "@/features/home/HomeArchiveWall";
@@ -51,6 +51,9 @@ export function HomeCampaign({
             <ScatteredBrainrots />
             <HeroCopy />
             <HeroModels />
+          </div>
+          <div className="pointer-events-auto absolute inset-x-3 bottom-3 z-40 sm:hidden">
+            <HeroCta />
           </div>
         </section>
 

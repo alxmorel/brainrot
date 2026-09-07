@@ -93,7 +93,7 @@ export function OrderStatusCard({ order }: { order: PublicOrderView }) {
               href={order.trackingUrl}
               target="_blank"
               rel="noreferrer"
-              className="mt-3 inline-flex rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker-sm"
+              className="mt-3 inline-flex min-h-12 items-center rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-3 font-display text-base font-bold uppercase tracking-tight text-white shadow-sticker-sm"
             >
               Suivre le colis →
             </a>
@@ -163,13 +163,13 @@ export function OrderStatusLinks() {
     <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
       <Link
         href="/#compose"
-        className="inline-flex rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker"
+        className="inline-flex min-h-12 items-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-white shadow-sticker"
       >
         Créer un autre →
       </Link>
       <Link
         href="/"
-        className="inline-flex rounded-pill border-[3px] border-ink bg-white px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
+        className="inline-flex min-h-12 items-center rounded-pill border-[3px] border-ink bg-white px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-ink shadow-sticker-sm"
       >
         Accueil
       </Link>

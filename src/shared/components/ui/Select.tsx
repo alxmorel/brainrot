@@ -36,7 +36,7 @@ export function Select({
         id={selectId}
         disabled={disabled}
         className={cn(
-          "w-full appearance-none rounded-xl border-[3px] border-ink bg-white px-4 py-3",
+          "w-full appearance-none rounded-xl border-[3px] border-ink bg-white px-4 py-3 text-base",
           "text-ink shadow-sticker-sm",
           "bg-[length:1rem] bg-[right_1rem_center] bg-no-repeat",
           "transition-[transform,box-shadow] duration-[var(--duration-micro)]",

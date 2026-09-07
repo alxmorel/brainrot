@@ -24,7 +24,7 @@ export function OfferBar() {
   return (
     <Link
       href={href}
-      className="flex items-center justify-center gap-x-2 border-b-[3px] border-ink bg-acid-yellow px-3 py-1.5 text-center"
+      className="flex min-h-11 items-center justify-center gap-x-2 border-b-[3px] border-ink bg-acid-yellow px-3 py-2 text-center"
     >
       <span className="font-display text-[0.65rem] font-bold uppercase leading-tight tracking-tight text-ink sm:text-xs">
         {formatWelcomeOffer(shop)} offerts · code{" "}

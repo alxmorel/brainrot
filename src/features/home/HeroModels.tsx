@@ -20,7 +20,7 @@ export function HeroModels({ className }: { className?: string }) {
         ease: easeOut,
       }}
       className={cn(
-        "pointer-events-none relative z-10 mx-auto flex h-[34vh] w-full items-end justify-center",
+        "pointer-events-none relative z-10 mx-auto flex h-[50vh] w-full items-end justify-center",
         "sm:absolute sm:bottom-0 sm:right-0 sm:mx-0 sm:h-[58dvh] sm:w-[68%]",
         "lg:h-[calc(100dvh-4.75rem-6.25rem)] lg:w-[66%]",
         "xl:h-[calc(100dvh-4.75rem-7.25rem)] xl:w-[68%]",

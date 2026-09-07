@@ -47,6 +47,7 @@
 
   html {
     scroll-behavior: smooth;
+    touch-action: pan-x pan-y;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -81,9 +82,15 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display), "Fredoka", system-ui, sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: var(--tracking-display);
     line-height: var(--leading-display);
+  }
+
+  @media (min-width: 640px) {
+    .font-display {
+      font-weight: 700;
+    }
   }
 
   .font-fredoka {
@@ -131,20 +138,45 @@
     text-shadow: 4px 4px 0 var(--br-cyan);
   }
 
-  .text-sticker-pop {
-    -webkit-text-stroke: 3px var(--br-fg);
+  .text-sticker-pop,
+  .text-sticker-stroke {
+    -webkit-text-stroke: 2.5px var(--br-fg);
     paint-order: stroke fill;
-    text-shadow: 5px 5px 0 var(--br-fg);
+    text-shadow: 3px 3px 0 var(--br-fg);
   }
 
   .text-outline {
-    -webkit-text-stroke: 3px var(--br-fg);
+    -webkit-text-stroke: 1.5px var(--br-fg);
     paint-order: stroke fill;
   }
 
   .text-outline-white {
-    -webkit-text-stroke: 4px #fff;
+    -webkit-text-stroke: 2px #fff;
     paint-order: stroke fill;
+  }
+
+  @media (min-width: 640px) {
+    .text-sticker-pop,
+    .text-sticker-stroke {
+      -webkit-text-stroke: 3px var(--br-fg);
+      text-shadow: 4px 4px 0 var(--br-fg);
+    }
+
+    .text-outline {
+      -webkit-text-stroke: 3px var(--br-fg);
+    }
+
+    .text-outline-white {
+      -webkit-text-stroke: 4px #fff;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .text-sticker-pop,
+    .text-sticker-stroke {
+      -webkit-text-stroke: 4px var(--br-fg);
+      text-shadow: 5px 5px 0 var(--br-fg);
+    }
   }
 
   .shadow-sticker {
@@ -323,5 +355,13 @@
     );
     animation: gloss-sweep 0.55s var(--ease-out) 0.38s both;
     pointer-events: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .font-display,
+  .font-display.font-bold,
+  .font-fredoka {
+    font-weight: 600;
   }
 }

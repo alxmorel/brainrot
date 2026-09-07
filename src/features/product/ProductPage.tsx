@@ -122,8 +122,8 @@ export function ProductPage({
                     onClick={() => setSize(value)}
                     className={
                       size === value
-                        ? "rounded-pill border-[3px] border-ink bg-acid-yellow px-2.5 py-1 font-display text-xs font-bold uppercase shadow-sticker-sm"
-                        : "rounded-pill border-[3px] border-ink bg-white px-2.5 py-1 font-display text-xs font-bold uppercase text-ink/70"
+                        ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-pill border-[3px] border-ink bg-acid-yellow px-3 font-display text-sm font-bold uppercase shadow-sticker-sm"
+                        : "inline-flex min-h-11 min-w-11 items-center justify-center rounded-pill border-[3px] border-ink bg-white px-3 font-display text-sm font-bold uppercase text-ink/70"
                     }
                   >
                     {value}
@@ -178,13 +178,13 @@ export function ProductPage({
             <>
               <Link
                 href="/mystery"
-                className="inline-flex items-center rounded-pill border-[3px] border-ink bg-white px-3 py-1.5 font-display text-xs font-bold uppercase shadow-sticker-sm hover:bg-acid-yellow sm:text-sm"
+                className="inline-flex min-h-11 items-center rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-sm font-bold uppercase shadow-sticker-sm hover:bg-acid-yellow"
               >
                 {brand.mystery.discover}
               </Link>
               <Link
                 href={createPageHref(null, size, resolvedColor)}
-                className="inline-flex items-center rounded-pill border-[3px] border-ink bg-white px-3 py-1.5 font-display text-xs font-bold uppercase shadow-sticker-sm hover:bg-acid-yellow sm:text-sm"
+                className="inline-flex min-h-11 items-center rounded-pill border-[3px] border-ink bg-white px-4 py-2 font-display text-sm font-bold uppercase shadow-sticker-sm hover:bg-acid-yellow"
               >
                 {brand.product.explore}
               </Link>
@@ -201,7 +201,7 @@ export function ProductPage({
           {justAdded ? (
             <Link
               href="/cart"
-              className="mt-2 inline-flex w-full justify-center font-display text-xs font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2"
+              className="mt-2 inline-flex min-h-11 w-full items-center justify-center font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2"
             >
               Voir le panier →
             </Link>

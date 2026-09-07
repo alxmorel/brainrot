@@ -396,7 +396,7 @@ export function GeneratorStudio({
                     aria-pressed={open}
                     onClick={() => toggleCategory(category.id)}
                     className={cn(
-                      "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-xl border-[3px] border-ink px-2 py-2 font-display text-[0.65rem] font-bold uppercase leading-tight shadow-sticker-sm transition-[transform,background-color,box-shadow,color] duration-[var(--duration-button)] sm:text-sm lg:gap-1 lg:rounded-2xl lg:px-3 lg:py-2.5 lg:text-base xl:text-lg",
+                      "flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl border-[3px] border-ink px-2 py-2.5 font-display text-xs font-bold uppercase leading-tight shadow-sticker-sm transition-[transform,background-color,box-shadow,color] duration-[var(--duration-button)] sm:min-h-14 sm:text-sm lg:gap-1 lg:rounded-2xl lg:px-3 lg:py-2.5 lg:text-base xl:text-lg",
                       open && "scale-[1.03] shadow-sticker",
                       tone
                         ? cn(tone, traitToneText(picked!.id))
@@ -467,8 +467,8 @@ export function GeneratorStudio({
                       onClick={() => pickSize(value)}
                       className={
                         size === value
-                          ? "min-w-[2.25rem] rounded-pill border-[3px] border-ink bg-acid-yellow px-2 py-1 font-display text-xs font-bold uppercase shadow-sticker-sm sm:min-w-[2.5rem] sm:px-2.5 sm:py-1.5 sm:text-sm lg:text-base"
-                          : "min-w-[2.25rem] rounded-pill border-[3px] border-ink bg-white px-2 py-1 font-display text-xs font-bold uppercase text-ink/70 sm:min-w-[2.5rem] sm:px-2.5 sm:py-1.5 sm:text-sm lg:text-base"
+                          ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-pill border-[3px] border-ink bg-acid-yellow px-3 font-display text-sm font-bold uppercase shadow-sticker-sm sm:text-base"
+                          : "inline-flex min-h-11 min-w-11 items-center justify-center rounded-pill border-[3px] border-ink bg-white px-3 font-display text-sm font-bold uppercase text-ink/70 sm:text-base"
                       }
                     >
                       {value}
@@ -507,7 +507,7 @@ export function GeneratorStudio({
                     </svg>
                   </Button>
                   <Button
-                    className="min-w-0 flex-1 text-sm sm:text-base lg:text-lg xl:text-xl"
+                    className="min-w-0 flex-1"
                     size="lg"
                     disabled={isGenerating}
                     onClick={handleAdd}
@@ -518,7 +518,7 @@ export function GeneratorStudio({
                 {justAdded ? (
                   <Link
                     href="/cart"
-                    className="mt-2 inline-flex font-display text-xs font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 sm:text-sm lg:text-base"
+                    className="mt-2 inline-flex min-h-11 items-center font-display text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 lg:text-base"
                   >
                     Voir le panier →
                   </Link>
@@ -526,7 +526,7 @@ export function GeneratorStudio({
               </>
             ) : (
               <Button
-                className="mt-4 w-full text-sm sm:text-base lg:mt-5 lg:text-lg xl:text-xl"
+                className="mt-4 w-full lg:mt-5"
                 size="lg"
                 disabled={!canGenerate}
                 onClick={handleGenerate}
@@ -540,7 +540,7 @@ export function GeneratorStudio({
               <button
                 type="button"
                 onClick={resetFilters}
-                className="mt-2 self-start text-xs font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 sm:text-sm lg:text-base"
+                className="mt-2 inline-flex min-h-11 items-center self-start text-sm font-bold uppercase text-hot-pink underline decoration-2 underline-offset-2 lg:text-base"
               >
                 Réinitialiser
               </button>

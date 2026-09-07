@@ -9,6 +9,8 @@ const img = {
   banachillo: "/assets/brainrots/banana-croc-chill.png",
   riccio: "/assets/brainrots/riccio-fragoloni.png",
   anatra: "/assets/brainrots/anatra-zuccarininio.png",
+  fragorockito: "/assets/brainrots/riccio-fragorockito.png",
+  fruttodrago: "/assets/brainrots/fruttodrago-furioso.png",
 } as const;
 
 const banacro = "/assets/products/banacrocodilo_bambino";
@@ -64,6 +66,24 @@ export const brainrots: Brainrototo[] = [
     image: img.anatra,
     rarity: "epic",
   },
+  {
+    id: "riccio-fragorockito",
+    name: "Riccio Fragorockito",
+    animal: "herisson",
+    ingredient: "fraise",
+    vibe: "rocker",
+    image: img.fragorockito,
+    rarity: "legendary",
+  },
+  {
+    id: "fruttodrago-furioso",
+    name: "Fruttodrago Furioso",
+    animal: "dragon",
+    ingredient: "fruit-dragon",
+    vibe: "furieux",
+    image: img.fruttodrago,
+    rarity: "legendary",
+  },
   { id: "crocopizza", name: "Crocopizza Chaos", animal: "crocodile", ingredient: "pizza", vibe: "chaotic", image: img.croc, rarity: "rare" },
   { id: "fragolafrogo", name: "Fragolafrogo", animal: "grenouille", ingredient: "fraise", vibe: "cute", image: img.sloth, mockup: `${lemonSloth}/editor_front.png`, gallery: [`${lemonSloth}/editor_front.png`, `${lemonSloth}/person1_front.png`, `${lemonSloth}/person1_profile-left.png`, `${lemonSloth}/person1_profile-right.png`, `${lemonSloth}/person1_back.png`, `${lemonSloth}/person2_front.png`], rarity: "epic" },
   { id: "melonsharko", name: "Melonsharko", animal: "requin", ingredient: "pasteque", vibe: "cursed", image: img.elephant, rarity: "rare" },
@@ -95,9 +115,8 @@ export const bestSellerFallbackIds = [
   "assassinpollo",
   "banachillo",
   "riccio-fragoloni",
+  "riccio-fragorockito",
+  "fruttodrago-furioso",
   "anatra-zuccarininio",
   "fragolafrogo",
-  "melonsharko",
-  "ananasinge",
-  "crocfraise",
 ] as const;

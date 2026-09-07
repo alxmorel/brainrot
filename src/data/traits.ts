@@ -9,6 +9,7 @@ export const animals: Trait[] = [
   { id: "canard", label: "Canard" },
   { id: "poulet", label: "Poulet" },
   { id: "herisson", label: "Hérisson" },
+  { id: "dragon", label: "Dragon" },
 ];
 
 export const ingredients: Trait[] = [
@@ -19,6 +20,7 @@ export const ingredients: Trait[] = [
   { id: "pomme", label: "Pomme" },
   { id: "pizza", label: "Pizza" },
   { id: "citrouille", label: "Citrouille" },
+  { id: "fruit-dragon", label: "Fruit du dragon" },
 ];
 
 export const vibes: Trait[] = [
@@ -29,6 +31,8 @@ export const vibes: Trait[] = [
   { id: "luxury", label: "Luxury" },
   { id: "assassin", label: "Assassin" },
   { id: "chill", label: "Chill" },
+  { id: "rocker", label: "Rocker" },
+  { id: "furieux", label: "Furieux" },
 ];
 
 function labelOf(list: Trait[], id: string) {

@@ -91,7 +91,7 @@ export function HomeHowItWorks() {
                   <h3 className="font-display text-sm font-bold uppercase leading-none text-ink sm:mt-2 sm:text-xl lg:mt-3 lg:text-2xl xl:text-3xl">
                     {step.title}
                   </h3>
-                  <p className="mt-2 hidden text-sm font-bold leading-snug text-ink/70 sm:block lg:mt-3 lg:text-base xl:text-lg">
+                  <p className="mt-2 hidden text-sm font-semibold leading-snug text-ink/70 sm:block lg:mt-3 lg:text-base xl:text-lg">
                     {step.text}
                   </p>
                 </div>
@@ -114,7 +114,7 @@ export function HomeHowItWorks() {
           <ComposeLink
             cta="composer"
             source="how"
-            className="inline-flex w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker sm:w-auto lg:px-10 lg:py-4 lg:text-lg"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-white shadow-sticker sm:min-h-14 sm:w-auto lg:px-10 lg:py-4 lg:text-lg"
           >
             {brand.how.cta}
           </ComposeLink>

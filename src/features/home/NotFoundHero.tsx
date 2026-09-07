@@ -6,12 +6,6 @@ import { StickerLabel } from "@/features/home/HeroStickers";
 import { heroH } from "@/features/home/HeroCopy";
 import { ComposeLink } from "@/shared/components/layout/ComposeLink";
 
-const strokeTitle = {
-  WebkitTextStroke: "4px #0a0a0a",
-  paintOrder: "stroke fill",
-  textShadow: "5px 5px 0 #0a0a0a",
-} as const;
-
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
 export function NotFoundHero() {
@@ -74,19 +68,17 @@ export function NotFoundHero() {
             transition: { staggerChildren: reduced ? 0 : 0.07 },
           },
         }}
-        className="font-display font-bold uppercase leading-[0.8] tracking-[-0.05em] text-[clamp(1.7rem,8vw,5.6rem)] xl:text-[clamp(4.25rem,5.8vw,6.75rem)]"
+        className="font-display font-bold uppercase leading-[0.85] tracking-[-0.05em] text-[clamp(1.7rem,8vw,5.6rem)] xl:text-[clamp(4.25rem,5.8vw,6.75rem)]"
       >
         <motion.span
           variants={line}
-          className="block max-[380px]:whitespace-normal whitespace-nowrap text-white"
-          style={strokeTitle}
+          className="text-sticker-stroke block max-[380px]:whitespace-normal whitespace-nowrap text-white"
         >
           {brand.notFound.lines[0]}
         </motion.span>
         <motion.span
           variants={line}
-          className="mt-0.5 block max-[380px]:whitespace-normal whitespace-nowrap text-hot-pink sm:mt-1"
-          style={strokeTitle}
+          className="text-sticker-stroke mt-0.5 block max-[380px]:whitespace-normal whitespace-nowrap text-hot-pink sm:mt-1"
         >
           {brand.notFound.lines[1]}
         </motion.span>
@@ -94,7 +86,7 @@ export function NotFoundHero() {
 
       <motion.p
         variants={fadeUp}
-        className="font-display text-sm font-bold uppercase leading-tight tracking-[-0.03em] text-ink sm:text-base lg:text-xl xl:text-2xl"
+        className="font-display text-sm font-semibold uppercase leading-tight tracking-[-0.03em] text-ink sm:text-base sm:font-bold lg:text-xl xl:text-2xl"
       >
         {brand.notFound.lead}
       </motion.p>
@@ -106,7 +98,7 @@ export function NotFoundHero() {
         <ComposeLink
           cta="composer"
           source="404"
-          className="inline-flex w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-5 py-2.5 font-display text-sm font-bold uppercase tracking-tight text-white shadow-sticker transition-[transform,box-shadow] duration-[var(--duration-button)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-sticker-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8] sm:w-auto sm:px-8 sm:py-4 sm:text-base lg:px-10 lg:py-5 lg:text-lg xl:text-xl"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-pill border-[3px] border-ink bg-hot-pink px-6 py-3.5 font-display text-base font-bold uppercase tracking-tight text-white shadow-sticker transition-[transform,box-shadow] duration-[var(--duration-button)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-sticker-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hot-pink focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8] sm:min-h-14 sm:w-auto sm:px-8 sm:py-4 sm:text-lg lg:px-10 lg:py-5 lg:text-xl"
         >
           {brand.notFound.cta}
         </ComposeLink>

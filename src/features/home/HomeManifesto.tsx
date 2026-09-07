@@ -58,7 +58,7 @@ export function HomeManifesto() {
           </motion.h2>
           <motion.p
             variants={fadeUp}
-            className="mt-3 max-w-xl font-sans text-sm font-bold leading-snug text-ink/75 sm:text-base lg:mt-4 lg:max-w-2xl lg:text-lg xl:text-xl"
+            className="mt-3 max-w-xl font-sans text-sm font-semibold leading-snug text-ink/75 sm:text-base lg:mt-4 lg:max-w-2xl lg:text-lg xl:text-xl"
           >
             {manifesto.body}
           </motion.p>

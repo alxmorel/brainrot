@@ -20,12 +20,12 @@ const press =
   "transition-[transform,box-shadow,background-color] duration-[var(--duration-button)] ease-[var(--ease-out)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-sticker-sm";
 
 const iconBtn = cn(
-  "inline-flex h-10 w-10 items-center justify-center rounded-pill border-[3px] border-ink shadow-sticker sm:h-11 sm:w-11",
+  "inline-flex h-11 w-11 items-center justify-center rounded-pill border-[3px] border-ink shadow-sticker",
   press,
 );
 
 const shopItem =
-  "inline-flex h-10 w-11 items-center justify-center sm:h-11 sm:w-12";
+  "inline-flex h-11 w-11 items-center justify-center sm:w-12";
 
 const HOME_SECTIONS = ["compose", "mystery"] as const;
 
@@ -97,13 +97,13 @@ export function SiteNav() {
   const cartOn = pathname === "/cart" || pathname.startsWith("/checkout");
 
   return (
-    <div className="sticky top-0 z-40">
+    <div className="sticky top-0 z-50">
       <OfferBar />
       <header className="flex items-center justify-between gap-2 border-b-[3px] border-ink bg-[#fffdf8] px-3 py-2 sm:gap-3 sm:px-6 sm:py-3 lg:px-8">
         <Link href="/" className="shrink-0">
           <BrandWordmark
             subtitle="Wear"
-            className="[&>span:first-child]:text-[clamp(1.15rem,4vw,2.1rem)] [&>span:first-child]:[-webkit-text-stroke-width:3px] [&>span:last-child]:hidden sm:[&>span:last-child]:inline sm:[&>span:last-child]:text-[clamp(0.8rem,2vw,1.1rem)]"
+            className="[&>span:first-child]:text-[clamp(1.15rem,4vw,2.1rem)] [&>span:first-child]:[-webkit-text-stroke-width:1.5px] [&>span:first-child]:[text-shadow:2px_2px_0_#0a0a0a] [&>span:last-child]:hidden sm:[&>span:last-child]:inline sm:[&>span:last-child]:text-[clamp(0.8rem,2vw,1.1rem)]"
           />
         </Link>
 
@@ -146,7 +146,7 @@ export function SiteNav() {
             </HomeHashLink>
           </div>
 
-          <div className="w-10 shrink-0 sm:w-11" aria-hidden />
+          <div className="w-11 shrink-0" aria-hidden />
           <IconLink
             href={me ? "/compte" : "/compte/inscription"}
             label={me ? "Compte" : "Rejoindre"}

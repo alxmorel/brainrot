@@ -79,7 +79,7 @@ export function SizeGuideDialog() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="font-display text-sm font-bold uppercase tracking-tight text-hot-pink underline decoration-2 underline-offset-2"
+        className="font-display text-sm font-bold uppercase tracking-tight text-hot-pink underline decoration-2 underline-offset-2 min-h-11 inline-flex items-center"
       >
         Guide des tailles
       </button>
